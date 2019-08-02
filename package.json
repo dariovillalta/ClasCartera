@@ -1,0 +1,59 @@
+{
+  "name": "IntegEval",
+  "version": "1.0.0",
+  "description": "Programa para clasificar la cartera crediticia",
+  "main": "app/main.js",
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "build": "gulp build",
+    "start": "gulp start",
+    "test": "gulp test",
+    "release": "gulp release"
+  },
+  "repository": "",
+  "keywords": [
+    "Electron",
+    "React"
+  ],
+  "author": "DarioVillalta",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-jest": "^24.8.0",
+    "electron": "~5.0.1",
+    "electron-builder": "^20.39.0",
+    "electron-react-devtools": "^0.5.3",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-css": "^0.1.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "jest": "^24.8.0",
+    "react-test-renderer": "^16.8.6"
+  },
+  "dependencies": {
+    "async": "^3.1.0",
+    "build": "^0.1.4",
+    "configure": "0.0.1",
+    "electron-is-dev": "^1.1.0",
+    "mssql": "5.1.0",
+    "node-addon-api": "^1.6.3",
+    "node-gyp": "^5.0.1",
+    "odbc": "github:markdirish/node-odbc",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.0"
+  },
+  "build": {
+    "appId": "com.karmadust.electrate",
+    "files": [
+      "app/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "publish": null
+  }
+}
