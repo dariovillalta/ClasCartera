@@ -63,13 +63,12 @@ function (_React$Component) {
           _this$props = this.props,
           isOpen = _this$props.isOpen,
           label = _this$props.label;
-      return _react["default"].createElement("div", {
-        className: "card"
-      }, _react["default"].createElement("div", {
+      return _react["default"].createElement("div", null, _react["default"].createElement("div", {
         onClick: onClick,
         style: {
           cursor: 'pointer',
-          width: '100%'
+          width: '100%',
+          backgroundColor: this.props.color
         },
         className: "card-header"
       }, _react["default"].createElement("span", {
@@ -92,7 +91,10 @@ function (_React$Component) {
           marginRight: "10px"
         }
       }) : _react["default"].createElement("span", null)), isOpen && _react["default"].createElement("div", {
-        className: "card-body"
+        className: "card-body",
+        style: {
+          backgroundColor: this.props.color
+        }
       }, this.props.children));
     }
   }]);

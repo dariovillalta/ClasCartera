@@ -122,7 +122,8 @@ export default class TipoCredito extends React.Component {
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.returnChooseTable}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnSelCredit}><a href="#" className={"breadcrumb-link"}>Seleccionar Tipo de Cr&eacute;dito</a></li>
-                                            <li className={"breadcrumb-item active"} aria-current="page">Creaci&oacute;n de Variables</li>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnSelCredit}><a href="#" className={"breadcrumb-link"}>Seleccionar Variables</a></li>
+                                            <li className={"breadcrumb-item active"} aria-current="page">Creaci&oacute;n de Campor de Tipo de Cr&eacute;dito</li>
                                         </ol>
                                     </nav>
                                 </div>

@@ -11,6 +11,8 @@ var _mssql = _interopRequireDefault(require("mssql"));
 
 var _Layout = _interopRequireDefault(require("./components/Layout.js"));
 
+var _LoginPage = _interopRequireDefault(require("./components/LoginPage.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -32,8 +34,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 //import odbc from 'odbc';
-
-/*import LoginPage from './components/LoginPage.js';*/
 var config = {
   user: 'SA',
   password: 'password111!',
@@ -131,9 +131,9 @@ function (_React$Component) {
       var logged = this.state.isLoggedIn;
       return _react["default"].createElement("div", null, logged ? _react["default"].createElement(_Layout["default"], {
         pool: pool
-      }, " ") :
-      /*<LoginPage> </LoginPage>*/
-      _react["default"].createElement("div", null));
+      }, " ") : _react["default"].createElement(_LoginPage["default"], {
+        pool: pool
+      }, " "));
     }
   }]);
 

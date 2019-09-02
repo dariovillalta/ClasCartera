@@ -162,10 +162,6 @@ function (_React$Component) {
       var nombre = $("#nombreElementoNuevo").val();
       var valor = $("#valorElementoNuevo").val();
       var tipo = $("#listaTipoNuevo").val();
-      console.log("idLista = " + idLista);
-      console.log("nombre = " + nombre);
-      console.log("valor = " + valor);
-      console.log("tipo = " + tipo);
 
       if (idLista != undefined && !isNaN(idLista)) {
         if (nombre.length > 0 && nombre.length < 51) {
@@ -187,6 +183,10 @@ function (_React$Component) {
                   } else {
                     transaction.commit(function (err) {
                       _this4.loadElementsOfLists();
+
+                      $("#nombreElementoNuevo").val("");
+                      $("#valorElementoNuevo").val("");
+                      $("#listaTipoNuevo").val("");
                     });
                   }
                 });
@@ -368,7 +368,8 @@ function (_React$Component) {
           style: {
             fontFamily: 'Circular Std Medium',
             color: "#71748d",
-            border: "1px solid #ccc"
+            border: "1px solid #ccc",
+            paddingLeft: "2%"
           },
           className: "alert-heading"
         }, this.state.listaSeleccionadaNombre)), _react["default"].createElement("div", {
@@ -443,10 +444,15 @@ function (_React$Component) {
             className: "form-group col-xl-6 col-6"
           }, _react["default"].createElement("label", {
             className: "col-form-label"
-          }, "Lista"), _react["default"].createElement(_InlineEdit["default"], {
-            id: "listaIdElemento" + i,
-            texto: elemento.listaID
-          }, " ")), _react["default"].createElement("div", {
+          }, "Lista"), _react["default"].createElement("h4", {
+            style: {
+              fontFamily: 'Circular Std Medium',
+              color: "#71748d",
+              border: "1px solid #ccc",
+              paddingLeft: "2%"
+            },
+            className: "alert-heading"
+          }, _this6.state.listaSeleccionadaNombre)), _react["default"].createElement("div", {
             className: "form-group col-xl-6 col-6"
           }, _react["default"].createElement("label", {
             className: "col-form-label"

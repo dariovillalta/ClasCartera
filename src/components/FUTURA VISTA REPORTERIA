@@ -1,3 +1,13 @@
+/*
+
+
+        esta seria una vista para reporteria (un tipo)
+
+
+*/
+
+
+
 import React from 'react';
 import sql from 'mssql';
 
@@ -87,8 +97,6 @@ export default class ConfiguracionTablas extends React.Component {
                             //arrTemporalCampos[i].concat(this.loadFields(result.recordset[i].ID));
                             this.loadFields(result.recordset[i].ID, i);
                         };
-                        console.log('this.state.camposTablas');
-                        console.log(this.state.camposTablas);
                         /*this.setState({
                             campos: arrTemporalCampos
                         });*/

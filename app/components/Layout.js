@@ -47,17 +47,34 @@ function (_React$Component) {
     _this.state = {
       router: {
         showConfiguration: true,
+        //lista de configuraciones
         showConfTables: false,
+        //configuracion de conexiones a tablas/campos
         showTypeCredit: false,
+        //configuracion de opciones de tipo de credito
         showClasificationCriteria: false,
-        showListas: false
+        //configuracion de opciones clasificacion de criterio
+        showLists: false,
+        //configuracion de opciones de tipo de listas
+        showCreditClassificationProcess: false,
+        //proceso de iniciar calculo de creditos
+        showChooseReports: false,
+        //reporteria elegir entre ver datos o descargar excel
+        showReportsView: false,
+        //reporteria ver datos
+        showReportsDownload: false //reporteria descargar datos
+
       }
     };
     _this.showConfigurationComponent = _this.showConfigurationComponent.bind(_assertThisInitialized(_this));
     _this.showTableConfigurationComponent = _this.showTableConfigurationComponent.bind(_assertThisInitialized(_this));
     _this.showTypeCreditComponent = _this.showTypeCreditComponent.bind(_assertThisInitialized(_this));
     _this.showClasificationCriteriaComponent = _this.showClasificationCriteriaComponent.bind(_assertThisInitialized(_this));
-    _this.showListasComponent = _this.showListasComponent.bind(_assertThisInitialized(_this));
+    _this.showListsComponent = _this.showListsComponent.bind(_assertThisInitialized(_this));
+    _this.showCreditClasificationProcess = _this.showCreditClasificationProcess.bind(_assertThisInitialized(_this));
+    _this.showChooseReports = _this.showChooseReports.bind(_assertThisInitialized(_this));
+    _this.showReportsView = _this.showReportsView.bind(_assertThisInitialized(_this));
+    _this.showReportsDownload = _this.showReportsDownload.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -70,7 +87,11 @@ function (_React$Component) {
           showConfTables: false,
           showTypeCredit: false,
           showClasificationCriteria: false,
-          showListas: false
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false
         }
       });
     }
@@ -83,7 +104,11 @@ function (_React$Component) {
           showConfTables: true,
           showTypeCredit: false,
           showClasificationCriteria: false,
-          showListas: false
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false
         }
       });
     }
@@ -96,7 +121,11 @@ function (_React$Component) {
           showConfTables: false,
           showTypeCredit: true,
           showClasificationCriteria: false,
-          showListas: false
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false
         }
       });
     }
@@ -109,20 +138,96 @@ function (_React$Component) {
           showConfTables: false,
           showTypeCredit: false,
           showClasificationCriteria: true,
-          showListas: false
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false
         }
       });
     }
   }, {
-    key: "showListasComponent",
-    value: function showListasComponent() {
+    key: "showListsComponent",
+    value: function showListsComponent() {
       this.setState({
         router: {
           showConfiguration: false,
           showConfTables: false,
           showTypeCredit: false,
           showClasificationCriteria: false,
-          showListas: true
+          showLists: true,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false
+        }
+      });
+    }
+  }, {
+    key: "showCreditClasificationProcess",
+    value: function showCreditClasificationProcess() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: true,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false
+        }
+      });
+    }
+  }, {
+    key: "showChooseReports",
+    value: function showChooseReports() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: true,
+          showReportsView: false,
+          showReportsDownload: false
+        }
+      });
+    }
+  }, {
+    key: "showReportsView",
+    value: function showReportsView() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: true,
+          showReportsDownload: false
+        }
+      });
+    }
+  }, {
+    key: "showReportsDownload",
+    value: function showReportsDownload() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: true
         }
       });
     }
@@ -131,7 +236,10 @@ function (_React$Component) {
     value: function render() {
       return _react["default"].createElement("div", {
         className: "dashboard-main-wrapper"
-      }, _react["default"].createElement(_NavBar["default"], null, " "), _react["default"].createElement(_LeftBar["default"], null, " "), _react["default"].createElement("div", {
+      }, _react["default"].createElement(_NavBar["default"], null, " "), _react["default"].createElement(_LeftBar["default"], {
+        showCreditClasificationProcess: this.showCreditClasificationProcess,
+        showChooseReports: this.showChooseReports
+      }, " "), _react["default"].createElement("div", {
         className: "dashboard-wrapper"
       }, _react["default"].createElement("div", {
         className: "container-fluid dashboard-content"
@@ -142,7 +250,9 @@ function (_React$Component) {
         showTableConfigurationComponent: this.showTableConfigurationComponent,
         showTypeCreditComponent: this.showTypeCreditComponent,
         showClasificationCriteriaComponent: this.showClasificationCriteriaComponent,
-        showListasComponent: this.showListasComponent
+        showListsComponent: this.showListsComponent,
+        showReportsView: this.showReportsView,
+        showReportsDownload: this.showReportsDownload
       }, " "))));
     }
   }]);

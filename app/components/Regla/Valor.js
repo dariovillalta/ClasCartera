@@ -7,8 +7,6 @@ exports["default"] = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _odbc = _interopRequireDefault(require("odbc"));
-
 var _mssql = _interopRequireDefault(require("mssql"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -46,20 +44,6 @@ function (_React$Component) {
       listas: [],
       variablesDeLista: []
     };
-    var connectionString = {
-      connectionString: 'DSN=ClasificacionCartera;Uid=SA;Pwd=password111!;',
-      connectionTimeout: 360,
-      loginTimeout: 360
-    };
-
-    _odbc["default"].connect('DSN={ClasificacionCartera};', function (error, connection) {
-      console.log(connection);
-      /*connection.columns(null, null, null, null, (error, result) => {
-          if (error) { return; } // handle
-          console.log(result);
-      });*/
-    });
-
     _this.updateVariableList = _this.updateVariableList.bind(_assertThisInitialized(_this));
     _this.getLists = _this.getLists.bind(_assertThisInitialized(_this));
     return _this;

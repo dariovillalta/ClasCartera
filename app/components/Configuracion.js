@@ -85,7 +85,7 @@ function (_React$Component) {
         className: "btn btn-outline-brand btn-block btnWhiteColorHover fontSize1EM"
       }, "Mantenimiento de Usuarios"), _react["default"].createElement("a", {
         className: "btn btn-outline-danger btn-block btnWhiteColorHover fontSize1EM",
-        onClick: this.props.showListasComponent
+        onClick: this.props.showListsComponent
       }, "Listas"), _react["default"].createElement("a", {
         className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
       }, "Variables Auxiliares")))))));

@@ -189,8 +189,6 @@ function (_React$Component) {
               }
 
               ;
-              console.log('this.state.camposTablas');
-              console.log(_this2.state.camposTablas);
               /*this.setState({
                   campos: arrTemporalCampos
               });*/

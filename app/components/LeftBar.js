@@ -70,95 +70,27 @@ function (_React$Component) {
       }, "Menu"), _react["default"].createElement("li", {
         className: "nav-item "
       }, _react["default"].createElement("a", {
-        className: "nav-link active",
-        href: "#",
-        "data-toggle": "collapse",
-        "aria-expanded": "false",
-        "data-target": "#submenu-1",
-        "aria-controls": "submenu-1"
+        className: "nav-link",
+        onClick: this.props.showCreditClasificationProcess,
+        href: "#"
       }, _react["default"].createElement("i", {
         className: "fa fa-fw fa-user-circle"
-      }), "Dashboard ", _react["default"].createElement("span", {
-        className: "badge badge-success"
-      }, "6")), _react["default"].createElement("div", {
-        id: "submenu-1",
-        className: "collapse submenu"
-      }, _react["default"].createElement("ul", {
-        className: "nav flex-column"
-      }, _react["default"].createElement("li", {
-        className: "nav-item"
+      }), "Clasificar Cart\xE9ra")), _react["default"].createElement("li", {
+        className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",
-        href: "index.html",
-        "data-toggle": "collapse",
-        "aria-expanded": "false",
-        "data-target": "#submenu-1-2",
-        "aria-controls": "submenu-1-2"
-      }, "E-Commerce"), _react["default"].createElement("div", {
-        id: "submenu-1-2",
-        className: "collapse submenu"
-      }, _react["default"].createElement("ul", {
-        className: "nav flex-column"
-      }, _react["default"].createElement("li", {
-        className: "nav-item"
+        onClick: this.props.showChooseReports,
+        href: "#"
+      }, _react["default"].createElement("i", {
+        className: "fa fa-fw fa-user-circle"
+      }), "Reporter\xEDa")), _react["default"].createElement("li", {
+        className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",
-        href: "../index.html"
-      }, "E Commerce Dashboard")), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "../ecommerce-product.html"
-      }, "Product List")), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "../ecommerce-product-single.html"
-      }, "Product Single")), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "../ecommerce-product-checkout.html"
-      }, "Product Checkout"))))), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        onClick: this.props.hideConfigurationComponent
-      }, "Finance")), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "../dashboard-sales.html"
-      }, "Sales")), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "#",
-        "data-toggle": "collapse",
-        "aria-expanded": "false",
-        "data-target": "#submenu-1-1",
-        "aria-controls": "submenu-1-1"
-      }, "Influencer"), _react["default"].createElement("div", {
-        id: "submenu-1-1",
-        className: "collapse submenu"
-      }, _react["default"].createElement("ul", {
-        className: "nav flex-column"
-      }, _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "../dashboard-influencer.html"
-      }, "Influencer")), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "../influencer-finder.html"
-      }, "Influencer Finder")), _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        href: "../influencer-profile.html"
-      }, "Influencer Profile"))))))))))))));
+        href: "#"
+      }, _react["default"].createElement("i", {
+        className: "fa fa-fw fa-user-circle"
+      }), "Gr\xE1ficos"))))))));
     }
   }]);
 

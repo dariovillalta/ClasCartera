@@ -54,6 +54,7 @@ function (_React$Component) {
     _this.returnToTableCreditID = _this.returnToTableCreditID.bind(_assertThisInitialized(_this));
     _this.returnToTablePayPlanID = _this.returnToTablePayPlanID.bind(_assertThisInitialized(_this));
     _this.loadFieldsFromTables = _this.loadFieldsFromTables.bind(_assertThisInitialized(_this));
+    _this.saveCriteriaClasification = _this.saveCriteriaClasification.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -370,7 +371,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -398,7 +399,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -416,7 +417,7 @@ function (_React$Component) {
             width: "100%"
           }
         }, _react["default"].createElement("select", {
-          id: "saldoCapitaPrest",
+          id: "pagoCapitalPrestamoCampoID",
           className: "form-control form-control-lg",
           style: {
             margin: "0 auto",
@@ -426,7 +427,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -444,7 +445,7 @@ function (_React$Component) {
             width: "100%"
           }
         }, _react["default"].createElement("select", {
-          id: "saldoImpuePrest",
+          id: "pagoImpuestosPrestamoCampoID",
           className: "form-control form-control-lg",
           style: {
             margin: "0 auto",
@@ -454,7 +455,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -472,7 +473,7 @@ function (_React$Component) {
             width: "100%"
           }
         }, _react["default"].createElement("select", {
-          id: "numPrestamoPrest",
+          id: "fechaPrestamoCampoID",
           className: "form-control form-control-lg",
           style: {
             margin: "0 auto",
@@ -482,7 +483,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         })))))))), _react["default"].createElement("div", {
@@ -528,7 +529,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -552,7 +553,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -570,7 +571,7 @@ function (_React$Component) {
             width: "100%"
           }
         }, _react["default"].createElement("select", {
-          id: "saldoCapitaPlan",
+          id: "pagoCapitalPlanPagoCampoID",
           className: "form-control form-control-lg",
           style: {
             margin: "0 auto",
@@ -580,7 +581,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -598,7 +599,7 @@ function (_React$Component) {
             width: "100%"
           }
         }, _react["default"].createElement("select", {
-          id: "saldoImpuePlan",
+          id: "pagoImpuestosPlanPagoCampoID",
           className: "form-control form-control-lg",
           style: {
             margin: "0 auto",
@@ -608,7 +609,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))), _react["default"].createElement("div", {
@@ -626,7 +627,7 @@ function (_React$Component) {
             width: "100%"
           }
         }, _react["default"].createElement("select", {
-          id: "numPrestamoPlan",
+          id: "fechaPlanPagoCampoID",
           className: "form-control form-control-lg",
           style: {
             margin: "0 auto",
@@ -636,7 +637,7 @@ function (_React$Component) {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
           return _react["default"].createElement("option", {
-            value: i,
+            value: campo.ID,
             key: i
           }, campo.nombre);
         }))))))))), _react["default"].createElement("div", {
@@ -648,7 +649,7 @@ function (_React$Component) {
             fontSize: "1.2em",
             fontWeight: "bold"
           },
-          onClick: this.props.saveCriteriaClasification
+          onClick: this.saveCriteriaClasification
         }, "Guardar")), _react["default"].createElement("br", null));
       }
     }

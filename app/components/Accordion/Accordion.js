@@ -93,8 +93,7 @@ function (_React$Component) {
       if (children.length != undefined && children.length > 1) {
         return _react["default"].createElement("div", {
           style: {
-            width: "100%",
-            padding: "2% 5% 0% 5%"
+            width: "100%"
           }
         }, children.map(function (child, i) {
           return _react["default"].createElement(_AccordionTile["default"], {
@@ -103,21 +102,22 @@ function (_React$Component) {
             key: i,
             isOpen: !!openSections[child.props.label],
             label: child.props.label,
-            onClick: onClick
+            onClick: onClick,
+            color: _this2.props.color
           }, child.props.children);
         }));
       } else {
         return _react["default"].createElement("div", {
           style: {
-            width: "100%",
-            padding: "2% 5% 0% 5%"
+            width: "100%"
           }
         }, _react["default"].createElement(_AccordionTile["default"], {
           showTrash: this.props.showTrash,
           deleteVariable: this.props.deleteVariable,
           isOpen: !!openSections[children.props.label],
           label: children.props.label,
-          onClick: onClick
+          onClick: onClick,
+          color: this.props.color
         }, children));
       }
     }

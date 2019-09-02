@@ -18,6 +18,7 @@ export default class ComportamientoPago extends React.Component {
         this.returnToTableCreditID = this.returnToTableCreditID.bind(this);
         this.returnToTablePayPlanID = this.returnToTablePayPlanID.bind(this);
         this.loadFieldsFromTables = this.loadFieldsFromTables.bind(this);
+        this.saveCriteriaClasification = this.saveCriteriaClasification.bind(this);
     }
 
     updateTableCreditID(id) {
@@ -224,7 +225,7 @@ export default class ComportamientoPago extends React.Component {
                                                 <select id="idClientePrest" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -238,7 +239,7 @@ export default class ComportamientoPago extends React.Component {
                                                 <select id="numPrestamoPrest" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -249,10 +250,10 @@ export default class ComportamientoPago extends React.Component {
                                         <div className={"campaign-info"} style={{width: "100%"}}>
                                             <h5 className={"mb-1"}>Pago de Capital</h5>
                                             <div className={"form-group"} style={{width: "100%"}}>
-                                                <select id="saldoCapitaPrest" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
+                                                <select id="pagoCapitalPrestamoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -263,10 +264,10 @@ export default class ComportamientoPago extends React.Component {
                                         <div className={"campaign-info"} style={{width: "100%"}}>
                                             <h5 className={"mb-1"}>Pago de Int&eacute;res</h5>
                                             <div className={"form-group"} style={{width: "100%"}}>
-                                                <select id="saldoImpuePrest" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
+                                                <select id="pagoImpuestosPrestamoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -277,10 +278,10 @@ export default class ComportamientoPago extends React.Component {
                                         <div className={"campaign-info"} style={{width: "100%"}}>
                                             <h5 className={"mb-1"}>Fecha</h5>
                                             <div className={"form-group"} style={{width: "100%"}}>
-                                                <select id="numPrestamoPrest" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
+                                                <select id="fechaPrestamoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -308,7 +309,7 @@ export default class ComportamientoPago extends React.Component {
                                                 <select id="idClientePlan" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -322,7 +323,7 @@ export default class ComportamientoPago extends React.Component {
                                                 <select id="numPrestamoPlan" className={"form-control form-control-lg"}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -333,10 +334,10 @@ export default class ComportamientoPago extends React.Component {
                                         <div className={"campaign-info"} style={{width: "100%"}}>
                                             <h5 className={"mb-1"}>Pago de Capital</h5>
                                             <div className={"form-group"} style={{width: "100%"}}>
-                                                <select id="saldoCapitaPlan" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
+                                                <select id="pagoCapitalPlanPagoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -347,10 +348,10 @@ export default class ComportamientoPago extends React.Component {
                                         <div className={"campaign-info"} style={{width: "100%"}}>
                                             <h5 className={"mb-1"}>Pago de Int&eacute;res</h5>
                                             <div className={"form-group"} style={{width: "100%"}}>
-                                                <select id="saldoImpuePlan" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
+                                                <select id="pagoImpuestosPlanPagoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -361,10 +362,10 @@ export default class ComportamientoPago extends React.Component {
                                         <div className={"campaign-info"} style={{width: "100%"}}>
                                             <h5 className={"mb-1"}>Fecha</h5>
                                             <div className={"form-group"} style={{width: "100%"}}>
-                                                <select id="numPrestamoPlan" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
+                                                <select id="fechaPlanPagoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
                                                     {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={i} key={i}>{campo.nombre}</option>
+                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -375,7 +376,7 @@ export default class ComportamientoPago extends React.Component {
                         </div>
                     </div>
                     <div className={"text-center"}>
-                        <a className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}} onClick={this.props.saveCriteriaClasification}>Guardar</a>
+                        <a className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}} onClick={this.saveCriteriaClasification}>Guardar</a>
                     </div>
                     <br/>
                 </div>

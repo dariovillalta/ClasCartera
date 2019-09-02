@@ -19,6 +19,14 @@ var _CriteriosClasificacion = _interopRequireDefault(require("./CriteriosClasifi
 
 var _CrearYSeleccionarLista = _interopRequireDefault(require("./Listas/CrearYSeleccionarLista.js"));
 
+var _ClasificarCarteraProceso = _interopRequireDefault(require("./ClasificarCarteraProceso/ClasificarCarteraProceso.js"));
+
+var _ElegirReporteria = _interopRequireDefault(require("./Reporteria/ElegirReporteria.js"));
+
+var _VerReporteria = _interopRequireDefault(require("./Reporteria/VerReporteria.js"));
+
+var _DescargarReporteria = _interopRequireDefault(require("./Reporteria/DescargarReporteria.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -39,6 +47,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+//const importacionODBC = new Worker("./components/odbcMSSQL.js");
 var Body =
 /*#__PURE__*/
 function (_React$Component) {
@@ -61,6 +70,8 @@ function (_React$Component) {
     };
     _this.showLoadingScreen = _this.showLoadingScreen.bind(_assertThisInitialized(_this));
     _this.hideLoadingScreen = _this.hideLoadingScreen.bind(_assertThisInitialized(_this));
+    /*importacionODBC.postMessage([this.props.pool, this.props.router]);*/
+
     return _this;
   }
 
@@ -86,7 +97,7 @@ function (_React$Component) {
           showTableConfigurationComponent: this.props.showTableConfigurationComponent,
           showTypeCreditComponent: this.props.showTypeCreditComponent,
           showClasificationCriteriaComponent: this.props.showClasificationCriteriaComponent,
-          showListasComponent: this.props.showListasComponent
+          showListsComponent: this.props.showListsComponent
         }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
           mensaje: this.state.mensajeLoadingScreen
         }, " ") : _react["default"].createElement("div", null));
@@ -105,10 +116,29 @@ function (_React$Component) {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));
-      } else if (this.props.router.showListas) {
+      } else if (this.props.router.showLists) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_CrearYSeleccionarLista["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent
+        }, " "));
+      } else if (this.props.router.showCreditClassificationProcess) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_ClasificarCarteraProceso["default"], {
+          pool: this.props.pool,
+          showConfigurationComponent: this.props.showConfigurationComponent
+        }, " "));
+      } else if (this.props.router.showChooseReports) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_ElegirReporteria["default"], {
+          pool: this.props.pool,
+          showReportsView: this.props.showReportsView,
+          showReportsDownload: this.props.showReportsDownload
+        }, " "));
+      } else if (this.props.router.showReportsView) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_VerReporteria["default"], {
+          pool: this.props.pool
+        }, " "));
+      } else if (this.props.router.showReportsDownload) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_DescargarReporteria["default"], {
+          pool: this.props.pool
         }, " "));
       } else {
         return _react["default"].createElement("div", null);

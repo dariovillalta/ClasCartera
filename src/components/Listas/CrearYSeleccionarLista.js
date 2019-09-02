@@ -105,10 +105,6 @@ export default class CrearYSeleccionarLista extends React.Component {
         let nombre = $("#nombreElementoNuevo").val();
         let valor = $("#valorElementoNuevo").val();
         let tipo = $("#listaTipoNuevo").val();
-        console.log("idLista = "+idLista);
-        console.log("nombre = "+nombre);
-        console.log("valor = "+valor);
-        console.log("tipo = "+tipo);
         if(idLista != undefined && !isNaN(idLista)) {
             if(nombre.length > 0 && nombre.length < 51) {
                 if(valor.length > 0 && valor.length < 501) {
@@ -130,6 +126,9 @@ export default class CrearYSeleccionarLista extends React.Component {
                                 } else {
                                     transaction.commit(err => {
                                         this.loadElementsOfLists();
+                                        $("#nombreElementoNuevo").val("");
+                                        $("#valorElementoNuevo").val("");
+                                        $("#listaTipoNuevo").val("");
                                     });
                                 }
                             });
@@ -258,7 +257,7 @@ export default class CrearYSeleccionarLista extends React.Component {
                                         <div className={"row"} style={{width: "100%"}}>
                                             <div className="form-group col-xl-6 col-6">
                                                 <label className={"col-form-label"}>Lista</label>
-                                                <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d", border: "1px solid #ccc"}} className={"alert-heading"} >{this.state.listaSeleccionadaNombre}</h4>
+                                                <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d", border: "1px solid #ccc", paddingLeft: "2%"}} className={"alert-heading"} >{this.state.listaSeleccionadaNombre}</h4>
                                             </div>
                                             <div className="form-group col-xl-6 col-6">
                                                 <label className={"col-form-label"}>Nombre de Elemento</label>
@@ -299,7 +298,7 @@ export default class CrearYSeleccionarLista extends React.Component {
                                             <div className={"row"} style={{width: "100%"}}>
                                                 <div className="form-group col-xl-6 col-6">
                                                     <label className={"col-form-label"}>Lista</label>
-                                                    <InlineEdit id={"listaIdElemento"+i} texto={elemento.listaID}> </InlineEdit>
+                                                    <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d", border: "1px solid #ccc", paddingLeft: "2%"}} className={"alert-heading"} >{this.state.listaSeleccionadaNombre}</h4>
                                                 </div>
                                                 <div className="form-group col-xl-6 col-6">
                                                     <label className={"col-form-label"}>Nombre de Elemento</label>

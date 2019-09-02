@@ -217,9 +217,16 @@ function (_React$Component) {
           href: "#",
           className: "breadcrumb-link"
         }, "Seleccionar Tipo de Cr\xE9dito")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.returnSelCredit
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Seleccionar Variables")), _react["default"].createElement("li", {
           className: "breadcrumb-item active",
           "aria-current": "page"
-        }, "Creaci\xF3n de Variables"))))))), _react["default"].createElement(_GuardarTipoCreditoCampo["default"], (_React$createElement = {
+        }, "Creaci\xF3n de Campor de Tipo de Cr\xE9dito"))))))), _react["default"].createElement(_GuardarTipoCreditoCampo["default"], (_React$createElement = {
           pool: this.props.pool
         }, _defineProperty(_React$createElement, "pool", this.props.pool), _defineProperty(_React$createElement, "tabla", this.state.nombreTablaSeleccionada), _defineProperty(_React$createElement, "tipoCredito", this.state.nombreCreditoSeleccionado), _defineProperty(_React$createElement, "campo", this.state.campoTexto), _defineProperty(_React$createElement, "operacion", this.state.operacion), _defineProperty(_React$createElement, "valor", this.state.valorTexto), _defineProperty(_React$createElement, "tablaID", this.state.idTablaSeleccionada), _defineProperty(_React$createElement, "creditoID", this.state.idCreditoSeleccionado), _defineProperty(_React$createElement, "reglaID", this.state.regla.ID), _React$createElement), " "));
       }

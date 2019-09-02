@@ -55,9 +55,9 @@ export default class Accordion extends React.Component {
 
         if(children.length != undefined && children.length > 1) {
             return (
-                <div style={{width: "100%", padding: "2% 5% 0% 5%"}}>
+                <div style={{width: "100%"}}>
                     {children.map((child, i) => (
-                        <AccordionTile showTrash={this.props.showTrash} deleteVariable={this.props.deleteVariable} key={i} isOpen={!!openSections[child.props.label]} label={child.props.label} onClick={onClick} >
+                        <AccordionTile showTrash={this.props.showTrash} deleteVariable={this.props.deleteVariable} key={i} isOpen={!!openSections[child.props.label]} label={child.props.label} onClick={onClick} color={this.props.color}>
                             {child.props.children}
                         </AccordionTile>
                     ))}
@@ -65,8 +65,8 @@ export default class Accordion extends React.Component {
             );
         } else {
             return (
-                <div style={{width: "100%", padding: "2% 5% 0% 5%"}}>
-                    <AccordionTile showTrash={this.props.showTrash} deleteVariable={this.props.deleteVariable} isOpen={!!openSections[children.props.label]} label={children.props.label} onClick={onClick} >
+                <div style={{width: "100%"}}>
+                    <AccordionTile showTrash={this.props.showTrash} deleteVariable={this.props.deleteVariable} isOpen={!!openSections[children.props.label]} label={children.props.label} onClick={onClick} color={this.props.color}>
                         {children}
                     </AccordionTile>
                 </div>

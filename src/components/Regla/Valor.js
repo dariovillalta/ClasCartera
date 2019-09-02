@@ -1,5 +1,4 @@
 import React from 'react';
-import odbc from 'odbc';
 import sql from 'mssql';
 
 export default class Valor extends React.Component {
@@ -9,18 +8,6 @@ export default class Valor extends React.Component {
             listas: [],
             variablesDeLista: []
         }
-        const connectionString = {
-            connectionString: 'DSN=ClasificacionCartera;Uid=SA;Pwd=password111!;',
-            connectionTimeout: 360,
-            loginTimeout: 360
-        }
-        odbc.connect('DSN={ClasificacionCartera};', (error, connection) => {
-            console.log(connection);
-            /*connection.columns(null, null, null, null, (error, result) => {
-                if (error) { return; } // handle
-                console.log(result);
-            });*/
-        });
         this.updateVariableList = this.updateVariableList.bind(this);
         this.getLists = this.getLists.bind(this);
     }

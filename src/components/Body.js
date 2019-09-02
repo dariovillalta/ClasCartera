@@ -6,6 +6,12 @@ import TipoCredito from './TipoCredito/TipoCredito.js';
 import LoadingScreen from './LoadingScreen.js';
 import CriteriosClasificacion from './CriteriosClasificacion/CriteriosClasificacion.js';
 import CrearYSeleccionarLista from './Listas/CrearYSeleccionarLista.js';
+import ClasificarCarteraProceso from './ClasificarCarteraProceso/ClasificarCarteraProceso.js';
+import ElegirReporteria from './Reporteria/ElegirReporteria.js';
+import VerReporteria from './Reporteria/VerReporteria.js';
+import DescargarReporteria from './Reporteria/DescargarReporteria.js';
+
+//const importacionODBC = new Worker("./components/odbcMSSQL.js");
 
 export default class Body extends React.Component {
     constructor(props) {
@@ -21,6 +27,7 @@ export default class Body extends React.Component {
         }
         this.showLoadingScreen = this.showLoadingScreen.bind(this);
         this.hideLoadingScreen = this.hideLoadingScreen.bind(this);
+        /*importacionODBC.postMessage([this.props.pool, this.props.router]);*/
     }
 
     showLoadingScreen () {
@@ -42,7 +49,7 @@ export default class Body extends React.Component {
                     <Configuracion showTableConfigurationComponent={this.props.showTableConfigurationComponent}
                         showTypeCreditComponent={this.props.showTypeCreditComponent}
                         showClasificationCriteriaComponent={this.props.showClasificationCriteriaComponent}
-                        showListasComponent={this.props.showListasComponent}> </Configuracion>
+                        showListsComponent={this.props.showListsComponent}> </Configuracion>
                     { this.state.showLoadingScreen ? (
                         <LoadingScreen mensaje={this.state.mensajeLoadingScreen}> </LoadingScreen>
                     ) : (
@@ -68,10 +75,34 @@ export default class Body extends React.Component {
                     <CriteriosClasificacion pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </CriteriosClasificacion>
                 </div>
             );
-        } else if(this.props.router.showListas) {
+        } else if(this.props.router.showLists) {
             return (
                 <div>
                     <CrearYSeleccionarLista pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </CrearYSeleccionarLista>
+                </div>
+            );
+        } else if(this.props.router.showCreditClassificationProcess) {
+            return (
+                <div>
+                    <ClasificarCarteraProceso pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </ClasificarCarteraProceso>
+                </div>
+            );
+        } else if(this.props.router.showChooseReports) {
+            return (
+                <div>
+                    <ElegirReporteria pool={this.props.pool} showReportsView={this.props.showReportsView} showReportsDownload={this.props.showReportsDownload}> </ElegirReporteria>
+                </div>
+            );
+        } else if(this.props.router.showReportsView) {
+            return (
+                <div>
+                    <VerReporteria pool={this.props.pool}> </VerReporteria>
+                </div>
+            );
+        } else if(this.props.router.showReportsDownload) {
+            return (
+                <div>
+                    <DescargarReporteria pool={this.props.pool}> </DescargarReporteria>
                 </div>
             );
         } else {

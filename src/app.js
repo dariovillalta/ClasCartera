@@ -2,8 +2,8 @@ import React from 'react';
 import sql from 'mssql';
 
 import Layout from './components/Layout.js';
+import LoginPage from './components/LoginPage.js';
 //import odbc from 'odbc';
-/*import LoginPage from './components/LoginPage.js';*/
 
 const config = {
     user: 'SA',
@@ -90,8 +90,7 @@ export default class App extends React.Component {
                 { logged ? (
                     <Layout pool={pool}> </Layout>
                 ) : (
-                    /*<LoginPage> </LoginPage>*/
-                    <div></div>
+                    <LoginPage pool={pool}> </LoginPage>
                 )}
             </div>
         );
