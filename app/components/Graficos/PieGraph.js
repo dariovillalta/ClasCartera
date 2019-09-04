@@ -27,76 +27,28 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var LeftBar =
+var PieGraph =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(LeftBar, _React$Component);
+  _inherits(PieGraph, _React$Component);
 
-  function LeftBar() {
-    _classCallCheck(this, LeftBar);
+  function PieGraph(props) {
+    _classCallCheck(this, PieGraph);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(LeftBar).apply(this, arguments));
+    return _possibleConstructorReturn(this, _getPrototypeOf(PieGraph).call(this, props));
   }
 
-  _createClass(LeftBar, [{
+  _createClass(PieGraph, [{
     key: "render",
     value: function render() {
-      return _react["default"].createElement("div", null, _react["default"].createElement("div", {
-        className: "nav-left-sidebar sidebar-dark"
-      }, _react["default"].createElement("div", {
-        className: "menu-list"
-      }, _react["default"].createElement("nav", {
-        className: "navbar navbar-expand-lg navbar-light"
-      }, _react["default"].createElement("a", {
-        className: "d-xl-none d-lg-none",
-        href: "#"
-      }, "Dashboard"), _react["default"].createElement("button", {
-        className: "navbar-toggler",
-        type: "button",
-        "data-toggle": "collapse",
-        "data-target": "#navbarNav",
-        "aria-controls": "navbarNav",
-        "aria-expanded": "false",
-        "aria-label": "Toggle navigation"
-      }, _react["default"].createElement("span", {
-        className: "navbar-toggler-icon"
-      })), _react["default"].createElement("div", {
-        className: "collapse navbar-collapse",
-        id: "navbarNav"
-      }, _react["default"].createElement("ul", {
-        className: "navbar-nav flex-column"
-      }, _react["default"].createElement("li", {
-        className: "nav-divider"
-      }, "Menu"), _react["default"].createElement("li", {
-        className: "nav-item "
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        onClick: this.props.showCreditClasificationProcess,
-        href: "#"
-      }, _react["default"].createElement("i", {
-        className: "fa fa-fw fa-user-circle"
-      }), "Clasificar Cart\xE9ra")), _react["default"].createElement("li", {
-        className: "nav-item "
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        onClick: this.props.showChooseReports,
-        href: "#"
-      }, _react["default"].createElement("i", {
-        className: "fa fa-fw fa-user-circle"
-      }), "Reporter\xEDa")), _react["default"].createElement("li", {
-        className: "nav-item "
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        onClick: this.props.showGraphics,
-        href: "#"
-      }, _react["default"].createElement("i", {
-        className: "fa fa-fw fa-user-circle"
-      }), "Gr\xE1ficos"))))))));
+      return _react["default"].createElement("div", null, _react["default"].createElement("h3", {
+        className: "card-header"
+      }, "PIE"));
     }
   }]);
 
-  return LeftBar;
+  return PieGraph;
 }(_react["default"].Component);
 
-exports["default"] = LeftBar;
-//# sourceMappingURL=LeftBar.js.map
+exports["default"] = PieGraph;
+//# sourceMappingURL=PieGraph.js.map

@@ -417,14 +417,14 @@ ________________________________________________________________________________
 
 /*		
 	DEF: Metodo para actualizar el campo de tipo de credito de prestamo
-	INPUT: tipos de creditos, reglas de tipos de creditos
+	INPUT: tipos de creditos, reglas de tipos de creditos, valores de clientes a evaluar
 	OUTPUT:
 
 	arreglo de tipos de creditos = [tipo1, tipo2 ...]
 	arreglo de reglas de tipos de creditos = [[regla1, regla2], [regla3, regla2]]
 */
 
-function tipoCredito (tiposCreditos, reglasTiposCreditos) {
+function tipoCredito (tiposCreditos, reglasTiposCreditos, camposClientes) {
 	for (var n = 0; n < tiposCreditos.length; n++) {
 		tiposCreditos[n]
 		for (var m = 0; m < reglasTiposCreditos[n].length; m++) {

@@ -62,7 +62,9 @@ function (_React$Component) {
         //reporteria elegir entre ver datos o descargar excel
         showReportsView: false,
         //reporteria ver datos
-        showReportsDownload: false //reporteria descargar datos
+        showReportsDownload: false,
+        //reporteria descargar datos
+        showGraphics: false //componente para mostrar diferentes tipos de graficos
 
       }
     };
@@ -75,6 +77,7 @@ function (_React$Component) {
     _this.showChooseReports = _this.showChooseReports.bind(_assertThisInitialized(_this));
     _this.showReportsView = _this.showReportsView.bind(_assertThisInitialized(_this));
     _this.showReportsDownload = _this.showReportsDownload.bind(_assertThisInitialized(_this));
+    _this.showGraphics = _this.showGraphics.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -91,7 +94,8 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: false,
           showReportsView: false,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -108,7 +112,8 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: false,
           showReportsView: false,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -125,7 +130,8 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: false,
           showReportsView: false,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -142,7 +148,8 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: false,
           showReportsView: false,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -159,7 +166,8 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: false,
           showReportsView: false,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -176,7 +184,8 @@ function (_React$Component) {
           showCreditClassificationProcess: true,
           showChooseReports: false,
           showReportsView: false,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -193,7 +202,8 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: true,
           showReportsView: false,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -210,7 +220,8 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: false,
           showReportsView: true,
-          showReportsDownload: false
+          showReportsDownload: false,
+          showGraphics: false
         }
       });
     }
@@ -227,7 +238,26 @@ function (_React$Component) {
           showCreditClassificationProcess: false,
           showChooseReports: false,
           showReportsView: false,
-          showReportsDownload: true
+          showReportsDownload: true,
+          showGraphics: false
+        }
+      });
+    }
+  }, {
+    key: "showGraphics",
+    value: function showGraphics() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false,
+          showGraphics: true
         }
       });
     }
@@ -240,7 +270,8 @@ function (_React$Component) {
         showConfigurationComponent: this.showConfigurationComponent
       }, " "), _react["default"].createElement(_LeftBar["default"], {
         showCreditClasificationProcess: this.showCreditClasificationProcess,
-        showChooseReports: this.showChooseReports
+        showChooseReports: this.showChooseReports,
+        showGraphics: this.showGraphics
       }, " "), _react["default"].createElement("div", {
         className: "dashboard-wrapper"
       }, _react["default"].createElement("div", {

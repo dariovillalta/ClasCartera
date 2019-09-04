@@ -17,7 +17,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,  //proceso de iniciar calculo de creditos
                 showChooseReports: false,  //reporteria elegir entre ver datos o descargar excel
                 showReportsView: false,  //reporteria ver datos
-                showReportsDownload: false  //reporteria descargar datos
+                showReportsDownload: false,  //reporteria descargar datos
+                showGraphics: false     //componente para mostrar diferentes tipos de graficos
             }
         }
         this.showConfigurationComponent = this.showConfigurationComponent.bind(this);
@@ -29,6 +30,7 @@ export default class Layout extends React.Component {
         this.showChooseReports = this.showChooseReports.bind(this);
         this.showReportsView = this.showReportsView.bind(this);
         this.showReportsDownload = this.showReportsDownload.bind(this);
+        this.showGraphics = this.showGraphics.bind(this);
     }
 
     showConfigurationComponent() {
@@ -42,7 +44,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: false,
                 showReportsView: false,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -58,7 +61,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: false,
                 showReportsView: false,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -74,7 +78,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: false,
                 showReportsView: false,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -90,7 +95,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: false,
                 showReportsView: false,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -106,7 +112,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: false,
                 showReportsView: false,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -122,7 +129,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: true,
                 showChooseReports: false,
                 showReportsView: false,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -138,7 +146,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: true,
                 showReportsView: false,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -154,7 +163,8 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: false,
                 showReportsView: true,
-                showReportsDownload: false
+                showReportsDownload: false,
+                showGraphics: false
             }
         });
     }
@@ -170,7 +180,25 @@ export default class Layout extends React.Component {
                 showCreditClassificationProcess: false,
                 showChooseReports: false,
                 showReportsView: false,
-                showReportsDownload: true
+                showReportsDownload: true,
+                showGraphics: false
+            }
+        });
+    }
+
+    showGraphics() {
+        this.setState({
+            router: {
+                showConfiguration: false,
+                showConfTables: false,
+                showTypeCredit: false,
+                showClasificationCriteria: false,
+                showLists: false,
+                showCreditClassificationProcess: false,
+                showChooseReports: false,
+                showReportsView: false,
+                showReportsDownload: false,
+                showGraphics: true
             }
         });
     }
@@ -180,7 +208,8 @@ export default class Layout extends React.Component {
             <div className={"dashboard-main-wrapper"}>
                 <NavBar showConfigurationComponent={this.showConfigurationComponent}> </NavBar>
                 <LeftBar showCreditClasificationProcess={this.showCreditClasificationProcess}
-                        showChooseReports={this.showChooseReports}> </LeftBar>
+                        showChooseReports={this.showChooseReports}
+                        showGraphics={this.showGraphics}> </LeftBar>
                 <div className={"dashboard-wrapper"}>
                     <div className={"container-fluid dashboard-content"}>
                         <Body router={this.state.router} pool={this.props.pool} showConfigurationComponent={this.showConfigurationComponent}

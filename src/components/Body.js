@@ -10,6 +10,7 @@ import ClasificarCarteraProceso from './ClasificarCarteraProceso/ClasificarCarte
 import ElegirReporteria from './Reporteria/ElegirReporteria.js';
 import VerReporteria from './Reporteria/VerReporteria.js';
 import DescargarReporteria from './Reporteria/DescargarReporteria.js';
+import Graficos from './Graficos/Graficos.js';
 
 //const importacionODBC = new Worker("./components/odbcMSSQL.js");
 
@@ -103,6 +104,12 @@ export default class Body extends React.Component {
             return (
                 <div>
                     <DescargarReporteria pool={this.props.pool}> </DescargarReporteria>
+                </div>
+            );
+        } else if(this.props.router.showGraphics) {
+            return (
+                <div>
+                    <Graficos pool={this.props.pool}> </Graficos>
                 </div>
             );
         } else {

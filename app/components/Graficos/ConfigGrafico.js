@@ -27,76 +27,60 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var LeftBar =
+var ConfigGrafico =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(LeftBar, _React$Component);
+  _inherits(ConfigGrafico, _React$Component);
 
-  function LeftBar() {
-    _classCallCheck(this, LeftBar);
+  function ConfigGrafico(props) {
+    var _this;
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(LeftBar).apply(this, arguments));
+    _classCallCheck(this, ConfigGrafico);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ConfigGrafico).call(this, props));
+    _this.state = {
+      tablaSeleccionada: "clientes" //this.cambioClientes = this.cambioClientes.bind(this);
+
+    };
+    return _this;
   }
 
-  _createClass(LeftBar, [{
+  _createClass(ConfigGrafico, [{
     key: "render",
     value: function render() {
       return _react["default"].createElement("div", null, _react["default"].createElement("div", {
-        className: "nav-left-sidebar sidebar-dark"
-      }, _react["default"].createElement("div", {
-        className: "menu-list"
-      }, _react["default"].createElement("nav", {
-        className: "navbar navbar-expand-lg navbar-light"
+        className: "card"
+      }, _react["default"].createElement("h3", {
+        className: "card-header"
+      }, "Seleccione los campos a mostrar en la grafica:"), _react["default"].createElement("div", {
+        className: "card-body"
+      }, _react["default"].createElement("h5", {
+        className: "card-header"
+      }, "Valor N\xFAmerico"), _react["default"].createElement("form", null, _react["default"].createElement("div", {
+        className: "form-group"
+      }, _react["default"].createElement("select", {
+        className: "form-control"
+      }, _react["default"].createElement("option", null, "Default select")))))), _react["default"].createElement("div", {
+        style: {
+          width: "100%",
+          height: "6%",
+          padding: "1% 0%"
+        },
+        className: "text-center"
       }, _react["default"].createElement("a", {
-        className: "d-xl-none d-lg-none",
-        href: "#"
-      }, "Dashboard"), _react["default"].createElement("button", {
-        className: "navbar-toggler",
-        type: "button",
-        "data-toggle": "collapse",
-        "data-target": "#navbarNav",
-        "aria-controls": "navbarNav",
-        "aria-expanded": "false",
-        "aria-label": "Toggle navigation"
-      }, _react["default"].createElement("span", {
-        className: "navbar-toggler-icon"
-      })), _react["default"].createElement("div", {
-        className: "collapse navbar-collapse",
-        id: "navbarNav"
-      }, _react["default"].createElement("ul", {
-        className: "navbar-nav flex-column"
-      }, _react["default"].createElement("li", {
-        className: "nav-divider"
-      }, "Menu"), _react["default"].createElement("li", {
-        className: "nav-item "
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        onClick: this.props.showCreditClasificationProcess,
-        href: "#"
-      }, _react["default"].createElement("i", {
-        className: "fa fa-fw fa-user-circle"
-      }), "Clasificar Cart\xE9ra")), _react["default"].createElement("li", {
-        className: "nav-item "
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        onClick: this.props.showChooseReports,
-        href: "#"
-      }, _react["default"].createElement("i", {
-        className: "fa fa-fw fa-user-circle"
-      }), "Reporter\xEDa")), _react["default"].createElement("li", {
-        className: "nav-item "
-      }, _react["default"].createElement("a", {
-        className: "nav-link",
-        onClick: this.props.showGraphics,
-        href: "#"
-      }, _react["default"].createElement("i", {
-        className: "fa fa-fw fa-user-circle"
-      }), "Gr\xE1ficos"))))))));
+        onClick: this.props.terminoConfigGrafico,
+        className: "btn btn-primary col-xs-6 col-6",
+        style: {
+          color: "white",
+          fontSize: "1.2em",
+          fontWeight: "bold"
+        }
+      }, "Iniciar ")));
     }
   }]);
 
-  return LeftBar;
+  return ConfigGrafico;
 }(_react["default"].Component);
 
-exports["default"] = LeftBar;
-//# sourceMappingURL=LeftBar.js.map
+exports["default"] = ConfigGrafico;
+//# sourceMappingURL=ConfigGrafico.js.map
