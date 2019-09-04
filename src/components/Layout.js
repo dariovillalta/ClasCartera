@@ -178,7 +178,7 @@ export default class Layout extends React.Component {
     render() {
         return (
             <div className={"dashboard-main-wrapper"}>
-                <NavBar> </NavBar>
+                <NavBar showConfigurationComponent={this.showConfigurationComponent}> </NavBar>
                 <LeftBar showCreditClasificationProcess={this.showCreditClasificationProcess}
                         showChooseReports={this.showChooseReports}> </LeftBar>
                 <div className={"dashboard-wrapper"}>

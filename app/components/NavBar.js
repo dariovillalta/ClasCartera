@@ -64,100 +64,6 @@ function (_React$Component) {
       }, _react["default"].createElement("ul", {
         className: "navbar-nav ml-auto navbar-right-top"
       }, _react["default"].createElement("li", {
-        className: "nav-item"
-      }, _react["default"].createElement("div", {
-        id: "custom-search",
-        className: "top-search-bar"
-      }, _react["default"].createElement("input", {
-        className: "form-control",
-        type: "text",
-        placeholder: "Search.."
-      }))), _react["default"].createElement("li", {
-        className: "nav-item dropdown notification"
-      }, _react["default"].createElement("a", {
-        className: "nav-link nav-icons",
-        href: "#",
-        id: "navbarDropdownMenuLink1",
-        "data-toggle": "dropdown",
-        "aria-haspopup": "true",
-        "aria-expanded": "false"
-      }, _react["default"].createElement("i", {
-        className: "fas fa-fw fa-bell"
-      }), " ", _react["default"].createElement("span", {
-        className: "indicator"
-      })), _react["default"].createElement("ul", {
-        className: "dropdown-menu dropdown-menu-right notification-dropdown"
-      }, _react["default"].createElement("li", null, _react["default"].createElement("div", {
-        className: "notification-title"
-      }, " Notification"), _react["default"].createElement("div", {
-        className: "notification-list"
-      }, _react["default"].createElement("div", {
-        className: "list-group"
-      }, _react["default"].createElement("a", {
-        href: "#",
-        className: "list-group-item list-group-item-action active"
-      }, _react["default"].createElement("div", {
-        className: "notification-info"
-      }, _react["default"].createElement("div", {
-        className: "notification-list-user-img"
-      }, " ", _react["default"].createElement("i", {
-        className: "fas fa-user mr-2"
-      }), " "), _react["default"].createElement("div", {
-        className: "notification-list-user-block"
-      }, _react["default"].createElement("span", {
-        className: "notification-list-user-name"
-      }, "Jeremy Rakestraw"), "accepted your invitation to join the team.", _react["default"].createElement("div", {
-        className: "notification-date"
-      }, "2 min ago")))), _react["default"].createElement("a", {
-        href: "#",
-        className: "list-group-item list-group-item-action"
-      }, _react["default"].createElement("div", {
-        className: "notification-info"
-      }, _react["default"].createElement("div", {
-        className: "notification-list-user-img"
-      }, " ", _react["default"].createElement("i", {
-        className: "fas fa-user mr-2"
-      }), " "), _react["default"].createElement("div", {
-        className: "notification-list-user-block"
-      }, _react["default"].createElement("span", {
-        className: "notification-list-user-name"
-      }, "John Abraham"), "is now following you", _react["default"].createElement("div", {
-        className: "notification-date"
-      }, "2 days ago")))), _react["default"].createElement("a", {
-        href: "#",
-        className: "list-group-item list-group-item-action"
-      }, _react["default"].createElement("div", {
-        className: "notification-info"
-      }, _react["default"].createElement("div", {
-        className: "notification-list-user-img"
-      }, " ", _react["default"].createElement("i", {
-        className: "fas fa-user mr-2"
-      }), " "), _react["default"].createElement("div", {
-        className: "notification-list-user-block"
-      }, _react["default"].createElement("span", {
-        className: "notification-list-user-name"
-      }, "Monaan Pechi"), " is watching your main repository", _react["default"].createElement("div", {
-        className: "notification-date"
-      }, "2 min ago")))), _react["default"].createElement("a", {
-        href: "#",
-        className: "list-group-item list-group-item-action"
-      }, _react["default"].createElement("div", {
-        className: "notification-info"
-      }, _react["default"].createElement("div", {
-        className: "notification-list-user-img"
-      }, " ", _react["default"].createElement("i", {
-        className: "fas fa-user mr-2"
-      }), " "), _react["default"].createElement("div", {
-        className: "notification-list-user-block"
-      }, _react["default"].createElement("span", {
-        className: "notification-list-user-name"
-      }, "Jessica Caruso"), "accepted your invitation to join the team.", _react["default"].createElement("div", {
-        className: "notification-date"
-      }, "2 min ago"))))))), _react["default"].createElement("li", null, _react["default"].createElement("div", {
-        className: "list-footer"
-      }, " ", _react["default"].createElement("a", {
-        href: "#"
-      }, "View all notifications"))))), _react["default"].createElement("li", {
         className: "nav-item dropdown nav-user"
       }, _react["default"].createElement("a", {
         className: "nav-link nav-user-img",
@@ -166,8 +72,13 @@ function (_React$Component) {
         "data-toggle": "dropdown",
         "aria-haspopup": "true",
         "aria-expanded": "false"
-      }, " ", _react["default"].createElement("i", {
-        className: "fas fa-user mr-2"
+      }, " ", _react["default"].createElement("img", {
+        src: "./assets/filter-icons/client.png",
+        alt: "",
+        style: {
+          height: "50px",
+          width: "auto"
+        }
       }), " "), _react["default"].createElement("div", {
         className: "dropdown-menu dropdown-menu-right nav-user-dropdown",
         "aria-labelledby": "navbarDropdownMenuLink2"
@@ -177,10 +88,11 @@ function (_React$Component) {
         className: "mb-0 text-white nav-user-name"
       }, "John Abraham")), _react["default"].createElement("a", {
         className: "dropdown-item",
-        href: "#"
+        href: "#",
+        onClick: this.props.showConfigurationComponent
       }, _react["default"].createElement("i", {
         className: "fas fa-user mr-2"
-      }), "Account"), _react["default"].createElement("a", {
+      }), "Configuraci\xF3n"), _react["default"].createElement("a", {
         className: "dropdown-item",
         href: "#"
       }, _react["default"].createElement("i", {

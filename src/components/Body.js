@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Configuracion from './Configuracion.js';
-import ConfiguracionTablas from './ConfiguracionTablas.js';
+import ConeccionTablas from './ConeccionTabla/ConeccionTablas.js';
 import TipoCredito from './TipoCredito/TipoCredito.js';
 import LoadingScreen from './LoadingScreen.js';
 import CriteriosClasificacion from './CriteriosClasificacion/CriteriosClasificacion.js';
@@ -60,7 +60,7 @@ export default class Body extends React.Component {
         } else if(this.props.router.showConfTables) {
             return (
                 <div>
-                    <ConfiguracionTablas pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </ConfiguracionTablas>
+                    <ConeccionTablas pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </ConeccionTablas>
                 </div>
             );
         } else if(this.props.router.showTypeCredit) {

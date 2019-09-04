@@ -236,7 +236,9 @@ function (_React$Component) {
     value: function render() {
       return _react["default"].createElement("div", {
         className: "dashboard-main-wrapper"
-      }, _react["default"].createElement(_NavBar["default"], null, " "), _react["default"].createElement(_LeftBar["default"], {
+      }, _react["default"].createElement(_NavBar["default"], {
+        showConfigurationComponent: this.showConfigurationComponent
+      }, " "), _react["default"].createElement(_LeftBar["default"], {
         showCreditClasificationProcess: this.showCreditClasificationProcess,
         showChooseReports: this.showChooseReports
       }, " "), _react["default"].createElement("div", {

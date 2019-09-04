@@ -9,7 +9,7 @@ var _react = _interopRequireDefault(require("react"));
 
 var _Configuracion = _interopRequireDefault(require("./Configuracion.js"));
 
-var _ConfiguracionTablas = _interopRequireDefault(require("./ConfiguracionTablas.js"));
+var _ConeccionTablas = _interopRequireDefault(require("./ConeccionTabla/ConeccionTablas.js"));
 
 var _TipoCredito = _interopRequireDefault(require("./TipoCredito/TipoCredito.js"));
 
@@ -102,7 +102,7 @@ function (_React$Component) {
           mensaje: this.state.mensajeLoadingScreen
         }, " ") : _react["default"].createElement("div", null));
       } else if (this.props.router.showConfTables) {
-        return _react["default"].createElement("div", null, _react["default"].createElement(_ConfiguracionTablas["default"], {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_ConeccionTablas["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));
