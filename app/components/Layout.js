@@ -64,7 +64,11 @@ function (_React$Component) {
         //reporteria ver datos
         showReportsDownload: false,
         //reporteria descargar datos
-        showGraphics: false //componente para mostrar diferentes tipos de graficos
+        showGraphics: false,
+        //componente para mostrar diferentes tipos de graficos
+        showHome: false,
+        //pantalla de inicio
+        showCatClass: false //configuracion de opciones de categorias de clasificacion
 
       }
     };
@@ -78,6 +82,8 @@ function (_React$Component) {
     _this.showReportsView = _this.showReportsView.bind(_assertThisInitialized(_this));
     _this.showReportsDownload = _this.showReportsDownload.bind(_assertThisInitialized(_this));
     _this.showGraphics = _this.showGraphics.bind(_assertThisInitialized(_this));
+    _this.showHome = _this.showHome.bind(_assertThisInitialized(_this));
+    _this.showCatClass = _this.showCatClass.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -95,7 +101,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -113,7 +121,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -131,7 +141,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -149,7 +161,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -167,7 +181,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -185,7 +201,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -203,7 +221,9 @@ function (_React$Component) {
           showChooseReports: true,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -221,7 +241,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: true,
           showReportsDownload: false,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -239,7 +261,9 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: true,
-          showGraphics: false
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false
         }
       });
     }
@@ -257,7 +281,49 @@ function (_React$Component) {
           showChooseReports: false,
           showReportsView: false,
           showReportsDownload: false,
-          showGraphics: true
+          showGraphics: true,
+          showHome: false,
+          showCatClass: false
+        }
+      });
+    }
+  }, {
+    key: "showHome",
+    value: function showHome() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false,
+          showGraphics: false,
+          showHome: true,
+          showCatClass: false
+        }
+      });
+    }
+  }, {
+    key: "showCatClass",
+    value: function showCatClass() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false,
+          showGraphics: false,
+          showHome: false,
+          showCatClass: true
         }
       });
     }
@@ -271,7 +337,8 @@ function (_React$Component) {
       }, " "), _react["default"].createElement(_LeftBar["default"], {
         showCreditClasificationProcess: this.showCreditClasificationProcess,
         showChooseReports: this.showChooseReports,
-        showGraphics: this.showGraphics
+        showGraphics: this.showGraphics,
+        showHome: this.showHome
       }, " "), _react["default"].createElement("div", {
         className: "dashboard-wrapper"
       }, _react["default"].createElement("div", {
@@ -285,7 +352,8 @@ function (_React$Component) {
         showClasificationCriteriaComponent: this.showClasificationCriteriaComponent,
         showListsComponent: this.showListsComponent,
         showReportsView: this.showReportsView,
-        showReportsDownload: this.showReportsDownload
+        showReportsDownload: this.showReportsDownload,
+        showCatClass: this.showCatClass
       }, " "))));
     }
   }]);

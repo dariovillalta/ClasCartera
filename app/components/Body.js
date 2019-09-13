@@ -29,6 +29,10 @@ var _DescargarReporteria = _interopRequireDefault(require("./Reporteria/Descarga
 
 var _Graficos = _interopRequireDefault(require("./Graficos/Graficos.js"));
 
+var _Home = _interopRequireDefault(require("./Home.js"));
+
+var _CategoriaClasificacion = _interopRequireDefault(require("./CategoriaClasificacion/CategoriaClasificacion.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -99,7 +103,8 @@ function (_React$Component) {
           showTableConfigurationComponent: this.props.showTableConfigurationComponent,
           showTypeCreditComponent: this.props.showTypeCreditComponent,
           showClasificationCriteriaComponent: this.props.showClasificationCriteriaComponent,
-          showListsComponent: this.props.showListsComponent
+          showListsComponent: this.props.showListsComponent,
+          showCatClass: this.props.showCatClass
         }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
           mensaje: this.state.mensajeLoadingScreen
         }, " ") : _react["default"].createElement("div", null));
@@ -145,6 +150,15 @@ function (_React$Component) {
       } else if (this.props.router.showGraphics) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_Graficos["default"], {
           pool: this.props.pool
+        }, " "));
+      } else if (this.props.router.showHome) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_Home["default"], {
+          pool: this.props.pool
+        }, " "));
+      } else if (this.props.router.showCatClass) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_CategoriaClasificacion["default"], {
+          pool: this.props.pool,
+          showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));
       } else {
         return _react["default"].createElement("div", null);

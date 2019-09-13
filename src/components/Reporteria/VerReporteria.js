@@ -1,5 +1,5 @@
 import React from 'react';
-import CrearFiltro from '../CrearFiltro.js';
+import CrearFiltro from '../Filtros/CrearFiltro.js';
 import ResultadoReporteria from './ResultadoReporteria.js';
 
 export default class VerReporteria extends React.Component {

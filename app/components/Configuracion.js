@@ -78,10 +78,11 @@ function (_React$Component) {
         className: "btn btn-outline-secondary btn-block btnWhiteColorHover fontSize1EM",
         onClick: this.props.showTypeCreditComponent
       }, "Tipos de Cr\xE9ditos"), _react["default"].createElement("a", {
-        className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"
+        className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
+        onClick: this.props.showCatClass
       }, "Categorias de Clasificaci\xF3n"), _react["default"].createElement("a", {
         className: "btn btn-outline-success btn-block btnWhiteColorHover fontSize1EM"
-      }, "Categorias de Clientes"), _react["default"].createElement("a", {
+      }, "Criterios por Deterioro"), _react["default"].createElement("a", {
         className: "btn btn-outline-brand btn-block btnWhiteColorHover fontSize1EM"
       }, "Mantenimiento de Usuarios"), _react["default"].createElement("a", {
         className: "btn btn-outline-danger btn-block btnWhiteColorHover fontSize1EM",

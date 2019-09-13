@@ -49,9 +49,15 @@ onmessage = function onmessage(e) {
   //e.data[1] = props
   //e.data[2] = arreglo
   if (e.data[0].localeCompare("iniciarArregloClientes") == 0) {
-    crearArregloClientes(e.data[1], e.data[2]);
+    crearArregloClientes(e.data[1], e.data[2], e.data[3], e.data[4], e.data[5]);
+  } else if (e.data[0].localeCompare("iniciarArregloPrestamos") == 0) {
+    crearArregloCreditos(e.data[1], e.data[2], e.data[3], e.data[4], e.data[5], e.data[6], e.data[7]);
   } else if (e.data[0].localeCompare("comportamientoPago") == 0) {
     comportamientoPago(e.data[1], e.data[2], e.data[3], e.data[4], e.data[5]);
+  } else if (e.data[0].localeCompare("tiposCredito") == 0) {
+    tipoCredito(e.data[1], e.data[2], e.data[3]);
+  } else if (e.data[0].localeCompare("traerResultados") == 0) {
+    retornarArreglos(e.data[1], e.data[2], e.data[3], e.data[4]);
   }
 };
 /*		HACER  METODO GUARDAR VALIDACION PARA GUARDAR A TABLAS (Porque fue calificado el prestamo)	*/
@@ -129,15 +135,18 @@ function ordenarPagos(arregloCreditosTodos, campoFecha) {
 */
 
 
-function crearArregloClientes(arregloCreditosTodos, campoClienteID, camposAGuardarCreditosDeTablas) {
-  arregloClientes = [];
-
-  if (tipoCampo == 'varchar' || tipoCampo == 'int' || tipoCampo == 'decimal') {
+function crearArregloClientes(arregloCreditosTodos, campoClienteID, tipoCampoCliente, camposAGuardarCreditosDeTablas, retornarArreglos) {
+  //arregloClientes = [];
+  if (tipoCampoCliente == 'varchar' || tipoCampoCliente == 'int' || tipoCampoCliente == 'decimal') {
     for (var i = 0; i < arregloCreditosTodos.length; i++) {
-      insercionBinariaClientes(arregloCreditosTodos[i], campoClienteID, camposAGuardarCreditosDeTablas);
+      insercionBinariaClientes(arregloCreditosTodos[i], campoClienteID, tipoCampoCliente, camposAGuardarCreditosDeTablas);
     }
 
     ;
+    console.log("FIN ARREGLO CLIENTES");
+    console.log(arregloClientes); //retornarArreglos = el ultimo arreglo que deberia ser creado para retornar el mensaje
+
+    if (retornarArreglos) postMessage("terminoCrearArreglos");
   } else {//add bitacora no se permite tipo id
   }
 }
@@ -152,14 +161,23 @@ function crearArregloClientes(arregloCreditosTodos, campoClienteID, camposAGuard
 */
 
 
-function crearArregloCreditos(arregloCreditosTodos) {
-  arregloCreditos = [];
+function crearArregloCreditos(arregloCreditosTodos, campoClienteID, campoPrestamoID, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarCreditosDeTablas, retornarArreglos) {
+  //arregloCreditos = [];
+  if (tipoCampoCliente == 'varchar' || tipoCampoCliente == 'int' || tipoCampoCliente == 'decimal') {
+    if (tipoCampoNumCuenta == 'varchar' || tipoCampoNumCuenta == 'int' || tipoCampoNumCuenta == 'decimal') {
+      for (var i = 0; i < arregloCreditosTodos.length; i++) {
+        insercionBinariaCreditos(arregloCreditosTodos[i], campoClienteID, campoPrestamoID, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarCreditosDeTablas);
+      }
 
-  for (var i = 0; i < arregloCreditosTodos.length; i++) {
-    insercionBinaria(arregloCreditosTodos[i], 'numeroCuenta', arregloCreditos);
-  }
+      ;
+      console.log("FIN ARREGLO CREDITOS");
+      console.log(arregloCreditos); //retornarArreglos = el ultimo arreglo que deberia ser creado para retornar el mensaje
 
-  ;
+      if (retornarArreglos) postMessage("terminoCrearArreglos");
+    } else {//add bitacora no se permite tipo id
+    }
+  } else {//add bitacora no se permite tipo id
+    }
 }
 /*		
 	DEF: Metodo para crear arreglo de pagos de prestamos ordenados por id de cliente
@@ -228,6 +246,30 @@ function clasificarCreditos(arregloCreditosTodos) {
   }
 
   ;
+}
+/*		
+	DEF: Metodo que retorna los arreglos para guardar los resultados
+	INPUT: boleans que dicen que arreglos retornar
+	OUTPUT: arreglo a guardar
+*/
+
+
+function retornarArreglos(retornarClientes, retornarCreditos, retornarPagos, retornarPlanPagos) {
+  if (retornarClientes) {
+    postMessage(["guardarResultados", arregloClientes]);
+  }
+
+  if (retornarCreditos) {
+    postMessage(["guardarResultados", arregloPrestamos]);
+  }
+
+  if (retornarPagos) {
+    postMessage(["guardarResultados", arregloPagos]);
+  }
+
+  if (retornarPlanPagos) {
+    postMessage(["guardarResultados", arregloPlanPagos]);
+  }
 }
 /*			COMPORTAMIENTO DE PAGO			*/
 
@@ -498,29 +540,106 @@ ________________________________________________________________________________
 	INPUT: tipos de creditos, reglas de tipos de creditos, valores de clientes a evaluar
 	OUTPUT:
 
-	arreglo de tipos de creditos = [tipo1, tipo2 ...]
-	arreglo de reglas de tipos de creditos = [[regla1, regla2], [regla3, regla2]]
+	n = arreglo de tipos de creditos = [tipo1, tipo2 ...]
+	m = arreglo de reglas de tipos de creditos = [[regla1, regla2], [regla3, regla2]]
 */
 
 
-function tipoCredito(tiposCreditos, reglasTiposCreditos, camposClientes) {
-  for (var n = 0; n < tiposCreditos.length; n++) {
-    tiposCreditos[n];
+function tipoCredito(tiposCreditos, camposTiposCreditos, reglasTiposCreditos) {
+  for (var i = 0; i < arregloCreditos.length; i++) {
+    for (var j = 0; j < arregloCreditos[i].length; j++) {
+      arregloCreditos[i][j].tipoCredito = 'No Tiene';
 
-    for (var m = 0; m < reglasTiposCreditos[n].length; m++) {
-      reglasTiposCreditos[n][m];
+      for (var n = 0; n < tiposCreditos.length; n++) {
+        var contadorCumpleParametros = 0;
+
+        for (var m = 0; m < reglasTiposCreditos[n].length; m++) {
+          //reglasTiposCreditos[n][m]
+          var condicionRegla = getEvalCodeCondition(reglasTiposCreditos[n][m], "arregloCreditos[i][j]");
+
+          if (eval(condicionRegla)) {
+            contadorCumpleParametros++;
+          } else {
+            break;
+          }
+
+          if (reglasTiposCreditos[n].length == 1 && contadorCumpleParametros == reglasTiposCreditos[n].length) {
+            arregloCreditos[i][j].tipoCredito = tiposCreditos[n].nombre;
+          }
+        }
+
+        ;
+      }
+
+      ;
     }
 
     ;
   }
 
-  ; //var valores = reglasTiposCreditos[i][j].valor.split("");
-  //arregloCreditos[i] + ' ' + reglasTiposCreditos[i][j].operacion + ' ' + valores[k]
-
-  if (eval()) {//
-  } else {//break;
-    }
+  ;
 }
+/*		
+	DEF: Metodo para crear cadena lista para ser evaluada windows[]
+	INPUT: arreglo de regla con valores y campos ya colocados como campos, nombre de funcion a retornar
+	OUTPUT: cadena con contenido para ser introducido al objeto windows[] retornando a la funcion pasada como parametro
+*/
+
+
+function getWindowsCodeFromRules(arregloReglas, nombreFunRet, nombreArreglo) {
+  for (var i = 0; i < arregloReglas.length; i++) {
+    var codigoRegla = getEvalCode(arregloReglas[i], "");
+  }
+
+  ;
+}
+/*		
+	DEF: Metodo para regresar cadena lista para ser evaluada en eval
+	INPUT: regla con valores
+	OUTPUT: cadena con contenido para ser introducido al if
+*/
+
+
+function getEvalCodeCondition(regla, objeto) {
+  var codigo = '';
+  var codigoCampo = objeto + "." + regla.campoValor.nombre;
+  var valores = regla.valorValores;
+
+  for (var i = 0; i < valores.length; i++) {
+    if (regla.operacion.localeCompare("sumIf") == 0 && codigo.length > 0) codigo += " || ";else if (codigo.length > 0) codigo += " && ";
+
+    if (regla.campoTipo.localeCompare("int") == 0 || regla.campoTipo.localeCompare("decimal") == 0) {
+      codigo += " " + codigoCampo + " " + regla.operacion + " " + valores[i].valor;
+    } else if (regla.campoTipo.localeCompare("varchar") == 0) {
+      codigo += " " + codigoCampo + ".localeCompare('" + valores[i].valor + "') ";
+    } else if (regla.campoTipo.localeCompare("date") == 0) {
+      var operacion;
+
+      if (regla.operacion.localeCompare("==") == 0) {
+        codigo += " moment(" + codigoCampo + ").isSame(" + valores[i].valor + ", 'day') ";
+      } else if (regla.operacion.localeCompare("!=") == 0) {
+        codigo += " !moment(" + codigoCampo + ").isSame(" + valores[i].valor + ", 'day') ";
+      } else if (regla.operacion.localeCompare("<") == 0) {
+        codigo += " !moment(" + codigoCampo + ").isBefore(" + valores[i].valor + ", 'day') ";
+      } else if (regla.operacion.localeCompare("<=") == 0) {
+        codigo += " !moment(" + codigoCampo + ").isSameOrBefore(" + valores[i].valor + ", 'day') ";
+      } else if (regla.operacion.localeCompare(">") == 0) {
+        codigo += " !moment(" + codigoCampo + ").isAfter(" + valores[i].valor + ", 'day') ";
+      } else if (regla.operacion.localeCompare(">=") == 0) {
+        codigo += " !moment(" + codigoCampo + ").isSameOrAfter(" + valores[i].valor + ", 'day') ";
+      }
+    } else if (regla.campoTipo.localeCompare("bool") == 0) {
+      codigo += " " + codigoCampo + " " + regla.operacion + " " + valores[i].valor;
+    }
+  }
+
+  ;
+  return codigo;
+} //Puede ser int o decimal
+//Puede ser date
+//Puede ser varchar
+//Puede ser bool
+
 /* ================================		INSERCION BINARIA		================================*/
 
 /*		
@@ -635,7 +754,7 @@ function insercionBinariaClientes(valor, campo, tipoCampo, camposAGuardarCredito
   }
 }
 
-function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarDeClientesCreditosDeTablas, camposAGuardarDeCreditosCreditosDeTablas, startVal, endVal) {
+function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarDeCreditosCreditosDeTablas, startVal, endVal) {
   var length = arregloClientes.length;
   var start = typeof startVal != 'undefined' ? startVal : 0;
   var end = typeof endVal != 'undefined' ? endVal : length - 1; //!! endVal could be 0 don't use || syntax
@@ -665,21 +784,19 @@ function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampo
     if (arregloClientes.length > 0) {
       if (arregloCreditos[0] == undefined) arregloCreditos[0] = [];
       if (arregloPagos[0] == undefined) arregloPagos[0] = [];
-      if (arregloPagos[0][0] == undefined) arregloPagos[0][0] = [];
-      var newObject = {};
+      if (arregloPagos[0][0] == undefined) arregloPagos[0][0] = []; //var newObject = {};
 
-      for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-        var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-        var validarVariable = true;
-
-        if (validarVariable) {
-          newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-        } else {//bitacora add error porque no inserto variable
-        }
+      /*for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
+      var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+      //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+      var validarVariable = true;
+      if( validarVariable ) {
+      newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+      } else {
+      //bitacora add error porque no inserto variable
       }
+      };*/
 
-      ;
       var newObjectCredito = {};
 
       for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
@@ -693,8 +810,8 @@ function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampo
         }
       }
 
-      ;
-      arregloClientes.push(newObject);
+      ; //arregloClientes.push(newObject);
+
       arregloCreditos[0].push(newObjectCredito);
     }
 
@@ -736,20 +853,18 @@ function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampo
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] > arregloClientes[end][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[end][campoCliente]) > 0) {
-    var newObject = {};
+    //var newObject = {};
 
-    for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
+    /*for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
+    var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+    //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+    var validarVariable = true;
+    if( validarVariable ) {
+    newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+    } else {
+    //bitacora add error porque no inserto variable
     }
-
-    ;
+    };*/
     var newObjectCredito;
 
     for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
@@ -764,28 +879,26 @@ function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampo
     }
 
     ;
-    var newArray = [newObjectCredito];
-    arregloClientes.splice(end + 1, 0, newObject);
+    var newArray = [newObjectCredito]; //arregloClientes.splice(end + 1, 0, newObject);
+
     arregloCreditos.splice(end + 1, 0, newArray);
     return;
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] < arregloClientes[start][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[start][campoCliente]) < 0) {
     //!!
-    var newObject = {};
+    //var newObject = {};
 
-    for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
+    /*for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
+    var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+    //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+    var validarVariable = true;
+    if( validarVariable ) {
+    newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+    } else {
+    //bitacora add error porque no inserto variable
     }
-
-    ;
+    };*/
     var newObjectCredito;
 
     for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
@@ -800,8 +913,8 @@ function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampo
     }
 
     ;
-    var newArray = [newObjectCredito];
-    arregloClientes.splice(start, 0, newObject);
+    var newArray = [newObjectCredito]; //arregloClientes.splice(start, 0, newObject);
+
     arregloCreditos.splice(start, 0, newArray);
     return;
   }
@@ -811,12 +924,12 @@ function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampo
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] < arregloClientes[m][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[m][campoCliente]) < 0) {
-    insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarDeClientesCreditosDeTablas, camposAGuardarDeCreditosCreditosDeTablas, start, m - 1);
+    insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarDeCreditosCreditosDeTablas, start, m - 1);
     return;
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] > arregloClientes[m][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[m][campoCliente]) > 0) {
-    insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarDeClientesCreditosDeTablas, camposAGuardarDeCreditosCreditosDeTablas, m + 1, end);
+    insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampoCliente, tipoCampoNumCuenta, camposAGuardarDeCreditosCreditosDeTablas, m + 1, end);
     return;
   }
 }

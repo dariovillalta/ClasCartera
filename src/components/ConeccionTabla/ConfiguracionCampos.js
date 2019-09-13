@@ -520,10 +520,10 @@ export default class ConfiguracionCampos extends React.Component {
                     </div>
                 </div>
 
-                <div className={"row"} style={{width: "100%"}}>
-                    <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"} style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                        {this.state.camposDeTabla.map((campo, i) => (
-                            <div key={campo.ID} className={"border-top alert alert-primary"} style={{padding: "1% 3%"}}>
+                {this.state.camposDeTabla.map((campo, i) => (
+                    <div key={campo.ID} className={"row"} style={{width: "100%"}}>
+                        <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"} style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                            <div className={"border-top alert alert-primary"} style={{padding: "1% 3%"}}>
                                 <div className={"row"}>
                                     <div className={"form-group col-xl-6 col-6"}>
                                         <h4 className={"col-form-label text-center"}>Tabla</h4>
@@ -586,9 +586,9 @@ export default class ConfiguracionCampos extends React.Component {
                                     <button onClick={() => this.deleteFieldsConfirmation(campo.ID, i)} className={"btn btn-light btn-block col-xl-1 col-1"} style={{margin: "0 auto", display: "block", display: "flex", alignItems: "center", justifyContent: "center"}}><img onClick={this.props.deleteVariable} src={"../assets/trash.png"} style={{height: "20px", width: "20px"}}></img></button>
                                 </div>
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
+                ))}
 
                 { this.state.mensajeModal.mostrarMensaje ? (
                     <MessageModal esError={this.state.mensajeModal.esError} esConfirmar={this.state.mensajeModal.esConfirmar} dismissMessage={this.dismissMessageModal} confirmFunction={this.confirmMessageModal} titulo={this.state.mensajeModal.titulo} mensaje={this.state.mensajeModal.mensaje}> </MessageModal>

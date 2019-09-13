@@ -7,7 +7,7 @@ exports["default"] = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _CrearFiltro = _interopRequireDefault(require("../CrearFiltro.js"));
+var _CrearFiltro = _interopRequireDefault(require("../Filtros/CrearFiltro.js"));
 
 var _DescargarReporteArchivo = _interopRequireDefault(require("./DescargarReporteArchivo.js"));
 

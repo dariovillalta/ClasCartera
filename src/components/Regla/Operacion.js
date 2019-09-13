@@ -2,7 +2,7 @@ import React from 'react';
 
 export default class Operacion extends React.Component {
     render() {
-        if(this.props.esNumero) {
+        /*if(this.props.esNumero) {
             return (
                 <div className={"row"}>
                     <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
@@ -106,7 +106,7 @@ export default class Operacion extends React.Component {
                     </div>
                 </div>
             );
-        } else if(this.props.esBoolean) {
+        } else*/ if(this.props.esBoolean) {
             return (
                 <div className={"row"}>
                     <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
@@ -126,7 +126,7 @@ export default class Operacion extends React.Component {
                     </div>
                 </div>
             );
-        } else if(this.props.esFecha) {
+        } else if(this.props.esNumero || this.props.esFecha) {
             return (
                 <div className={"row"}>
                     <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>

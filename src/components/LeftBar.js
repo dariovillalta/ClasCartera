@@ -14,16 +14,19 @@ export default class LeftBar extends React.Component {
                             <div className={"collapse navbar-collapse"} id="navbarNav">
                                 <ul className={"navbar-nav flex-column"}>
                                     <li className={"nav-divider"}>
-                                        Menu
+                                        <h3 style={{color: "#b0bec5"}}>Menu</h3>
                                     </li>
                                     <li className={"nav-item "}>
-                                        <a className={"nav-link"} onClick={this.props.showCreditClasificationProcess} href="#"><i className={"fa fa-fw fa-user-circle"}></i>Clasificar Cart&eacute;ra</a>
+                                        <a className={"nav-link"} onClick={this.props.showHome} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Inicio</h3></a>
                                     </li>
                                     <li className={"nav-item "}>
-                                        <a className={"nav-link"} onClick={this.props.showChooseReports} href="#"><i className={"fa fa-fw fa-user-circle"}></i>Reporter&iacute;a</a>
+                                        <a className={"nav-link"} onClick={this.props.showCreditClasificationProcess} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Clasificar Cart&eacute;ra</h3></a>
                                     </li>
                                     <li className={"nav-item "}>
-                                        <a className={"nav-link"} onClick={this.props.showGraphics} href="#"><i className={"fa fa-fw fa-user-circle"}></i>Gr&aacute;ficos</a>
+                                        <a className={"nav-link"} onClick={this.props.showChooseReports} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Reporter&iacute;a</h3></a>
+                                    </li>
+                                    <li className={"nav-item "}>
+                                        <a className={"nav-link"} onClick={this.props.showGraphics} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Gr&aacute;ficos</h3></a>
                                     </li>
                                 </ul>
                             </div>

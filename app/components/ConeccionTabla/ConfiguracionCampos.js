@@ -933,24 +933,24 @@ function (_React$Component) {
           margin: "0 auto",
           display: "block"
         }
-      }, "Crear"))), _react["default"].createElement("div", {
-        className: "row",
-        style: {
-          width: "100%"
-        }
-      }, _react["default"].createElement("div", {
-        className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12",
-        style: {
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        }
-      }, this.state.camposDeTabla.map(function (campo, i) {
+      }, "Crear"))), this.state.camposDeTabla.map(function (campo, i) {
         var _ref;
 
         return _react["default"].createElement("div", {
           key: campo.ID,
+          className: "row",
+          style: {
+            width: "100%"
+          }
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12",
+          style: {
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }
+        }, _react["default"].createElement("div", {
           className: "border-top alert alert-primary",
           style: {
             padding: "1% 3%"
@@ -1078,8 +1078,8 @@ function (_React$Component) {
             height: "20px",
             width: "20px"
           }
-        }))));
-      }))), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
+        }))))));
+      }), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
         esError: this.state.mensajeModal.esError,
         esConfirmar: this.state.mensajeModal.esConfirmar,
         dismissMessage: this.dismissMessageModal,

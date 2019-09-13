@@ -41,213 +41,111 @@ function (_React$Component) {
   _createClass(Operacion, [{
     key: "render",
     value: function render() {
-      if (this.props.esNumero) {
-        return _react["default"].createElement("div", {
-          className: "row"
-        }, _react["default"].createElement("div", {
-          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
-        }, _react["default"].createElement("div", {
-          className: "card"
-        }, _react["default"].createElement("h3", {
-          className: "card-header"
-        }, "Seleccionar Operacion"), _react["default"].createElement("div", {
-          className: "card-body"
-        }, _react["default"].createElement("div", {
-          className: "row"
-        }, _react["default"].createElement("div", {
-          className: "col-xl-3 offset-xl-1 col-3 offset-1"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "<",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/lessThan.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))), _react["default"].createElement("div", {
-          className: "col-xl-3 col-3"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "<=",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/lessThanEqual.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))), _react["default"].createElement("div", {
-          className: "col-xl-3 col-3"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: ">",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/greaterThanEqual.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))), _react["default"].createElement("div", {
-          className: "col-xl-2 col-2"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: ">=",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/greater.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        }))))), _react["default"].createElement("br", null), _react["default"].createElement("div", {
-          className: "row"
-        }, _react["default"].createElement("div", {
-          className: "col-xl-3 offset-xl-4 col-3 offset-4"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "==",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/equal.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))), _react["default"].createElement("div", {
-          className: "col-xl-3 col-3"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "!=",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/not equal.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))))), _react["default"].createElement("h5", {
-          className: "card-header",
-          style: {
-            margin: "0px",
-            height: "0px"
-          }
-        }), _react["default"].createElement("div", {
-          className: "card-body"
-        }, _react["default"].createElement("div", {
-          className: "row"
-        }, _react["default"].createElement("div", {
-          className: "col-xl-3 offset-xl-1 col-3 offset-1"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "+",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/plus.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))), _react["default"].createElement("div", {
-          className: "col-xl-3 col-3"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "-",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/minus.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))), _react["default"].createElement("div", {
-          className: "col-xl-3 col-3"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "*",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/asterisk.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))), _react["default"].createElement("div", {
-          className: "col-xl-2 col-2"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "/",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/equal-icons/division.png",
-          alt: "",
-          style: {
-            height: "30px",
-            width: "30px"
-          }
-        })))))))));
-      } else if (this.props.esBoolean) {
+      /*if(this.props.esNumero) {
+          return (
+              <div className={"row"}>
+                  <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
+                      <div className={"card"}>
+                          <h3 className={"card-header"}>Seleccionar Operacion</h3>
+                          <div className={"card-body"}>
+                              <div className={"row"}>
+                                  <div className={"col-xl-3 offset-xl-1 col-3 offset-1"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="<" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/lessThan.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                                  <div className={"col-xl-3 col-3"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="<=" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/lessThanEqual.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                                  <div className={"col-xl-3 col-3"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value=">" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/greaterThanEqual.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                                  <div className={"col-xl-2 col-2"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value=">=" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/greater.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                              </div>
+                              <br/>
+                              <div className={"row"}>
+                                  <div className={"col-xl-3 offset-xl-4 col-3 offset-4"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="==" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/equal.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                                  <div className={"col-xl-3 col-3"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="!=" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/not equal.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                              </div>
+                          </div>
+                          
+                          <h5 className={"card-header"} style={{margin: "0px", height: "0px"}}></h5>
+                          <div className={"card-body"}>
+                              <div className={"row"}>
+                                  <div className={"col-xl-3 offset-xl-1 col-3 offset-1"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="+" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/plus.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                                  <div className={"col-xl-3 col-3"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="-" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/minus.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                                  <div className={"col-xl-3 col-3"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="*" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/asterisk.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                                  <div className={"col-xl-2 col-2"}>
+                                      <label className={"custom-control custom-radio custom-control-inline"}>
+                                          <input type="radio" value="/" name="operacionRadio" className={"custom-control-input"}/>
+                                          <span className={"custom-control-label"}>
+                                              <img src="./assets/equal-icons/division.png" alt="" style={{height: "30px", width: "30px"}}/>
+                                          </span>
+                                      </label>
+                                  </div>
+                              </div>
+                          </div>
+                       </div>
+                  </div>
+              </div>
+          );
+      } else*/
+      if (this.props.esBoolean) {
         return _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {
@@ -277,7 +175,7 @@ function (_React$Component) {
             width: "30px"
           }
         }))))))));
-      } else if (this.props.esFecha) {
+      } else if (this.props.esNumero || this.props.esFecha) {
         return _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {

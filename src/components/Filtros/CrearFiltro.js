@@ -1,5 +1,10 @@
 import React from 'react';
 
+/*import CampoFiltro from './CampoFiltro.js';
+import OperacionFiltro from './OperacionFiltro.js';
+import ValorFiltro from './ValorFiltro.js';*/
+
+
 export default class CrearFiltro extends React.Component {
     constructor(props) {
         super(props);
@@ -89,6 +94,8 @@ export default class CrearFiltro extends React.Component {
                     </div>
 
                     <div className={"col-xl-8 col-8"} style={{height: "100%", backgroundColor: this.state.colorDeTablaSeleccionada}}>
+                        <br/>
+                        
                     </div>
                 </div>
                 <div style={{width: "100%", height: "6%", padding: "1% 0%"}} className={"text-center"}>

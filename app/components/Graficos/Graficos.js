@@ -11,7 +11,7 @@ var _ElegirGraficos = _interopRequireDefault(require("./ElegirGraficos.js"));
 
 var _ConfigGrafico = _interopRequireDefault(require("./ConfigGrafico.js"));
 
-var _CrearFiltro = _interopRequireDefault(require("../CrearFiltro.js"));
+var _CrearFiltro = _interopRequireDefault(require("../Filtros/CrearFiltro.js"));
 
 var _VerGrafico = _interopRequireDefault(require("./VerGrafico.js"));
 
@@ -166,7 +166,7 @@ function (_React$Component) {
           className: "page-header"
         }, _react["default"].createElement("h2", {
           className: "pageheader-title"
-        }, "Descargar Reporteria"), _react["default"].createElement("div", {
+        }, "Gr\xE1ficos"), _react["default"].createElement("div", {
           className: "page-breadcrumb"
         }, _react["default"].createElement("nav", {
           "aria-label": "breadcrumb"
@@ -202,7 +202,7 @@ function (_React$Component) {
           className: "page-header"
         }, _react["default"].createElement("h2", {
           className: "pageheader-title"
-        }, "Descargar Reporteria"), _react["default"].createElement("div", {
+        }, "Gr\xE1ficos"), _react["default"].createElement("div", {
           className: "page-breadcrumb"
         }, _react["default"].createElement("nav", {
           "aria-label": "breadcrumb"

@@ -7,6 +7,12 @@ exports["default"] = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
+var _Campo = _interopRequireDefault(require("./Regla/Campo.js"));
+
+var _Operacion = _interopRequireDefault(require("./Regla/Operacion.js"));
+
+var _Valor = _interopRequireDefault(require("./Regla/Valor.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -268,7 +274,25 @@ function (_React$Component) {
           height: "100%",
           backgroundColor: this.state.colorDeTablaSeleccionada
         }
-      })), _react["default"].createElement("div", {
+      }, _react["default"].createElement("br", null), _react["default"].createElement(_Campo["default"], {
+        esNumero: true,
+        esBoolean: false,
+        esFecha: false,
+        esTexto: false,
+        campos: []
+      }, " "), _react["default"].createElement(_Operacion["default"], {
+        esNumero: true,
+        esBoolean: false,
+        esFecha: false,
+        esTexto: false
+      }, " "), _react["default"].createElement(_Valor["default"], {
+        esNumero: true,
+        esBoolean: false,
+        esFecha: false,
+        esTexto: false,
+        campos: [],
+        pool: this.props.pool
+      }, " "))), _react["default"].createElement("div", {
         style: {
           width: "100%",
           height: "6%",

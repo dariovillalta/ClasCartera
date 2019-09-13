@@ -1,7 +1,7 @@
 import React from 'react';
 import ElegirGraficos from './ElegirGraficos.js';
 import ConfigGrafico from './ConfigGrafico.js';
-import CrearFiltro from '../CrearFiltro.js';
+import CrearFiltro from '../Filtros/CrearFiltro.js';
 import VerGrafico from './VerGrafico.js';
 
 export default class Graficos extends React.Component {

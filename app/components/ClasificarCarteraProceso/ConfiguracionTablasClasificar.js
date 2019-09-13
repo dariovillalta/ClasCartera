@@ -88,7 +88,8 @@ function (_React$Component) {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            borderRadius: "5px"
+            borderRadius: "5px",
+            overflowY: "scroll"
           }
         }, _react["default"].createElement("div", {
           className: "text-center",
@@ -123,7 +124,7 @@ function (_React$Component) {
         }, _react["default"].createElement(_OpcionConfiguracionTablasClasificar["default"], {
           id: "CapacidadPago" + i,
           campos: [],
-          nombre: "E"
+          nombre: "Analisis Financiero"
         }, " ")), _react["default"].createElement("div", {
           style: {
             width: "100%",
@@ -147,13 +148,36 @@ function (_React$Component) {
         }, "Comportamiento de Pago"))), _react["default"].createElement("div", {
           style: {
             width: "100%",
-            height: "25%"
+            height: "25%",
+            overflowY: "scroll"
           }
         }, _this.props.opcionesTabla[i] != undefined ? _react["default"].createElement(_OpcionConfiguracionTablasClasificar["default"], {
           id: "ComportamientoPago" + i,
           campos: _this.props.opcionesTabla[i].tipoCredito,
           nombre: _this.props.opcionesTabla[i].tipoCreditoNombre
-        }, " ") : _react["default"].createElement("span", null))));
+        }, " ") : _react["default"].createElement("span", null)), _react["default"].createElement("div", {
+          className: "text-center",
+          style: {
+            borderBottom: "solid 4px #cfd8dc",
+            borderTop: "solid 4px #cfd8dc"
+          }
+        }, _react["default"].createElement("h3", null, "Tipo de Cr\xE9dito")), _react["default"].createElement("div", {
+          style: {
+            width: "100%",
+            height: "25%",
+            overflowY: "scroll"
+          }
+        }, _this.props.opcionesTabla[i] != undefined ? _react["default"].createElement(_OpcionConfiguracionTablasClasificar["default"], {
+          id: "tipoCredito" + i,
+          campos: _this.props.opcionesTabla[i].tipoCredito,
+          nombre: _this.props.opcionesTabla[i].tipoCreditoNombre
+        }, " ") : _react["default"].createElement("span", null)), _react["default"].createElement("div", {
+          className: "text-center",
+          style: {
+            borderBottom: "solid 4px #cfd8dc",
+            borderTop: "solid 4px #cfd8dc"
+          }
+        }, _react["default"].createElement("h3", null, "Categorias de Clasificaci\xF3n"))));
       }));
     }
   }]);

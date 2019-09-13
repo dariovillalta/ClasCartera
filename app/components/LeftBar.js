@@ -67,7 +67,23 @@ function (_React$Component) {
         className: "navbar-nav flex-column"
       }, _react["default"].createElement("li", {
         className: "nav-divider"
-      }, "Menu"), _react["default"].createElement("li", {
+      }, _react["default"].createElement("h3", {
+        style: {
+          color: "#b0bec5"
+        }
+      }, "Menu")), _react["default"].createElement("li", {
+        className: "nav-item "
+      }, _react["default"].createElement("a", {
+        className: "nav-link",
+        onClick: this.props.showHome,
+        href: "#"
+      }, _react["default"].createElement("i", {
+        className: "fa fa-fw fa-user-circle"
+      }), _react["default"].createElement("h3", {
+        style: {
+          color: "white"
+        }
+      }, "Inicio"))), _react["default"].createElement("li", {
         className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",
@@ -75,7 +91,11 @@ function (_React$Component) {
         href: "#"
       }, _react["default"].createElement("i", {
         className: "fa fa-fw fa-user-circle"
-      }), "Clasificar Cart\xE9ra")), _react["default"].createElement("li", {
+      }), _react["default"].createElement("h3", {
+        style: {
+          color: "white"
+        }
+      }, "Clasificar Cart\xE9ra"))), _react["default"].createElement("li", {
         className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",
@@ -83,7 +103,11 @@ function (_React$Component) {
         href: "#"
       }, _react["default"].createElement("i", {
         className: "fa fa-fw fa-user-circle"
-      }), "Reporter\xEDa")), _react["default"].createElement("li", {
+      }), _react["default"].createElement("h3", {
+        style: {
+          color: "white"
+        }
+      }, "Reporter\xEDa"))), _react["default"].createElement("li", {
         className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",
@@ -91,7 +115,11 @@ function (_React$Component) {
         href: "#"
       }, _react["default"].createElement("i", {
         className: "fa fa-fw fa-user-circle"
-      }), "Gr\xE1ficos"))))))));
+      }), _react["default"].createElement("h3", {
+        style: {
+          color: "white"
+        }
+      }, "Gr\xE1ficos")))))))));
     }
   }]);
 

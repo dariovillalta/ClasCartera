@@ -42,6 +42,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var myWorker = new Worker("./components/ClasificarCredito.js");
+var tamanoFinalBandera = 0,
+    tamanoActualBandera = 0,
+    camposGuardar;
 
 var ClasificarCarteraProceso =
 /*#__PURE__*/
@@ -63,7 +66,10 @@ function (_React$Component) {
     _this.loadTables = _this.loadTables.bind(_assertThisInitialized(_this));
     _this.selectTable = _this.selectTable.bind(_assertThisInitialized(_this));
     _this.iniciarCalculo = _this.iniciarCalculo.bind(_assertThisInitialized(_this));
+    _this.tablasGuardarCampos = _this.tablasGuardarCampos.bind(_assertThisInitialized(_this));
+    _this.verificarGuardarCampos = _this.verificarGuardarCampos.bind(_assertThisInitialized(_this));
     _this.verificarSeleccionoTablas = _this.verificarSeleccionoTablas.bind(_assertThisInitialized(_this));
+    _this.creandoArreglos = _this.creandoArreglos.bind(_assertThisInitialized(_this));
     _this.fetchDataComportamientoPago = _this.fetchDataComportamientoPago.bind(_assertThisInitialized(_this));
     _this.getPrestamoTablaComportamientoPago = _this.getPrestamoTablaComportamientoPago.bind(_assertThisInitialized(_this));
     _this.getPrestamoCamposDeTablaComportamientoPago = _this.getPrestamoCamposDeTablaComportamientoPago.bind(_assertThisInitialized(_this));
@@ -74,6 +80,15 @@ function (_React$Component) {
     _this.agregarOpciones = _this.agregarOpciones.bind(_assertThisInitialized(_this));
     _this.obtenerTipoCredito = _this.obtenerTipoCredito.bind(_assertThisInitialized(_this));
     _this.obtenerTipoCreditoCampos = _this.obtenerTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.fetchDataTipoCredito = _this.fetchDataTipoCredito.bind(_assertThisInitialized(_this));
+    _this.fetchDataTipoCreditoCampos = _this.fetchDataTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.fetchDataReglasTipoCreditoCampos = _this.fetchDataReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.verificarReglasTipoCreditoCampos = _this.verificarReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.fetchDataCamposReglasTipoCreditoCampos = _this.fetchDataCamposReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.verificarCamposReglasTipoCreditoCampos = _this.verificarCamposReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.fetchDataValoresReglasTipoCreditoCampos = _this.fetchDataValoresReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.verificarValoresReglasTipoCreditoCampos = _this.verificarValoresReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
+    _this.verifyTypeCreditFinal = _this.verifyTypeCreditFinal.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -233,20 +248,182 @@ function (_React$Component) {
     key: "verificarSeleccionoTablas",
     value: function verificarSeleccionoTablas() {
       if (this.state.tablasSeleccionadas.length > 0) {
-        this.iniciarCalculo();
+        this.creandoArreglos();
       } else {
         alert("Seleccione por lo menos una tabla");
       }
     }
   }, {
-    key: "iniciarCalculo",
-    value: function iniciarCalculo() {
+    key: "creandoArreglos",
+    value: function creandoArreglos() {
+      camposGuardar = [];
+
       for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
-        //this.state.tablasSeleccionadas[i]
+        this.tablasGuardarCampos(this.state.tablasSeleccionadas[i].ID);
+      }
+
+      ;
+      /*for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
+          //this.state.tablasSeleccionadas[i]
+          var calcularComportamientoPago = false;
+          var primeraVezEntra = true; //agregar valores de tabla a arreglo global de clientes, prestamos y pagos en ClasificarCartera.js
+          if($("#ComportamientoPago"+i).prop('checked') == true)
+              calcularComportamientoPago = true;
+           if(calcularComportamientoPago) {
+              this.fetchDataComportamientoPago(this.state.tablasSeleccionadas[i].ID);
+              if(primeraVezEntra) {
+                  primeraVezEntra = false;
+              }
+          }
+          this.fetchDataTipoCredito(this.state.tablasSeleccionadas[i].ID);
+      };*/
+    }
+    /*      
+        *****   *****   *****       *****   *****   *****   *****
+                        INICIAR ARREGLOS
+        *****   *****   *****       *****   *****   *****   *****
+    */
+
+  }, {
+    key: "tablasGuardarCampos",
+    value: function tablasGuardarCampos(tablaID) {
+      var _this5 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from Tablas where ID = " + tablaID, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              var usuario = result.recordset[0].usuario;
+              var password = result.recordset[0].contrasena;
+              var servidor = result.recordset[0].servidor;
+              var basedatos = result.recordset[0].baseDatos;
+              var tabla = result.recordset[0].tabla;
+              /*              CONSIGUIENDO VALORES DE TABLA         */
+
+              var pool = new _mssql["default"].ConnectionPool({
+                user: usuario,
+                password: password,
+                server: servidor,
+                database: basedatos,
+                stream: true,
+                connectionTimeout: 900000,
+                requestTimeout: 900000,
+                pool: {
+                  max: 40,
+                  min: 0,
+                  idleTimeoutMillis: 30000
+                },
+                options: {
+                  useUTC: false
+                }
+              });
+              pool.connect(function (err) {
+                pool.request() // or: new sql.Request(pool1)
+                .query("select * from " + tabla, function (err, result) {
+                  if (result != undefined) {
+                    _this5.verificarGuardarCampos(tablaID, result.recordset);
+                  } else {//agregar error fallo connecion tabla (no existe o malos campos)
+                  }
+                });
+              }); // fin pool connect
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "verificarGuardarCampos",
+    value: function verificarGuardarCampos(tablaID, valoresTabla) {
+      var _this6 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from Campos where tablaID = " + tablaID, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              var identificadorCliente = result.recordset.filter(function (object) {
+                return object.funcion.localeCompare("Identificador") == 0 && object.tabla.localeCompare("Cliente") == 0;
+              });
+              var identificadorPrestamo = result.recordset.filter(function (object) {
+                return object.funcion.localeCompare("Identificador") == 0 && object.tabla.localeCompare("Préstamo") == 0;
+              });
+              var camposAGuardarCliente = result.recordset.filter(function (object) {
+                return object.tabla.localeCompare("Cliente") == 0;
+              });
+              var camposAGuardarPrestamo = result.recordset.filter(function (object) {
+                return object.tabla.localeCompare("Préstamo") == 0;
+              });
+
+              if (identificadorCliente.length == 0 && identificadorPrestamo.length == 0) {
+                alert("Tiene que ingresar un campo Identificador para Cliente o para Préstamo");
+              } else {
+                //viendo si se llama metodo crear arreglo para clientes y prestamos o solo uno
+                if (identificadorCliente.length > 0 && identificadorPrestamo.length > 0) {
+                  myWorker.postMessage(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, false]);
+                  myWorker.postMessage(["iniciarArregloPrestamos", valoresTabla, identificadorCliente[0].nombre, identificadorPrestamo[0].nombre, identificadorCliente[0].tipo, identificadorPrestamo[0].tipo, camposAGuardarPrestamo, true]);
+                  camposGuardar.concat(result.recordset);
+                  var self = _this6;
+
+                  myWorker.onmessage = function (e) {
+                    if (e.data == 'terminoCrearArreglos') {
+                      //revisando que procedimientos llamar
+                      self.iniciarCalculo(true, true, true, true);
+                    }
+                  };
+                } else {
+                  if (identificadorCliente.length > 0) {
+                    myWorker.postMessage(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, true]);
+                    var _self = _this6;
+                    camposGuardar.concat(result.recordset);
+
+                    myWorker.onmessage = function (e) {
+                      console.log("llamado de vuelta");
+                      console.log(e);
+
+                      if (e.data == 'terminoCrearArreglos') {
+                        //revisando que procedimientos llamar
+                        _self.iniciarCalculo(false, false, true, false);
+                      }
+                    };
+                  }
+                }
+              }
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "iniciarCalculo",
+    value: function iniciarCalculo(verificarComportamientoPago, verificarTipoCredito, verificarTipoCliente, verificarClasCategoria) {
+      //como no tiene id prestamo o cliente, no se puede calcular comportamiento plan pago, agregar mensaje bitacora  // si verificarComportamientoPago == false
+      for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
         var calcularComportamientoPago = false;
         var primeraVezEntra = true; //agregar valores de tabla a arreglo global de clientes, prestamos y pagos en ClasificarCartera.js
+        //como no tiene id prestamo o cliente, no se puede calcular comportamiento plan pago, agregar mensaje bitacora  // si verificarComportamientoPago == false
 
-        if ($("#ComportamientoPago" + i).prop('checked') == true) calcularComportamientoPago = true;
+        if (verificarComportamientoPago && $("#ComportamientoPago" + i).prop('checked') == true) calcularComportamientoPago = true;
 
         if (calcularComportamientoPago) {
           this.fetchDataComportamientoPago(this.state.tablasSeleccionadas[i].ID);
@@ -255,14 +432,30 @@ function (_React$Component) {
             primeraVezEntra = false;
           }
         }
+
+        if (verificarTipoCredito) {
+          this.fetchDataTipoCredito(this.state.tablasSeleccionadas[i].ID);
+        }
       }
 
       ;
     }
+    /*      
+        *****   *****   *****       *****   *****   *****   *****
+                        INICIAR ARREGLOS
+        *****   *****   *****       *****   *****   *****   *****
+    */
+
+    /*      
+        *****   *****   *****       *****   *****   *****   *****
+                        COMPORTAMIENTO PAGO
+        *****   *****   *****       *****   *****   *****   *****
+    */
+
   }, {
     key: "fetchDataComportamientoPago",
     value: function fetchDataComportamientoPago(prestamoTablaID) {
-      var _this5 = this;
+      var _this7 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
@@ -280,7 +473,7 @@ function (_React$Component) {
           } else {
             transaction.commit(function (err) {
               for (var i = 0; i < result.recordset.length; i++) {
-                _this5.getPrestamoTablaComportamientoPago(result.recordset[i]);
+                _this7.getPrestamoTablaComportamientoPago(result.recordset[i]);
               }
             });
           }
@@ -290,7 +483,7 @@ function (_React$Component) {
   }, {
     key: "getPrestamoTablaComportamientoPago",
     value: function getPrestamoTablaComportamientoPago(ComportamientoPago) {
-      var _this6 = this;
+      var _this8 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
@@ -307,7 +500,7 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              _this6.getPrestamoCamposDeTablaComportamientoPago(result.recordset[0], ComportamientoPago);
+              _this8.getPrestamoCamposDeTablaComportamientoPago(result.recordset[0], ComportamientoPago);
             });
           }
         });
@@ -324,7 +517,7 @@ function (_React$Component) {
   }, {
     key: "getPlanPagoTablaComportamientoPago",
     value: function getPlanPagoTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, ComportamientoPago) {
-      var _this7 = this;
+      var _this9 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
@@ -341,7 +534,7 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              _this7.getPlanPagosCamposDeTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, result.recordset[0], ComportamientoPago);
+              _this9.getPlanPagosCamposDeTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, result.recordset[0], ComportamientoPago);
             });
           }
         });
@@ -358,7 +551,7 @@ function (_React$Component) {
   }, {
     key: "getPlanPagoCamposDeTablaComportamientoPago",
     value: function getPlanPagoCamposDeTablaComportamientoPago(prestamoTabla, camposDePrestamoTabla, tabla, ComportamientoPago) {
-      var _this8 = this;
+      var _this10 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
@@ -377,7 +570,7 @@ function (_React$Component) {
             transaction.commit(function (err) {
               /*              CONSIGUIENDO VALORES DE TABLA DE PLAN DE PAGOS         */
               var pool = new _mssql["default"].ConnectionPool({
-                user: tabla.nombre,
+                user: tabla.usuario,
                 password: tabla.contrasena,
                 server: tabla.servidor,
                 database: tabla.baseDatos,
@@ -396,7 +589,7 @@ function (_React$Component) {
               pool.connect(function (err) {
                 pool.request() // or: new sql.Request(pool1)
                 .query("select * from " + tabla.tabla, function (err, result) {
-                  _this8.getFieldsComportamientoPago(prestamoTabla, camposDePrestamoTabla, result.recordset, ComportamientoPago);
+                  _this10.getFieldsComportamientoPago(prestamoTabla, camposDePrestamoTabla, result.recordset, ComportamientoPago);
                 });
               }); // fin pool connect
             });
@@ -407,7 +600,7 @@ function (_React$Component) {
   }, {
     key: "getFieldsComportamientoPago",
     value: function getFieldsComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago) {
-      var _this9 = this;
+      var _this11 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
@@ -424,7 +617,7 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              _this9.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, result.recordset, ComportamientoPago);
+              _this11.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, result.recordset, ComportamientoPago);
             });
           }
         });
@@ -540,25 +733,470 @@ function (_React$Component) {
     }
   }, {
     key: "hacerChekeosDeVariablesAlImportar",
-    value: function hacerChekeosDeVariablesAlImportar() {
-      /*
-           EN RESULT DE CAMPOS DESPUES DE TRAER POR TABLA ID
-           if(result.recordset[i].tipo.localeCompare("bit") == 0 || result.recordset[i].tipo.localeCompare("date") == 0 || result.recordset[i].tipo.localeCompare("varchar") == 0) {
-              if(result.recordset[i].tipo.localeCompare("bit") == 0 || result.recordset[i].tipo.localeCompare("varchar") == 0) {
-                  if(selectFieldsQueryString.length > 0)
-                      selectFieldsQueryString+=", ";
-                  selectFieldsQueryString+=result.recordset[i].nombre;
-              } else if(result.recordset[i].tipo.localeCompare("date") == 0) {
-                  if(selectFieldsQueryString.length > 0)
-                      selectFieldsQueryString+=", ";
-                  selectFieldsQueryString+=result.recordset[i].nombre;
+    value: function hacerChekeosDeVariablesAlImportar() {}
+    /*
+         EN RESULT DE CAMPOS DESPUES DE TRAER POR TABLA ID
+         if(result.recordset[i].tipo.localeCompare("bit") == 0 || result.recordset[i].tipo.localeCompare("date") == 0 || result.recordset[i].tipo.localeCompare("varchar") == 0) {
+            if(result.recordset[i].tipo.localeCompare("bit") == 0 || result.recordset[i].tipo.localeCompare("varchar") == 0) {
+                if(selectFieldsQueryString.length > 0)
+                    selectFieldsQueryString+=", ";
+                selectFieldsQueryString+=result.recordset[i].nombre;
+            } else if(result.recordset[i].tipo.localeCompare("date") == 0) {
+                if(selectFieldsQueryString.length > 0)
+                    selectFieldsQueryString+=", ";
+                selectFieldsQueryString+=result.recordset[i].nombre;
+            }
+        } else if(result.recordset[i].tipo.localeCompare("int") == 0) {
+            if(selectFieldsQueryString.length > 0)
+                selectFieldsQueryString+=", ";
+            selectFieldsQueryString+=result.recordset[i].nombre;
+        }
+    */
+
+    /*      
+        *****   *****   *****       *****   *****   *****   *****
+                        COMPORTAMIENTO PAGO
+        *****   *****   *****       *****   *****   *****   *****
+    */
+
+    /*      
+        *****   *****   *****       *****   *****   *****   *****
+                        TIPO DE CREDITOS
+        *****   *****   *****       *****   *****   *****   *****
+    */
+
+  }, {
+    key: "fetchDataTipoCredito",
+    value: function fetchDataTipoCredito(tablaID) {
+      var _this12 = this;
+
+      console.log("tablaID = " + tablaID);
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from TipoCredito where tablaID = " + tablaID, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              //arregloCamposTipoCreditos: Cada posicion del arreglo corresponde a la del tipo de credito
+              var arregloCamposTipoCreditos = [];
+              console.log(result.recordset);
+              tamanoFinalBandera = result.recordset.length;
+
+              for (var i = 0; i < result.recordset.length; i++) {
+                _this12.fetchDataTipoCreditoCampos(result.recordset[i], arregloCamposTipoCreditos, i, result.recordset);
               }
-          } else if(result.recordset[i].tipo.localeCompare("int") == 0) {
-              if(selectFieldsQueryString.length > 0)
-                  selectFieldsQueryString+=", ";
-              selectFieldsQueryString+=result.recordset[i].nombre;
+            });
           }
-      */
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "fetchDataTipoCreditoCampos",
+    value: function fetchDataTipoCreditoCampos(tipoCredito, arregloCamposTipoCreditos, i, arregloTipoCreditos) {
+      var _this13 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from TipoCreditoCampo where tipoCreditoID = " + tipoCredito.ID, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              console.log('TipoCreditoCampo');
+              console.log(result.recordset);
+              tamanoActualBandera++;
+              arregloCamposTipoCreditos[i] = result.recordset;
+
+              _this13.verificarReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos);
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "verificarReglasTipoCreditoCampos",
+    value: function verificarReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos) {
+      console.log("tamanoActualBandera = " + tamanoActualBandera);
+      console.log("tamanoFinalBandera = " + tamanoFinalBandera); //AQUI arregloCamposTipoCreditos verificar si tiene campos
+
+      if (tamanoActualBandera == tamanoFinalBandera) {
+        //arregloReglasDeCamposTipoCreditos: Cada posicion del arreglo corresponde a la del campo de tipo de credito
+        var arregloReglasDeCamposTipoCreditos = [];
+        tamanoActualBandera = 0, tamanoFinalBandera = 0;
+
+        for (var i = 0; i < arregloCamposTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloCamposTipoCreditos[i].length; j++) {
+            tamanoFinalBandera++;
+          }
+
+          ;
+        }
+
+        ;
+
+        for (var i = 0; i < arregloCamposTipoCreditos.length; i++) {
+          if (arregloReglasDeCamposTipoCreditos[i] == undefined) arregloReglasDeCamposTipoCreditos[i] = [];
+
+          for (var j = 0; j < arregloCamposTipoCreditos[i].length; j++) {
+            this.fetchDataReglasTipoCreditoCampos(arregloCamposTipoCreditos[i][j], arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos);
+          }
+
+          ;
+        }
+
+        ;
+      }
+    }
+  }, {
+    key: "fetchDataReglasTipoCreditoCampos",
+    value: function fetchDataReglasTipoCreditoCampos(tipoCredito, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos) {
+      var _this14 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from Reglas where ID = " + tipoCredito.reglaID, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              console.log('Reglas');
+              console.log(result.recordset);
+              tamanoActualBandera++;
+              arregloReglasDeCamposTipoCreditos[i][j] = result.recordset[0];
+
+              _this14.verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos);
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "verificarCamposReglasTipoCreditoCampos",
+    value: function verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos) {
+      if (tamanoActualBandera == tamanoFinalBandera) {
+        tamanoActualBandera = 0, tamanoFinalBandera = 0;
+
+        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
+            tamanoFinalBandera++;
+          }
+
+          ;
+        }
+
+        ;
+
+        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
+            this.fetchDataCamposReglasTipoCreditoCampos(arregloReglasDeCamposTipoCreditos[i][j], arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos);
+          }
+
+          ;
+        }
+
+        ;
+      }
+    }
+  }, {
+    key: "fetchDataCamposReglasTipoCreditoCampos",
+    value: function fetchDataCamposReglasTipoCreditoCampos(regla, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos) {
+      var _this15 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from Campos where ID = " + regla.campoCampoID, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              console.log('Campos');
+              console.log(result.recordset);
+              tamanoActualBandera++;
+              arregloReglasDeCamposTipoCreditos[i][j].campoValor = result.recordset[0];
+
+              _this15.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos);
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "verificarValoresReglasTipoCreditoCampos",
+    value: function verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos) {
+      if (tamanoActualBandera == tamanoFinalBandera) {
+        tamanoActualBandera = 0, tamanoFinalBandera = 0;
+
+        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
+            var idsValores = arregloReglasDeCamposTipoCreditos[i][j].valor.split(",");
+
+            for (var k = 0; k < idsValores.length; k++) {
+              tamanoFinalBandera++;
+            }
+
+            ;
+          }
+
+          ;
+        }
+
+        ;
+
+        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
+            var idsValores = arregloReglasDeCamposTipoCreditos[i][j].valor.split(",");
+
+            for (var k = 0; k < idsValores.length; k++) {
+              this.fetchDataValoresReglasTipoCreditoCampos(idsValores[k], arregloReglasDeCamposTipoCreditos[i][j].esListaValor, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos);
+            }
+
+            ;
+          }
+
+          ;
+        }
+
+        ;
+      }
+    }
+  }, {
+    key: "fetchDataValoresReglasTipoCreditoCampos",
+    value: function fetchDataValoresReglasTipoCreditoCampos(id, esLista, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos) {
+      var _this16 = this;
+
+      var tabla;
+      if (esLista) tabla = 'VariablesdeLista';else tabla = 'Campos';
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from " + tabla + " where ID = " + id, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              console.log(tabla);
+              console.log(result.recordset);
+              tamanoActualBandera++;
+              if (arregloReglasDeCamposTipoCreditos[i][j].valorValores == undefined) arregloReglasDeCamposTipoCreditos[i][j].valorValores = [];
+              arregloReglasDeCamposTipoCreditos[i][j].valorValores.push(result.recordset[0]);
+
+              _this16.verifyTypeCreditFinal(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos);
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "verifyTypeCreditFinal",
+    value: function verifyTypeCreditFinal(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos) {
+      console.log("tamanoActualBandera = " + tamanoActualBandera);
+      console.log("tamanoFinalBandera = " + tamanoFinalBandera);
+
+      if (tamanoActualBandera == tamanoFinalBandera) {
+        console.log(arregloTipoCreditos);
+        console.log(arregloCamposTipoCreditos);
+        console.log(arregloReglasDeCamposTipoCreditos);
+        myWorker.postMessage(["tiposCredito", arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos]);
+      }
+    }
+    /*      
+        *****   *****   *****       *****   *****   *****   *****
+                        TIPO DE CREDITOS
+        *****   *****   *****       *****   *****   *****   *****
+    */
+
+    /*      
+        *****   *****   *****       *****   *****   *****   *****
+                        GUARDAR RESULTADOS
+        *****   *****   *****       *****   *****   *****   *****
+    */
+
+  }, {
+    key: "iterateProperties",
+    value: function iterateProperties(arreglo) {
+      for (var i = 0; i < arreglo.length; i++) {
+        var identificadorCampoNombre;
+        Object.keys(arreglo[i]).forEach(function (key, index) {
+          // key: the name of the object key
+          // index: the ordinal position of the key within the object
+          identificadorCampoNombre = camposGuardar.filter(function (object) {
+            return object.nombre.localeCompare(key) == 0 && object.funcion.localeCompare("Identificador") == 0;
+          });
+        });
+
+        if (identificadorCampoNombre.length > 0) {
+          Object.keys(arreglo[i]).forEach(function (key, index) {
+            // key: the name of the object key
+            // index: the ordinal position of the key within the object
+            console.log("key");
+            console.log(key);
+            console.log("arreglo[i]");
+            console.log(arreglo[i]);
+            console.log("arreglo[i][key]");
+            console.log(arreglo[i][key]);
+
+            if (identificadorCampoNombre[0].funcion.localeCompare("Identificador") == 0) {
+              this.verifyResultID(identificadorCampoNombre[0].nombre, identificadorCampoNombre[0].tabla, key);
+            } else {
+              this.verifyResultField(identificadorCampoNombre[0].nombre, identificadorCampoNombre[0].tabla, key, arreglo[i][key]);
+            }
+          });
+        } else {//bitacora no existe campo id
+        }
+      }
+
+      ;
+    }
+  }, {
+    key: "verifyResultID",
+    value: function verifyResultID(valor, objeto, nombre) {
+      console.log(prop);
+      this.saveResultID(valor, objeto, nombre);
+    }
+  }, {
+    key: "verifyResultField",
+    value: function verifyResultField(idObjeto, objeto, nombre, valor) {
+      if (!isNaN(valor)) {
+        saveResultFieldInt(idObjeto, objeto, nombre, valor);
+      } else {
+        saveResultFieldString(idObjeto, objeto, nombre, valor);
+      }
+    }
+  }, {
+    key: "saveResultID",
+    value: function saveResultID(valor, objetoV, nombreV) {
+      var identificador = valor;
+      var objeto = objetoV;
+      var nombre = nombreV;
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("insert into ResultadosID values (identificador, objeto, nombre)", function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {});
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "saveResultFieldInt",
+    value: function saveResultFieldInt(idObjetoV, objetoV, nombreV, valorV) {
+      var _this17 = this;
+
+      var identificador = idObjetoV;
+      var objeto = objetoV;
+      var nombre = nombreV;
+      var fecha = new Date();
+      var valor = valorV;
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("insert into ResultadosInt values ('" + idObjeto + "', '" + objeto + "', '" + nombre + "', '" + _this17.formatDateCreation(fecha) + "', " + valor + ")", function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {});
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "saveResultFieldString",
+    value: function saveResultFieldString(idObjetoV, objetoV, nombreV, valorV) {
+      var _this18 = this;
+
+      var identificador = idObjetoV;
+      var objeto = objetoV;
+      var nombre = nombreV;
+      var fecha = new Date();
+      var valor = valorV;
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("insert into ResultadosString values ('" + idObjeto + "', '" + objeto + "', '" + nombre + "', '" + _this18.formatDateCreation(fecha) + "', '" + valor + "')", function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {});
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "formatDateCreation",
+    value: function formatDateCreation(date) {
+      //formato si es STRING
+      //aaaa/mm/dd
+      //aaaa-mm-dd
+      var monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dec"];
+      var day = date.getDate();
+      var monthIndex = date.getMonth();
+      monthIndex++;
+      var year = date.getFullYear();
+      return year + '-' + monthIndex + '-' + day;
     }
   }, {
     key: "render",
