@@ -20,7 +20,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,  //reporteria descargar datos
                 showGraphics: false,     //componente para mostrar diferentes tipos de graficos
                 showHome: false,     //pantalla de inicio
-                showCatClass: false     //configuracion de opciones de categorias de clasificacion
+                showCatClass: false,     //configuracion de opciones de categorias de clasificacion
+                showDeteriorationCriteria: false    //configuracion de criterios de deterioro
             }
         }
         this.showConfigurationComponent = this.showConfigurationComponent.bind(this);
@@ -35,6 +36,7 @@ export default class Layout extends React.Component {
         this.showGraphics = this.showGraphics.bind(this);
         this.showHome = this.showHome.bind(this);
         this.showCatClass = this.showCatClass.bind(this);
+        this.showDeteriorationCriteria = this.showDeteriorationCriteria.bind(this);
     }
 
     showConfigurationComponent() {
@@ -51,7 +53,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -70,7 +73,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -89,7 +93,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -108,7 +113,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -127,7 +133,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -146,7 +153,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -165,7 +173,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -184,7 +193,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -203,7 +213,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: true,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -222,7 +233,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: true,
                 showHome: false,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -241,7 +253,8 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: true,
-                showCatClass: false
+                showCatClass: false,
+                showDeteriorationCriteria: false
             }
         });
     }
@@ -260,7 +273,28 @@ export default class Layout extends React.Component {
                 showReportsDownload: false,
                 showGraphics: false,
                 showHome: false,
-                showCatClass: true
+                showCatClass: true,
+                showDeteriorationCriteria: false
+            }
+        });
+    }
+
+    showDeteriorationCriteria() {
+        this.setState({
+            router: {
+                showConfiguration: false,
+                showConfTables: false,
+                showTypeCredit: false,
+                showClasificationCriteria: false,
+                showLists: false,
+                showCreditClassificationProcess: false,
+                showChooseReports: false,
+                showReportsView: false,
+                showReportsDownload: false,
+                showGraphics: false,
+                showHome: false,
+                showCatClass: false,
+                showDeteriorationCriteria: true
             }
         });
     }
@@ -282,7 +316,8 @@ export default class Layout extends React.Component {
                             showListsComponent={this.showListsComponent}
                             showReportsView={this.showReportsView}
                             showReportsDownload={this.showReportsDownload}
-                            showCatClass={this.showCatClass}> </Body>
+                            showCatClass={this.showCatClass}
+                            showDeteriorationCriteria={this.showDeteriorationCriteria}> </Body>
                     </div>
                 </div>
             </div>

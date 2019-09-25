@@ -27,6 +27,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+//faltan warning
+//light
 var Configuracion =
 /*#__PURE__*/
 function (_React$Component) {
@@ -81,7 +83,8 @@ function (_React$Component) {
         className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
         onClick: this.props.showCatClass
       }, "Categorias de Clasificaci\xF3n"), _react["default"].createElement("a", {
-        className: "btn btn-outline-success btn-block btnWhiteColorHover fontSize1EM"
+        className: "btn btn-outline-success btn-block btnWhiteColorHover fontSize1EM",
+        onClick: this.props.showDeteriorationCriteria
       }, "Criterios por Deterioro"), _react["default"].createElement("a", {
         className: "btn btn-outline-brand btn-block btnWhiteColorHover fontSize1EM"
       }, "Mantenimiento de Usuarios"), _react["default"].createElement("a", {

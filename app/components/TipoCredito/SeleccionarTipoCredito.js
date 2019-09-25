@@ -69,7 +69,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from TipoCredito where tablaID = " + _this2.props.tablaID, function (err, result) {
+        request.query("select * from TipoCredito", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -136,13 +136,6 @@ function (_React$Component) {
           href: "#",
           className: "breadcrumb-link"
         }, "Configuraci\xF3n")), _react["default"].createElement("li", {
-          className: "breadcrumb-item",
-          "aria-current": "page",
-          onClick: this.props.retornoTablas
-        }, _react["default"].createElement("a", {
-          href: "#",
-          className: "breadcrumb-link"
-        }, "Seleccionar Tabla")), _react["default"].createElement("li", {
           className: "breadcrumb-item active",
           "aria-current": "page"
         }, "Seleccionar Tipo de Cr\xE9dito"))))))), _react["default"].createElement("div", {

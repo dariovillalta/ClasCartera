@@ -88,7 +88,7 @@ export default class VariableCreation extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from Campos where tablaID = "+this.props.tablaID, (err, result) => {
+            request.query("select * from Campos", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -112,9 +112,9 @@ export default class VariableCreation extends React.Component {
         console.log( $("input[name='operacionRadio']:checked").val() )
         let listaID = $("#selectLista").val();
         console.log("listaID = "+listaID)*/
-        let campoTablaID = this.props.tablaID;
         let seleccionCampoIDSelect = $("#campo").val();
         if(seleccionCampoIDSelect.length > 0) {
+            let campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
             let campoID = this.state.campos[seleccionCampoIDSelect].ID;
             let campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
             let operacion = $("input[name='operacionRadio']:checked").val();
@@ -168,7 +168,7 @@ export default class VariableCreation extends React.Component {
                                                         rolledBack = true;
                                                     });
                                                     const request = new sql.Request(transaction);
-                                                    request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID) values ("+campoTablaID+", "+campoID+", '"+campoTipo+"', '"+operacion+"', '"+operacionTipo+"','"+valorCampos+"', '', '"+esListaValor+"', '"+esCampoValor+"', "+valorLista+")", (err, result) => {
+                                                    request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, tipoTablaRes, idTipoTabla) values ("+campoTablaID+", "+campoID+", '"+campoTipo+"', '"+operacion+"', '"+operacionTipo+"','"+valorCampos+"', '', '"+esListaValor+"', '"+esCampoValor+"', "+valorLista+", '"+this.props.tipoTablaRes+"', "+this.props.idTipoTabla+")", (err, result) => {
                                                         if (err) {
                                                             if (!rolledBack) {
                                                                 console.log(err);

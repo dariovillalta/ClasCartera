@@ -20,7 +20,7 @@ export default class LeftBar extends React.Component {
                                         <a className={"nav-link"} onClick={this.props.showHome} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Inicio</h3></a>
                                     </li>
                                     <li className={"nav-item "}>
-                                        <a className={"nav-link"} onClick={this.props.showCreditClasificationProcess} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Clasificar Cart&eacute;ra</h3></a>
+                                        <a className={"nav-link"} onClick={this.props.showCreditClasificationProcess} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Clasificar Cartera</h3></a>
                                     </li>
                                     <li className={"nav-item "}>
                                         <a className={"nav-link"} onClick={this.props.showChooseReports} href="#"><i className={"fa fa-fw fa-user-circle"}></i><h3 style={{color: "white"}}>Reporter&iacute;a</h3></a>

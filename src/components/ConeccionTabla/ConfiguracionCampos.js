@@ -5,8 +5,8 @@ import InlineEdit from '../InlineEdit.js';
 import ErrorMessage from '../ErrorMessage.js';
 import MessageModal from '../MessageModal.js';
 
-const campos = [ {nombre: "varchar"}, {nombre: "bit"}, {nombre: "date"}, {nombre: "int"} ];
-const tablas = [ {nombre: "Cliente"}, {nombre: "Préstamo"}, {nombre: "Pagos"}, {nombre: "Plan de Pagos"} ];
+const campos = [ {nombre: "varchar"}, {nombre: "bit"}, {nombre: "date"}, {nombre: "int"}, {nombre: "decimal"} ];
+const tablas = [ {nombre: "Cliente"}, {nombre: "Préstamo"}, {nombre: "Pagos"}, {nombre: "PlanPagos"} ];
 const funciones = [ {nombre: "Identificador"}, {nombre: "Otro"} ];
 //let funciones = [ {funcion: "idCliente", texto: "ID de Cliente"}, {funcion: "fecha", texto: "fecha"}, {nombre: "date"}, {nombre: "int"} ];
 
@@ -87,7 +87,7 @@ export default class ConfiguracionCampos extends React.Component {
             guardarCampo = false;
         if(!isNaN(idTabla) && idTabla.toString().length > 0) {
             if(campoNombre.length > 0 && campoNombre.length < 41) {
-                if(tablaCampo.length > 0 && tablaCampo.length < 11) {
+                if(tablaCampo.length > 0 && tablaCampo.length < 16) {
                     if(funcionCampo.length > 0 && funcionCampo.length < 16) {
                         if(tipoCampo.length > 0 && tipoCampo.length < 26) {
                             if(guardarCampo != undefined) {
@@ -157,7 +157,7 @@ export default class ConfiguracionCampos extends React.Component {
                     if(tablaCampo.length == 0)
                         descripcion = "El campo debe tener una longitud mayor a 0.";
                     else
-                        descripcion = "El campo debe tener una longitud menor a 11.";
+                        descripcion = "El campo debe tener una longitud menor a 16.";
                     this.setState({
                         errorCreacionCampo: {campo: campo, descripcion: descripcion, mostrar: true}
                     });
@@ -206,7 +206,7 @@ export default class ConfiguracionCampos extends React.Component {
             guardarCampo = false;
         if(!isNaN(idTabla) && idTabla.toString().length > 0) {
             if(campoNombre.length > 0 && campoNombre.length < 41) {
-                if(tablaCampo.length > 0 && tablaCampo.length < 11) {
+                if(tablaCampo.length > 0 && tablaCampo.length < 16) {
                     if(funcionCampo.length > 0 && funcionCampo.length < 16) {
                         if(tipoCampo.length > 0 && tipoCampo.length < 26) {
                             if(guardarCampo != undefined) {
@@ -233,17 +233,16 @@ export default class ConfiguracionCampos extends React.Component {
                                         } else {
                                             transaction.commit(err => {
                                                 // 1. Make a shallow copy of the items
-                                                let campos = [...this.state.camposDeTabla];
+                                                //let campos = [...this.state.camposDeTabla];
                                                 // 2. Make a shallow copy of the item you want to mutate
-                                                let campo = [...campos[index]];
+                                                //let campo = [...campos[index]];
                                                 // 3. Replace the property you're intested in
-                                                campo = {ID: campo.ID, idTabla: idTabla, nombre: campoNombre, tipo: tipoCampo, guardar: guardarCampo};
+                                                //campo = {ID: campo.ID, idTabla: idTabla, nombre: campoNombre, tipo: tipoCampo, guardar: guardarCampo};
                                                 // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-                                                campos[index] = campo;
+                                                //campos[index] = campo;
                                                 // 5. Set the state to our new copy
-                                                //this.loadTables();
+                                                this.loadFields();
                                                 this.setState({
-                                                    camposDeTabla: campos,
                                                     mensajeModal: {mostrarMensaje: false, mensajeConfirmado: true, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: this.state.mensajeModal.idElementoSelec, indiceX: this.state.mensajeModal.indiceX}
                                                 });
                                                 this.showSuccesMessage("Exito", "Campo modificado con éxito.");
@@ -300,7 +299,7 @@ export default class ConfiguracionCampos extends React.Component {
                     if(tablaCampo.length == 0)
                         descripcion = "El campo debe tener una longitud mayor a 0.";
                     else
-                        descripcion = "El campo debe tener una longitud menor a 11.";
+                        descripcion = "El campo debe tener una longitud menor a 16.";
                     this.setState({
                         errorModificarCampo: {campo: campo, descripcion: descripcion, mostrar: true},
                         mensajeModal: {mostrarMensaje: false, mensajeConfirmado: true, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: this.state.mensajeModal.idElementoSelec, indiceX: this.state.mensajeModal.indiceX}

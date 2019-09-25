@@ -13,6 +13,7 @@ import DescargarReporteria from './Reporteria/DescargarReporteria.js';
 import Graficos from './Graficos/Graficos.js';
 import Home from './Home.js';
 import CategoriaClasificacion from './CategoriaClasificacion/CategoriaClasificacion.js';
+//import CriteriosDeterioro from './CriteriosDeterioro/CriteriosDeterioro.js';
 
 //const importacionODBC = new Worker("./components/odbcMSSQL.js");
 
@@ -122,6 +123,12 @@ export default class Body extends React.Component {
                 </div>
             );
         } else if(this.props.router.showCatClass) {
+            return (
+                <div>
+                    <CategoriaClasificacion pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </CategoriaClasificacion>
+                </div>
+            );
+        } else if(this.props.router.showDeteriorationCriteria) {
             return (
                 <div>
                     <CategoriaClasificacion pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </CategoriaClasificacion>

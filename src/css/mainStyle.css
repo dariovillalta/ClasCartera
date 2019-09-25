@@ -7019,3 +7019,39 @@ Media Query
 .fontSize1EM {
     font-size: 1.5em !important;
 }
+
+.btn-outline-primary-active {
+    color: white !important;
+    background-color:#007bff;
+    border-color:#007bff;
+}
+
+.btn-outline-secondary-active {
+    color: white !important;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-outline-info-active {
+    color: white !important;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-outline-success-active {
+    color: white !important;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-danger-active {
+    color: white !important;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-dark-active {
+    color: white !important;
+    background-color: #343a40;
+    border-color: #343a40;
+}

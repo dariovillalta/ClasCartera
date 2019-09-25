@@ -9,7 +9,7 @@ var _react = _interopRequireDefault(require("react"));
 
 var _mssql = _interopRequireDefault(require("mssql"));
 
-var _SeleccionarTipoCredito = _interopRequireDefault(require("./SeleccionarTipoCredito.js"));
+var _SeleccionarCriterioDeterioro = _interopRequireDefault(require("./SeleccionarCriterioDeterioro.js"));
 
 var _MostrarReglas = _interopRequireDefault(require("../Regla/MostrarReglas.js"));
 
@@ -35,48 +35,49 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var TipoCredito =
+var CriteriosDeterioro =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(TipoCredito, _React$Component);
+  _inherits(CriteriosDeterioro, _React$Component);
 
-  function TipoCredito(props) {
+  function CriteriosDeterioro(props) {
     var _this;
 
-    _classCallCheck(this, TipoCredito);
+    _classCallCheck(this, CriteriosDeterioro);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TipoCredito).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CriteriosDeterioro).call(this, props));
     _this.state = {
-      idCreditoSeleccionado: -1,
-      nombreCreditoSeleccionado: "",
-      mostrarTabla: "selCredit",
+      idCriterioDeterioro: -1,
+      nombreCriterioDeterioroSeleccionado: "",
+      mostrarComponente: "selCrit",
       regla: {},
       campoTexto: '',
       operacion: '',
       valorTexto: ''
     };
-    _this.updateCreditSelectedID = _this.updateCreditSelectedID.bind(_assertThisInitialized(_this));
+    _this.updateDeterCriteriaID = _this.updateDeterCriteriaID.bind(_assertThisInitialized(_this));
     _this.returnSelCredit = _this.returnSelCredit.bind(_assertThisInitialized(_this));
     _this.updateVarCreation = _this.updateVarCreation.bind(_assertThisInitialized(_this));
     _this.returnVarCreation = _this.returnVarCreation.bind(_assertThisInitialized(_this));
     return _this;
   }
 
-  _createClass(TipoCredito, [{
-    key: "updateCreditSelectedID",
-    value: function updateCreditSelectedID(id, nombre) {
+  _createClass(CriteriosDeterioro, [{
+    key: "updateDeterCriteriaID",
+    value: function updateDeterCriteriaID(id, nombre) {
       this.setState({
-        idCreditoSeleccionado: id,
-        mostrarTabla: "selVar",
-        nombreCreditoSeleccionado: nombre
+        idCriterioDeterioro: id,
+        mostrarComponente: "selVar",
+        nombreCriterioDeterioroSeleccionado: nombre
       });
     }
   }, {
-    key: "returnSelCredit",
-    value: function returnSelCredit() {
+    key: "returnSelDeterCriteria",
+    value: function returnSelDeterCriteria() {
       this.setState({
-        idCreditoSeleccionado: -1,
-        mostrarTabla: "selCredit"
+        idCriterioDeterioro: -1,
+        mostrarTabla: "selCrit",
+        nombreCriterioDeterioroSeleccionado: ""
       });
     }
   }, {
@@ -106,28 +107,28 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      if (this.state.mostrarTabla.localeCompare("selCredit") == 0) {
-        return _react["default"].createElement("div", null, _react["default"].createElement(_SeleccionarTipoCredito["default"], {
+      if (this.state.mostrarComponente.localeCompare("selCrit") == 0) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_SeleccionarCriterioDeterioro["default"], {
           pool: this.props.pool,
-          seleccionarCredito: this.updateCreditSelectedID,
+          seleccionarCriterio: this.updateDeterCriteriaID,
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));
-      } else if (this.state.mostrarTabla.localeCompare("selVar") == 0) {
+      } else if (this.state.mostrarComponente.localeCompare("selVar") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_MostrarReglas["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent,
-          returnPrevComponent: this.returnSelCredit,
-          returnPrevComponentName: "Seleccionar Tipo de Crédito",
+          returnPrevComponent: this.returnSelDeterCriteria,
+          returnPrevComponentName: "Seleccionar Criterio de Deterioro",
           campoTexto: this.state.campoTexto,
-          tipoTablaRes: "TipoCredito",
-          idTipoTabla: this.state.idCreditoSeleccionado
+          tipoTablaRes: "CriterioDeterioro",
+          idTipoTabla: this.state.idCriterioDeterioro
         }, " "));
       }
     }
   }]);
 
-  return TipoCredito;
+  return CriteriosDeterioro;
 }(_react["default"].Component);
 
-exports["default"] = TipoCredito;
-//# sourceMappingURL=TipoCredito.js.map
+exports["default"] = CriteriosDeterioro;
+//# sourceMappingURL=CriteriosDeterioro.js.map

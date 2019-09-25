@@ -3,7 +3,7 @@ import sql from 'mssql';
 
 import InlineEdit from '../InlineEdit.js';
 
-const campos = [ {nombre: "varchar"}, {nombre: "bit"}, {nombre: "date"}, {nombre: "int"} ];
+const campos = [ {nombre: "varchar"}, {nombre: "bit"}, {nombre: "date"}, {nombre: "int"},  {nombre: "decimal"}];
 
 export default class CrearYSeleccionarLista extends React.Component {
     constructor(props) {

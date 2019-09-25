@@ -27,7 +27,7 @@ export default class SeleccionarTipoCredito extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from TipoCredito where tablaID = "+this.props.tablaID, (err, result) => {
+            request.query("select * from TipoCredito", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -76,7 +76,6 @@ export default class SeleccionarTipoCredito extends React.Component {
                                     <nav aria-label="breadcrumb">
                                         <ol className={"breadcrumb"}>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
-                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoTablas}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla</a></li>
                                             <li className={"breadcrumb-item active"} aria-current="page">Seleccionar Tipo de Cr&eacute;dito</li>
                                         </ol>
                                     </nav>

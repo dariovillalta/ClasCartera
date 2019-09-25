@@ -53,6 +53,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+//import CriteriosDeterioro from './CriteriosDeterioro/CriteriosDeterioro.js';
 //const importacionODBC = new Worker("./components/odbcMSSQL.js");
 var Body =
 /*#__PURE__*/
@@ -156,6 +157,11 @@ function (_React$Component) {
           pool: this.props.pool
         }, " "));
       } else if (this.props.router.showCatClass) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_CategoriaClasificacion["default"], {
+          pool: this.props.pool,
+          showConfigurationComponent: this.props.showConfigurationComponent
+        }, " "));
+      } else if (this.props.router.showDeteriorationCriteria) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_CategoriaClasificacion["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent

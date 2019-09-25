@@ -149,7 +149,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from Campos where tablaID = " + _this2.props.tablaID, function (err, result) {
+        request.query("select * from Campos", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -175,10 +175,10 @@ function (_React$Component) {
       console.log( $("input[name='operacionRadio']:checked").val() )
       let listaID = $("#selectLista").val();
       console.log("listaID = "+listaID)*/
-      var campoTablaID = this.props.tablaID;
       var seleccionCampoIDSelect = $("#campo").val();
 
       if (seleccionCampoIDSelect.length > 0) {
+        var campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
         var campoID = this.state.campos[seleccionCampoIDSelect].ID;
         var campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
         var operacion = $("input[name='operacionRadio']:checked").val();
@@ -237,7 +237,7 @@ function (_React$Component) {
                               rolledBack = true;
                             });
                             var request = new _mssql["default"].Request(transaction);
-                            request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID) values (" + campoTablaID + ", " + campoID + ", '" + campoTipo + "', '" + operacion + "', '" + operacionTipo + "','" + valorCampos + "', '', '" + esListaValor + "', '" + esCampoValor + "', " + valorLista + ")", function (err, result) {
+                            request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, tipoTablaRes, idTipoTabla) values (" + campoTablaID + ", " + campoID + ", '" + campoTipo + "', '" + operacion + "', '" + operacionTipo + "','" + valorCampos + "', '', '" + esListaValor + "', '" + esCampoValor + "', " + valorLista + ", '" + _this3.props.tipoTablaRes + "', " + _this3.props.idTipoTabla + ")", function (err, result) {
                               if (err) {
                                 if (!rolledBack) {
                                   console.log(err);

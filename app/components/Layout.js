@@ -68,7 +68,9 @@ function (_React$Component) {
         //componente para mostrar diferentes tipos de graficos
         showHome: false,
         //pantalla de inicio
-        showCatClass: false //configuracion de opciones de categorias de clasificacion
+        showCatClass: false,
+        //configuracion de opciones de categorias de clasificacion
+        showDeteriorationCriteria: false //configuracion de criterios de deterioro
 
       }
     };
@@ -84,6 +86,7 @@ function (_React$Component) {
     _this.showGraphics = _this.showGraphics.bind(_assertThisInitialized(_this));
     _this.showHome = _this.showHome.bind(_assertThisInitialized(_this));
     _this.showCatClass = _this.showCatClass.bind(_assertThisInitialized(_this));
+    _this.showDeteriorationCriteria = _this.showDeteriorationCriteria.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -103,7 +106,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -123,7 +127,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -143,7 +148,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -163,7 +169,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -183,7 +190,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -203,7 +211,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -223,7 +232,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -243,7 +253,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -263,7 +274,8 @@ function (_React$Component) {
           showReportsDownload: true,
           showGraphics: false,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -283,7 +295,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: true,
           showHome: false,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -303,7 +316,8 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: true,
-          showCatClass: false
+          showCatClass: false,
+          showDeteriorationCriteria: false
         }
       });
     }
@@ -323,7 +337,29 @@ function (_React$Component) {
           showReportsDownload: false,
           showGraphics: false,
           showHome: false,
-          showCatClass: true
+          showCatClass: true,
+          showDeteriorationCriteria: false
+        }
+      });
+    }
+  }, {
+    key: "showDeteriorationCriteria",
+    value: function showDeteriorationCriteria() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false,
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false,
+          showDeteriorationCriteria: true
         }
       });
     }
@@ -353,7 +389,8 @@ function (_React$Component) {
         showListsComponent: this.showListsComponent,
         showReportsView: this.showReportsView,
         showReportsDownload: this.showReportsDownload,
-        showCatClass: this.showCatClass
+        showCatClass: this.showCatClass,
+        showDeteriorationCriteria: this.showDeteriorationCriteria
       }, " "))));
     }
   }]);

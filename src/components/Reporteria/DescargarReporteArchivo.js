@@ -4,9 +4,41 @@ export default class DescargarReporteArchivo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tablaSeleccionada: "clientes"
+            resultados: []
         }
         //this.cambioClientes = this.cambioClientes.bind(this);
+        this.loadDataWithFilters = this.loadDataWithFilters.bind(this);
+        this.getFiltersString = this.getFiltersString.bind(this);
+        this.getFilterQuery = this.getFilterQuery.bind(this);
+        this.getObjects = this.getObjects.bind(this);
+    }
+
+    componentDidMount() {
+        this.loadDataWithFilters();
+    }
+
+    loadDataWithFilters() {
+        var cadenaFiltros = this.getFiltersString();
+        this.getObjects(cadenaFiltros);
+    }
+
+    getFiltersString () {
+        var resultado = '';
+        for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
+            resultado += this.getFilterQuery(this.props.arregloDeFiltros[i]);
+        };
+    }
+
+    getFilterQuery(filtro) {
+        //if (filtro.)
+    }
+
+    getObjects(queryString) {
+        //traer resultados de base de datos
+    }
+
+    crearArchivoExcel() {
+        //
     }
 
     render() {

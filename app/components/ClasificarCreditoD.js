@@ -1,65 +1,30 @@
 "use strict";
 
-importScripts('./libs/moment/min/moment.min.js');
-var document = self.document = {
-  parentNode: null,
-  nodeType: 9,
-  toString: function toString() {
-    return "FakeDocument";
-  }
-};
-var window = self.window = self;
-var fakeElement = Object.create(document);
-fakeElement.nodeType = 1;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.constructor = constructor;
 
-fakeElement.toString = function () {
-  return "FakeElement";
-};
+var _momentMin = _interopRequireDefault(require("../libs/moment/min/moment.min.js"));
 
-fakeElement.parentNode = fakeElement.firstChild = fakeElement.lastChild = fakeElement;
-fakeElement.ownerDocument = document;
-document.head = document.body = fakeElement;
-document.ownerDocument = document.documentElement = document;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-document.getElementById = document.createElement = function () {
-  return fakeElement;
-};
-
-document.createDocumentFragment = function () {
-  return this;
-};
-
-document.getElementsByTagName = document.getElementsByClassName = function () {
-  return [fakeElement];
-};
-
-document.getAttribute = document.setAttribute = document.removeChild = document.addEventListener = document.removeEventListener = function () {
-  return null;
-};
-
-document.cloneNode = document.appendChild = function () {
-  return this;
-};
-
-document.appendChild = function (child) {
-  return child;
-};
-
-onmessage = function onmessage(e) {
+//importScripts('./libs/moment/min/moment.min.js');
+function constructor(arreglo) {
   //e.data[1] = props
   //e.data[2] = arreglo
-  if (e.data[0].localeCompare("iniciarArregloClientes") == 0) {
-    crearArregloClientes(e.data[1], e.data[2], e.data[3], e.data[4], e.data[5]);
-  } else if (e.data[0].localeCompare("iniciarArregloPrestamos") == 0) {
-    crearArregloCreditos(e.data[1], e.data[2], e.data[3], e.data[4], e.data[5], e.data[6], e.data[7]);
-  } else if (e.data[0].localeCompare("comportamientoPago") == 0) {
-    comportamientoPago(e.data[1], e.data[2], e.data[3], e.data[4], e.data[5]);
-  } else if (e.data[0].localeCompare("tiposCredito") == 0) {
-    tipoCredito(e.data[1], e.data[2], e.data[3]);
-  } else if (e.data[0].localeCompare("traerResultados") == 0) {
-    retornarArreglos(e.data[1], e.data[2], e.data[3], e.data[4]);
+  if (arreglo[0].localeCompare("iniciarArregloClientes") == 0) {
+    crearArregloClientes(arreglo[1], arreglo[2], arreglo[3], arreglo[4], arreglo[5]);
+  } else if (arreglo[0].localeCompare("iniciarArregloPrestamos") == 0) {
+    crearArregloCreditos(arreglo[1], arreglo[2], arreglo[3], arreglo[4], arreglo[5], arreglo[6], arreglo[7]);
+  } else if (arreglo[0].localeCompare("comportamientoPago") == 0) {
+    comportamientoPago(arreglo[1], arreglo[2], arreglo[3], arreglo[4], arreglo[5]);
+  } else if (arreglo[0].localeCompare("tiposCredito") == 0) {
+    tipoCredito(arreglo[1], arreglo[2], arreglo[3]);
+  } else if (arreglo[0].localeCompare("traerResultados") == 0) {
+    retornarArreglos(arreglo[1], arreglo[2], arreglo[3], arreglo[4]);
   }
-};
+}
 /*		HACER  METODO GUARDAR VALIDACION PARA GUARDAR A TABLAS (Porque fue calificado el prestamo)	*/
 
 /*		HACER  ARREGLOS DE RESULTADOS CON CALCULO MISMA VARIABLE PARA AHORRAR MEMORIA	*/
@@ -339,15 +304,15 @@ function comportamientoPago(prestamoCampos, valoresPrestamos, planPagoCampos, va
   console.log(fechaPlanPagoCampoID); //insertarPagoPrestamoArreglos();
 
   for (var i = 0; i < valoresPrestamos.length; i++) {
-    insercionBinariaClientes(valoresPrestamos[i], idClientePrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, idClientePrestamoCampoID);
-    insercionBinariaCreditos(valoresPrestamos[i], idClientePrestamoCampoID[0].nombre, numeroPrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, numeroPrestamoCampoID[0].tipo, idClientePrestamoCampoID, numeroPrestamoCampoID);
+    /*insercionBinariaClientes(valoresPrestamos[i], idClientePrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, idClientePrestamoCampoID);
+    insercionBinariaCreditos(valoresPrestamos[i], idClientePrestamoCampoID[0].nombre, numeroPrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, numeroPrestamoCampoID[0].tipo, idClientePrestamoCampoID, numeroPrestamoCampoID);*/
     insercionBinariaPagos(valoresPrestamos[i], idClientePrestamoCampoID[0].nombre, numeroPrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, numeroPrestamoCampoID[0].tipo, idClientePrestamoCampoID, numeroPrestamoCampoID, pagoCapitalPrestamoCampoID.concat(pagoImpuestosPrestamoCampoID, fechaPrestamoCampoID));
   }
 
   ;
 
   for (var i = 0; i < valoresPlanPago.length; i++) {
-    insercionBinariaPlanPagos(valoresPrestamos[i], idClientePrestamoCampoID[0].nombre, numeroPrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, numeroPrestamoCampoID[0].tipo, idClientePrestamoCampoID, numeroPrestamoCampoID, pagoCapitalPrestamoCampoID.concat(pagoImpuestosPrestamoCampoID, fechaPrestamoCampoID));
+    insercionBinariaPlanPagos(valoresPlanPago[i], idClientePrestamoCampoID[0].nombre, numeroPrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, numeroPrestamoCampoID[0].tipo, idClientePrestamoCampoID, numeroPrestamoCampoID, pagoCapitalPrestamoCampoID.concat(pagoImpuestosPrestamoCampoID, fechaPrestamoCampoID));
   }
 
   ;
@@ -381,10 +346,10 @@ function comportamientoPago(prestamoCampos, valoresPrestamos, planPagoCampos, va
   console.log(arregloCreditos);
   console.log(arregloPagos);
   console.log(arregloPlanPagos);
-  initEvalcomportamientoPago();
+  initEvalcomportamientoPago(pagoCapitalPrestamoCampoID[0].nombre, pagoCapitalPlanPagoCampoID[0].nombre, pagoImpuestosPrestamoCampoID[0].nombre, pagoImpuestosPlanPagoCampoID[0].nombre, fechaPrestamoCampoID[0].nombre, fechaPlanPagoCampoID[0].nombre);
 }
 
-function initEvalcomportamientoPago() {
+function initEvalcomportamientoPago(capitalPago, capitalPlanPago, impuestoPago, impuestoPlanPago, fechaPago, fechaPlanPago) {
   for (var i = 0; i < arregloClientes.length; i++) {
     var numPagosAtrasadosCliente = 0;
     var diasMoraCliente = 0;
@@ -392,6 +357,7 @@ function initEvalcomportamientoPago() {
     var totalImpuestosPagado = 0;
     var totalCapitalPlanPagos = 0;
     var totalImpuestosPlanPagos = 0;
+    console.log("ENTRE CLIENTES = " + i);
 
     for (var j = 0; j < arregloCreditos[i].length; j++) {
       var mesViejo = new Date(2019, 0, 1);
@@ -399,31 +365,32 @@ function initEvalcomportamientoPago() {
       var totalImpuestosPagadoPrestamo = 0;
       var totalCapitalPlanPagoPrestamo = 0;
       var totalImpuestosPlanPagoPrestamo = 0;
+      console.log("ENTRE PRESTAMOS = " + j);
 
       if (arregloPlanPagos[i][j].length > 0) {
-        var fechaPactadaPago = arregloPlanPagos[i][j][0][fechaPrestamoCampoID];
+        var fechaPactadaPago = arregloPlanPagos[i][j][0][fechaPlanPago];
         var banderaVerFechaPactada = true;
         var arregloPlanPagosDeCredito = [];
 
         for (var k = 0; k < arregloPagos[i][j].length; k++) {
           //validando cuando cambia de mes, para ver si el pago se hizo a tiempo
-          if (mesViejo.getMonth() < arregloPagos[i][j][k][fechaPrestamoCampoID].getMonth()) {
-            mesViejo = arregloPagos[i][j][k][fechaPrestamoCampoID].getMonth();
+          if (mesViejo.getMonth() < arregloPagos[i][j][k][fechaPago].getMonth()) {
+            mesViejo = arregloPagos[i][j][k][fechaPago];
             banderaVerFechaPactada = true;
           }
 
-          if (mesViejo.getMonth() == arregloPagos[i][j][k][fechaPrestamoCampoID].getMonth() && banderaVerFechaPactada) {
-            if (fechaPactadaPago.getDate() > arregloPagos[i][j][k][fechaPrestamoCampoID].getDate()) {
+          if (mesViejo.getMonth() == arregloPagos[i][j][k][fechaPago].getMonth() && banderaVerFechaPactada) {
+            if (fechaPactadaPago.getDate() > arregloPagos[i][j][k][fechaPago].getDate()) {
               numPagosAtrasadosCliente++;
             } else {
               banderaVerFechaPactada = false;
             }
           }
 
-          totalCapitalPagado += arregloPagos[i][j][k][pagoCapitalPrestamoCampoID];
-          totalCapitalPagadoPrestamo += arregloPagos[i][j][k][pagoCapitalPrestamoCampoID];
-          totalImpuestosPagado += arregloPagos[i][j][k][pagoImpuestosPrestamoCampoID];
-          totalImpuestosPagadoPrestamo += arregloPagos[i][j][k][pagoImpuestosPrestamoCampoID];
+          totalCapitalPagado += arregloPagos[i][j][k][capitalPago];
+          totalCapitalPagadoPrestamo += arregloPagos[i][j][k][capitalPago];
+          totalImpuestosPagado += arregloPagos[i][j][k][impuestoPago];
+          totalImpuestosPagadoPrestamo += arregloPagos[i][j][k][impuestoPago];
         }
 
         ;
@@ -432,7 +399,7 @@ function initEvalcomportamientoPago() {
           var index = -1;
 
           for (var p = 0; p < arregloPlanPagosDeCredito.length; p++) {
-            if (arregloPlanPagosDeCredito[p].mes.getMonth() == arregloPlanPagos[i][j][k][fechaPlanPagoCampoID].getMonth()) {
+            if (arregloPlanPagosDeCredito[p].mes.getMonth() == arregloPlanPagos[i][j][k][fechaPlanPago].getMonth()) {
               index = p;
             }
           }
@@ -440,21 +407,32 @@ function initEvalcomportamientoPago() {
           ;
 
           if (index != -1) {
-            arregloPlanPagosDeCredito[index].montoCapital += arregloPlanPagos[i][j][k][pagoCapitalPlanPagoCampoID];
-            arregloPlanPagosDeCredito[index].montoImpuesto += arregloPlanPagos[i][j][k][pagoImpuestosPlanPagoCampoID];
+            arregloPlanPagosDeCredito[index].montoCapital += arregloPlanPagos[i][j][k][capitalPlanPago];
+            arregloPlanPagosDeCredito[index].montoImpuesto += arregloPlanPagos[i][j][k][impuestoPlanPago];
           } else {
-            arregloPlanPagosDeCredito.push({
-              mes: arregloPlanPagos[i][j][k][fechaPlanPagoCampoID],
-              montoCapital: arregloPlanPagos[i][j][k][pagoCapitalPlanPagoCampoID],
-              montoImpuesto: arregloPlanPagos[i][j][k][pagoImpuestosPlanPagoCampoID]
-            });
+            if (arregloPlanPagosDeCredito.length > 0) {
+              arregloPlanPagosDeCredito.push({
+                mes: arregloPlanPagos[i][j][k][fechaPlanPago],
+                montoCapital: arregloPlanPagos[i][j][k][capitalPlanPago],
+                montoImpuesto: arregloPlanPagos[i][j][k][impuestoPlanPago],
+                montoCapitalTotal: arregloPlanPagosDeCredito[arregloPlanPagosDeCredito.length - 1].montoCapitalTotal + arregloPlanPagos[i][j][k][capitalPlanPago],
+                montoImpuestoTotal: arregloPlanPagosDeCredito[arregloPlanPagosDeCredito.length - 1].montoImpuestoTotal + arregloPlanPagos[i][j][k][impuestoPlanPago]
+              });
+            } else {
+              arregloPlanPagosDeCredito.push({
+                mes: arregloPlanPagos[i][j][k][fechaPlanPago],
+                montoCapital: arregloPlanPagos[i][j][k][capitalPlanPago],
+                montoImpuesto: arregloPlanPagos[i][j][k][impuestoPlanPago],
+                montoCapitalTotal: arregloPlanPagos[i][j][k][capitalPlanPago],
+                montoImpuestoTotal: arregloPlanPagos[i][j][k][impuestoPlanPago]
+              });
+            }
           }
 
-          totalCapitalPlanPagos += arregloPlanPagos[i][j][k][pagoImpuestosPrestamoCampoID];
-          totalCapitalPlanPagoPrestamo += arregloPlanPagos[i][j][k][pagoCapitalPrestamoCampoID];
-          totalImpuestosPlanPagos += arregloPlanPagos[i][j][k][pagoImpuestosPrestamoCampoID];
-          totalImpuestosPagadoPrestamo += arregloPlanPagos[i][j][k][pagoImpuestosPrestamoCampoID];
-          totalImpuestosPlanPagoPrestamo += arregloPlanPagos[i][j][k][pagoImpuestosPrestamoCampoID];
+          totalCapitalPlanPagos += arregloPlanPagos[i][j][k][capitalPlanPago];
+          totalCapitalPlanPagoPrestamo += arregloPlanPagos[i][j][k][capitalPlanPago];
+          totalImpuestosPlanPagos += arregloPlanPagos[i][j][k][impuestoPlanPago];
+          totalImpuestosPlanPagoPrestamo += arregloPlanPagos[i][j][k][impuestoPlanPago];
         }
 
         ;
@@ -462,10 +440,13 @@ function initEvalcomportamientoPago() {
             posicionPlan = -1;
 
         for (var p = 0; p < arregloPlanPagosDeCredito.length; p++) {
-          if (totalCapitalPagadoPrestamo < arregloPlanPagosDeCredito[p].montoCapital || totalImpuestosPlanPagoPrestamo < arregloPlanPagosDeCredito[p].montoImpuesto) {
+          console.log("SIIIISUAISUAHSJKAHSKJAHSKJHKJSH");
+          console.log(arregloPlanPagosDeCredito);
+
+          if (totalCapitalPagadoPrestamo >= arregloPlanPagosDeCredito[p].montoCapitalTotal && totalImpuestosPlanPagoPrestamo >= arregloPlanPagosDeCredito[p].montoImpuestoTotal) {
+            console.log("NOOOOOOO");
             mesDelPlan = arregloPlanPagosDeCredito[p].mes;
-            posicionPlan = p;
-            break;
+            posicionPlan = p; //break;
           }
         }
 
@@ -474,9 +455,19 @@ function initEvalcomportamientoPago() {
         if (posicionPlan != -1) {
           var fechaInicial = arregloPlanPagosDeCredito[0].mes.getDate();
           var fechaAIniciarContar = new Date(arregloPlanPagosDeCredito[0].mes.getFullYear(), arregloPlanPagosDeCredito[0].mes.getMonth(), fechaInicial + 1);
-          var hoy = moment();
-          var momentFechaPlan = moment(mesDelPlan);
+          var hoy = (0, _momentMin["default"])();
+          var momentFechaPlan = (0, _momentMin["default"])(mesDelPlan);
           var diferenciaDias = hoy.diff(momentFechaPlan, 'days');
+          console.log("---------------------");
+          console.log("MES DEL PLAN");
+          console.log(mesDelPlan);
+          console.log("HOY");
+          console.log(hoy);
+          console.log("DIFF DIAS");
+          console.log(diferenciaDias);
+          console.log("CREDITO");
+          console.log(arregloCreditos[i][j]);
+          console.log("///////////////////");
           arregloCreditos[i][j]["mesDelPlan"] = mesDelPlan;
           arregloCreditos[i][j]["diasMora"] = diferenciaDias;
         }
@@ -497,8 +488,8 @@ function initEvalcomportamientoPago() {
     ;
     arregloClientes[i]["t0talC4pitalPagado"] = totalCapitalPagado;
     arregloClientes[i]["t0talC4pitalD3beriaPagado"] = totalCapitalPlanPagos;
-    arregloClientes[i]["t0tal1mpu3stosPagado"] = totalImpuestosPagadoPrestamo;
-    arregloClientes[i]["t0tal1mpu3stosD3beriaPagado"] = totalImpuestosPlanPagoPrestamo;
+    arregloClientes[i]["t0tal1mpu3stosPagado"] = totalImpuestosPagado;
+    arregloClientes[i]["t0tal1mpu3stosD3beriaPagado"] = totalImpuestosPlanPagos;
   }
 
   ;
@@ -567,7 +558,7 @@ function tipoCredito(tiposCreditos, reglasTiposCreditos) {
             break;
           }
 
-          if (reglasTiposCreditos[n].length == 1 && contadorCumpleParametros == reglasTiposCreditos[n].length) {
+          if (reglasTiposCreditos[n].length - 1 == m && contadorCumpleParametros == reglasTiposCreditos[n].length) {
             arregloCreditos[i][j].tipoCredito = tiposCreditos[n].nombre;
           }
         }
@@ -663,8 +654,6 @@ function getEvalCodeCondition(regla, objeto) {
   var codigo = '';
   var codigoCampo = objeto + "." + regla.campoValor.nombre;
   var valores = regla.valorValores;
-  console.log('regla');
-  console.log(regla);
 
   for (var i = 0; i < valores.length; i++) {
     if (regla.operacion.localeCompare("sumIf") == 0 && codigo.length > 0) codigo += " || ";else if (codigo.length > 0) codigo += " && ";
@@ -908,6 +897,19 @@ function insercionBinariaCreditos(valor, campoCliente, campoNumCuenta, tipoCampo
 
       ;
       arregloCreditos[m].push(newObject);
+    } else {
+      for (var j = 0; j < camposAGuardarDeCreditosCreditosDeTablas.length; j++) {
+        var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[j].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
+
+        var validarVariable = true;
+
+        if (validarVariable) {
+          arregloCreditos[m][i][camposAGuardarDeCreditosCreditosDeTablas[j].nombre] = valorAInsertar;
+        } else {//bitacora add error porque no inserto variable
+        }
+      }
+
+      ;
     }
 
     return;
@@ -1144,35 +1146,29 @@ function insercionBinariaPagos(valor, campoCliente, campoNumCuenta, tipoCampoCli
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] > arregloClientes[end][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[end][campoCliente]) > 0) {
-    var newObject = {};
-
+    /*var newObject = {};
     for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
+    var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+    //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+    var validarVariable = true;
+    if( validarVariable ) {
+    newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+    } else {
+    //bitacora add error porque no inserto variable
     }
-
-    ;
+    };
     var newObjectCredito = {};
-
     for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
+    var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre];
+    //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
+    var validarVariable = true;
+    if( validarVariable ) {
+    newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
+    } else {
+    //bitacora add error porque no inserto variable
     }
-
-    ;
-    var newArray = [newObjectCredito];
+    };
+    var newArray = [newObjectCredito];*/
     var newObjectPago = {};
 
     for (var i = 0; i < camposAGuardarDePagosCreditosDeTablas.length; i++) {
@@ -1188,43 +1184,39 @@ function insercionBinariaPagos(valor, campoCliente, campoNumCuenta, tipoCampoCli
 
     ;
     var newArrayPagos = [[newObjectPago]];
-    arregloClientes.splice(end + 1, 0, newObject);
-    arregloCreditos.splice(end + 1, 0, newArray);
+    /*arregloClientes.splice(end + 1, 0, newObject);
+    arregloCreditos.splice(end + 1, 0, newArray);*/
+
     arregloPagos.splice(end + 1, 0, newArrayPagos);
     return;
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] < arregloClientes[start][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[start][campoCliente]) < 0) {
     //!!
-    var newObject = {};
 
-    for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
-    }
-
-    ;
+    /*var newObject = {};
+       for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
+    	var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+    	//var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+    	var validarVariable = true;
+    	if( validarVariable ) {
+    		newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+    	} else {
+    		//bitacora add error porque no inserto variable
+    	}
+    };
     var newObjectCredito = {};
-
-    for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
-    }
-
-    ;
-    var newArray = [newObjectCredito];
+       for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
+    	var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre];
+    	//var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
+    	var validarVariable = true;
+    	if( validarVariable ) {
+    		newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
+    	} else {
+    		//bitacora add error porque no inserto variable
+    	}
+    };
+    var newArray = [newObjectCredito];*/
     var newObjectPago = {};
 
     for (var i = 0; i < camposAGuardarDePagosCreditosDeTablas.length; i++) {
@@ -1240,8 +1232,9 @@ function insercionBinariaPagos(valor, campoCliente, campoNumCuenta, tipoCampoCli
 
     ;
     var newArrayPagos = [[newObjectPago]];
-    arregloClientes.splice(start, 0, newObject);
-    arregloCreditos.splice(start, 0, newArray);
+    /*arregloClientes.splice(start, 0, newObject);
+    arregloCreditos.splice(start, 0, newArray);*/
+
     arregloPagos.splice(start, 0, newArrayPagos);
     return;
   }
@@ -1292,34 +1285,29 @@ function insercionBinariaPlanPagos(valor, campoCliente, campoNumCuenta, tipoCamp
       if (arregloCreditos[0] == undefined) arregloCreditos[0] = [];
       if (arregloPlanPagos[0] == undefined) arregloPlanPagos[0] = [];
       if (arregloPlanPagos[0][0] == undefined) arregloPlanPagos[0][0] = [];
-      var newObject = {};
-
-      for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-        var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-        var validarVariable = true;
-
-        if (validarVariable) {
-          newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-        } else {//bitacora add error porque no inserto variable
-        }
-      }
-
-      ;
+      /*var newObject = {};
+         for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
+      	var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+      	//var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+      	var validarVariable = true;
+      	if( validarVariable ) {
+      		newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+      	} else {
+      		//bitacora add error porque no inserto variable
+      	}
+      };
       var newObjectCredito = {};
+         for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
+      	var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre];
+      	//var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
+      	var validarVariable = true;
+      	if( validarVariable ) {
+      		newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
+      	} else {
+      		//bitacora add error porque no inserto variable
+      	}
+      };*/
 
-      for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
-        var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
-
-        var validarVariable = true;
-
-        if (validarVariable) {
-          newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
-        } else {//bitacora add error porque no inserto variable
-        }
-      }
-
-      ;
       var newObjectPago = {};
 
       for (var i = 0; i < camposAGuardarDePagosCreditosDeTablas.length; i++) {
@@ -1334,8 +1322,9 @@ function insercionBinariaPlanPagos(valor, campoCliente, campoNumCuenta, tipoCamp
       }
 
       ;
-      arregloClientes.push(newObject);
-      arregloCreditos[0].push(newObjectCredito);
+      /*arregloClientes.push(newObject);
+         arregloCreditos[0].push(newObjectCredito);*/
+
       arregloPlanPagos[0][0].push(newObjectPago);
     }
 
@@ -1410,35 +1399,29 @@ function insercionBinariaPlanPagos(valor, campoCliente, campoNumCuenta, tipoCamp
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] > arregloClientes[end][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[end][campoCliente]) > 0) {
-    var newObject = {};
-
+    /*var newObject = {};
     for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
+    var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+    //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+    var validarVariable = true;
+    if( validarVariable ) {
+    newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+    } else {
+    //bitacora add error porque no inserto variable
     }
-
-    ;
+    };
     var newObjectCredito = {};
-
     for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
+    var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre];
+    //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
+    var validarVariable = true;
+    if( validarVariable ) {
+    newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
+    } else {
+    //bitacora add error porque no inserto variable
     }
-
-    ;
-    var newArray = [newObjectCredito];
+    };
+    var newArray = [newObjectCredito];*/
     var newObjectPago = {};
 
     for (var i = 0; i < camposAGuardarDePagosCreditosDeTablas.length; i++) {
@@ -1454,43 +1437,39 @@ function insercionBinariaPlanPagos(valor, campoCliente, campoNumCuenta, tipoCamp
 
     ;
     var newArrayPagos = [[newObjectPago]];
-    arregloClientes.splice(end + 1, 0, newObject);
-    arregloCreditos.splice(end + 1, 0, newArray);
+    /*arregloClientes.splice(end + 1, 0, newObject);
+    arregloCreditos.splice(end + 1, 0, newArray);*/
+
     arregloPlanPagos.splice(end + 1, 0, newArrayPagos);
     return;
   }
 
   if ((esIntCampoCliente || esDecCampoCliente) && valor[campoCliente] < arregloClientes[start][campoCliente] || esStringCampoCliente && valor[campoCliente].localeCompare(arregloClientes[start][campoCliente]) < 0) {
     //!!
-    var newObject = {};
 
-    for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
-    }
-
-    ;
+    /*var newObject = {};
+       for (var i = 0; i < camposAGuardarDeClientesCreditosDeTablas.length; i++) {
+    	var valorAInsertar = valor[camposAGuardarDeClientesCreditosDeTablas[i].nombre];
+    	//var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeClientesCreditosDeTablas[i].tipo);
+    	var validarVariable = true;
+    	if( validarVariable ) {
+    		newObject[camposAGuardarDeClientesCreditosDeTablas[i].nombre] = valorAInsertar;
+    	} else {
+    		//bitacora add error porque no inserto variable
+    	}
+    };
     var newObjectCredito = {};
-
-    for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
-      var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre]; //var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
-
-      var validarVariable = true;
-
-      if (validarVariable) {
-        newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
-      } else {//bitacora add error porque no inserto variable
-      }
-    }
-
-    ;
-    var newArray = [newObjectCredito];
+       for (var i = 0; i < camposAGuardarDeCreditosCreditosDeTablas.length; i++) {
+    	var valorAInsertar = valor[camposAGuardarDeCreditosCreditosDeTablas[i].nombre];
+    	//var validarVariable = checkVariable(valorAInsertar, camposAGuardarDeCreditosCreditosDeTablas[i].tipo);
+    	var validarVariable = true;
+    	if( validarVariable ) {
+    		newObjectCredito[camposAGuardarDeCreditosCreditosDeTablas[i].nombre] = valorAInsertar;
+    	} else {
+    		//bitacora add error porque no inserto variable
+    	}
+    };
+    var newArray = [newObjectCredito];*/
     var newObjectPago = {};
 
     for (var i = 0; i < camposAGuardarDePagosCreditosDeTablas.length; i++) {
@@ -1506,8 +1485,9 @@ function insercionBinariaPlanPagos(valor, campoCliente, campoNumCuenta, tipoCamp
 
     ;
     var newArrayPagos = [[newObjectPago]];
-    arregloClientes.splice(start, 0, newObject);
-    arregloCreditos.splice(start, 0, newArray);
+    /*arregloClientes.splice(start, 0, newObject);
+    arregloCreditos.splice(start, 0, newArray);*/
+
     arregloPlanPagos.splice(start, 0, newArrayPagos);
     return;
   }
@@ -1527,4 +1507,4 @@ function insercionBinariaPlanPagos(valor, campoCliente, campoNumCuenta, tipoCamp
   }
 }
 /* ================================		UTILS		================================*/
-//# sourceMappingURL=ClasificarCredito.js.map
+//# sourceMappingURL=ClasificarCreditoD.js.map

@@ -52,11 +52,22 @@ function (_React$Component) {
       }, {
         clases: "btn btn-outline-success btn-block btnWhiteColorHover"
       }, {
-        clases: "btn btn-outline-brand btn-block btnWhiteColorHover"
-      }, {
         clases: "btn btn-outline-danger btn-block btnWhiteColorHover"
       }, {
         clases: "btn btn-outline-dark btn-block btnWhiteColorHover"
+      }];
+      var colorSeleccionado = [{
+        clases: "btn btn-outline-primary-active btn-block btnWhiteColorHover"
+      }, {
+        clases: "btn btn-outline-secondary-active btn-block btnWhiteColorHover"
+      }, {
+        clases: "btn btn-outline-info-active btn-block btnWhiteColorHover"
+      }, {
+        clases: "btn btn-outline-success-active btn-block btnWhiteColorHover"
+      }, {
+        clases: "btn btn-outline-danger-active btn-block btnWhiteColorHover"
+      }, {
+        clases: "btn btn-outline-dark-active btn-block btnWhiteColorHover"
       }];
       return _react["default"].createElement("div", {
         style: {
@@ -91,7 +102,7 @@ function (_React$Component) {
           onClick: function onClick() {
             return _this.props.selectTable(i);
           },
-          className: color[i % color.length].clases
+          className: tabla.active ? colorSeleccionado[i % colorSeleccionado.length].clases : color[i % color.length].clases
         }, tabla.nombre)));
       }));
     }

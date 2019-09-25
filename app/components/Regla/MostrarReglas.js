@@ -33,17 +33,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var SeleccionarRegla =
+var MostrarReglas =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(SeleccionarRegla, _React$Component);
+  _inherits(MostrarReglas, _React$Component);
 
-  function SeleccionarRegla(props) {
+  function MostrarReglas(props) {
     var _this;
 
-    _classCallCheck(this, SeleccionarRegla);
+    _classCallCheck(this, MostrarReglas);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(SeleccionarRegla).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MostrarReglas).call(this, props));
     _this.state = {
       reglas: [],
       mostrarCreacionRegla: false
@@ -54,7 +54,7 @@ function (_React$Component) {
     return _this;
   }
 
-  _createClass(SeleccionarRegla, [{
+  _createClass(MostrarReglas, [{
     key: "componentDidMount",
     value: function componentDidMount() {
       this.loadRules();
@@ -71,7 +71,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from Reglas", function (err, result) {
+        request.query("select * from Reglas where tipoTablaRes = '" + _this2.props.tipoTablaRes + "' and idTipoTabla = " + _this2.props.idTipoTabla, function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -143,11 +143,13 @@ function (_React$Component) {
         }, _react["default"].createElement("a", {
           href: "#",
           className: "breadcrumb-link"
-        }, "Seleccionar Variables")), _react["default"].createElement("li", {
+        }, "Mostrar Variables")), _react["default"].createElement("li", {
           className: "breadcrumb-item active",
           "aria-current": "page"
         }, "Creaci\xF3n de Variables"))))))), _react["default"].createElement(_VariableCreation["default"], {
-          pool: this.props.pool
+          pool: this.props.pool,
+          tipoTablaRes: this.props.tipoTablaRes,
+          idTipoTabla: this.props.idTipoTabla
         }, " "));
       } else {
         return _react["default"].createElement("div", null, _react["default"].createElement("div", {
@@ -235,8 +237,8 @@ function (_React$Component) {
     }
   }]);
 
-  return SeleccionarRegla;
+  return MostrarReglas;
 }(_react["default"].Component);
 
-exports["default"] = SeleccionarRegla;
-//# sourceMappingURL=SeleccionarRegla.js.map
+exports["default"] = MostrarReglas;
+//# sourceMappingURL=MostrarReglas.js.map

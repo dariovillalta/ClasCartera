@@ -39,6 +39,8 @@ var campos = [{
   nombre: "date"
 }, {
   nombre: "int"
+}, {
+  nombre: "decimal"
 }];
 
 var CrearYSeleccionarLista =

@@ -53,6 +53,8 @@ var campos = [{
   nombre: "date"
 }, {
   nombre: "int"
+}, {
+  nombre: "decimal"
 }];
 var tablas = [{
   nombre: "Cliente"
@@ -61,7 +63,7 @@ var tablas = [{
 }, {
   nombre: "Pagos"
 }, {
-  nombre: "Plan de Pagos"
+  nombre: "PlanPagos"
 }];
 var funciones = [{
   nombre: "Identificador"
@@ -179,7 +181,7 @@ function (_React$Component) {
 
       if (!isNaN(idTabla) && idTabla.toString().length > 0) {
         if (campoNombre.length > 0 && campoNombre.length < 41) {
-          if (tablaCampo.length > 0 && tablaCampo.length < 11) {
+          if (tablaCampo.length > 0 && tablaCampo.length < 16) {
             if (funcionCampo.length > 0 && funcionCampo.length < 16) {
               if (tipoCampo.length > 0 && tipoCampo.length < 26) {
                 if (guardarCampo != undefined) {
@@ -273,7 +275,7 @@ function (_React$Component) {
 
             var _descripcion3;
 
-            if (tablaCampo.length == 0) _descripcion3 = "El campo debe tener una longitud mayor a 0.";else _descripcion3 = "El campo debe tener una longitud menor a 11.";
+            if (tablaCampo.length == 0) _descripcion3 = "El campo debe tener una longitud mayor a 0.";else _descripcion3 = "El campo debe tener una longitud menor a 16.";
             this.setState({
               errorCreacionCampo: {
                 campo: _campo3,
@@ -347,7 +349,7 @@ function (_React$Component) {
 
       if (!isNaN(idTabla) && idTabla.toString().length > 0) {
         if (campoNombre.length > 0 && campoNombre.length < 41) {
-          if (tablaCampo.length > 0 && tablaCampo.length < 11) {
+          if (tablaCampo.length > 0 && tablaCampo.length < 16) {
             if (funcionCampo.length > 0 && funcionCampo.length < 16) {
               if (tipoCampo.length > 0 && tipoCampo.length < 26) {
                 if (guardarCampo != undefined) {
@@ -389,25 +391,17 @@ function (_React$Component) {
                       } else {
                         transaction.commit(function (err) {
                           // 1. Make a shallow copy of the items
-                          var campos = _toConsumableArray(_this4.state.camposDeTabla); // 2. Make a shallow copy of the item you want to mutate
-
-
-                          var campo = _toConsumableArray(campos[index]); // 3. Replace the property you're intested in
-
-
-                          campo = {
-                            ID: campo.ID,
-                            idTabla: idTabla,
-                            nombre: campoNombre,
-                            tipo: tipoCampo,
-                            guardar: guardarCampo
-                          }; // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-
-                          campos[index] = campo; // 5. Set the state to our new copy
-                          //this.loadTables();
+                          //let campos = [...this.state.camposDeTabla];
+                          // 2. Make a shallow copy of the item you want to mutate
+                          //let campo = [...campos[index]];
+                          // 3. Replace the property you're intested in
+                          //campo = {ID: campo.ID, idTabla: idTabla, nombre: campoNombre, tipo: tipoCampo, guardar: guardarCampo};
+                          // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                          //campos[index] = campo;
+                          // 5. Set the state to our new copy
+                          _this4.loadFields();
 
                           _this4.setState({
-                            camposDeTabla: campos,
                             mensajeModal: {
                               mostrarMensaje: false,
                               mensajeConfirmado: true,
@@ -513,7 +507,7 @@ function (_React$Component) {
 
             var _descripcion8;
 
-            if (tablaCampo.length == 0) _descripcion8 = "El campo debe tener una longitud mayor a 0.";else _descripcion8 = "El campo debe tener una longitud menor a 11.";
+            if (tablaCampo.length == 0) _descripcion8 = "El campo debe tener una longitud mayor a 0.";else _descripcion8 = "El campo debe tener una longitud menor a 16.";
             this.setState({
               errorModificarCampo: {
                 campo: _campo8,

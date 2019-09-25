@@ -19,7 +19,7 @@ export default class GuardarTipoCreditoCampo extends React.Component {
                         rolledBack = true;
                     });
                     const request = new sql.Request(transaction);
-                    request.query("insert into TipoCreditoCampo (tipoCreditoID, tablaID, reglaID, nombre, descripcion) values ("+this.props.creditoID+","+this.props.tablaID+","+this.props.reglaID+",'"+nombre+"','"+descripcion+"')", (err, result) => {
+                    request.query("insert into TipoCreditoCampo (tipoCreditoID, reglaID, nombre, descripcion) values ("+this.props.creditoID+","+this.props.reglaID+",'"+nombre+"','"+descripcion+"')", (err, result) => {
                         if (err) {
                             if (!rolledBack) {
                                 console.log(err);

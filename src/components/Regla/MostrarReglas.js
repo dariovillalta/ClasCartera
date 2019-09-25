@@ -4,7 +4,7 @@ import sql from 'mssql';
 import VariableCreation from './VariableCreation.js';
 import ReglaTexto from './ReglaTexto.js';
 
-export default class SeleccionarRegla extends React.Component {
+export default class MostrarReglas extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -28,7 +28,7 @@ export default class SeleccionarRegla extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from Reglas", (err, result) => {
+            request.query("select * from Reglas where tipoTablaRes = '"+this.props.tipoTablaRes+"' and idTipoTabla = "+this.props.idTipoTabla, (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -72,7 +72,7 @@ export default class SeleccionarRegla extends React.Component {
                                         <ol className={"breadcrumb"}>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.returnPrevComponent}><a href="#" className={"breadcrumb-link"}>{this.props.returnPrevComponentName}</a></li>
-                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnChooseRule}><a href="#" className={"breadcrumb-link"}>Seleccionar Variables</a></li>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnChooseRule}><a href="#" className={"breadcrumb-link"}>Mostrar Variables</a></li>
                                             <li className={"breadcrumb-item active"} aria-current="page">Creaci&oacute;n de Variables</li>
                                         </ol>
                                     </nav>
@@ -80,7 +80,7 @@ export default class SeleccionarRegla extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <VariableCreation pool={this.props.pool}> </VariableCreation>
+                    <VariableCreation pool={this.props.pool}  tipoTablaRes={this.props.tipoTablaRes} idTipoTabla={this.props.idTipoTabla}> </VariableCreation>
                 </div>
             );
         } else {

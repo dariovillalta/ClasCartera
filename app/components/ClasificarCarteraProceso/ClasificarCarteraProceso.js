@@ -13,9 +13,13 @@ var _SeleccionarTablaClasificarCarteraProceso = _interopRequireDefault(require("
 
 var _ConfiguracionTablasClasificar = _interopRequireDefault(require("./ConfiguracionTablasClasificar.js"));
 
+var _ClasificarCreditoD = require("../ClasificarCreditoD.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -41,10 +45,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var myWorker = new Worker("./components/ClasificarCredito.js");
+var myWorker = new Worker("./components/ClasificarCredito.js"); //import "../../libs/moment/min/moment.min.js";
+
 var tamanoFinalBandera = 0,
     tamanoActualBandera = 0,
-    camposGuardar;
+    camposGuardar,
+    arregloCamposTablasSeleccionadas = [];
+var procesosACalcular = {
+  capacidadDeudor: false,
+  diasMora: false,
+  disponibilidadGarantias: false,
+  entornoEconomico: false,
+  tiposCredito: false,
+  categoriasClasificacion: false,
+  criteriosDeterioro: false
+};
+var banderaGuardarResultadosTamActual, banderaGuardarResultadosTamFinal;
 
 var ClasificarCarteraProceso =
 /*#__PURE__*/
@@ -77,18 +93,17 @@ function (_React$Component) {
     _this.getPlanPagoCamposDeTablaComportamientoPago = _this.getPlanPagoCamposDeTablaComportamientoPago.bind(_assertThisInitialized(_this));
     _this.initWebWorkerComportamientoPago = _this.initWebWorkerComportamientoPago.bind(_assertThisInitialized(_this));
     _this.propiedadDeObjetoExisteEnTablaCampos = _this.propiedadDeObjetoExisteEnTablaCampos.bind(_assertThisInitialized(_this));
-    _this.agregarOpciones = _this.agregarOpciones.bind(_assertThisInitialized(_this));
+    _this.verificarProcesosAClasificar = _this.verificarProcesosAClasificar.bind(_assertThisInitialized(_this));
     _this.obtenerTipoCredito = _this.obtenerTipoCredito.bind(_assertThisInitialized(_this));
     _this.obtenerTipoCreditoCampos = _this.obtenerTipoCreditoCampos.bind(_assertThisInitialized(_this));
     _this.fetchDataTipoCredito = _this.fetchDataTipoCredito.bind(_assertThisInitialized(_this));
-    _this.fetchDataTipoCreditoCampos = _this.fetchDataTipoCreditoCampos.bind(_assertThisInitialized(_this));
     _this.fetchDataReglasTipoCreditoCampos = _this.fetchDataReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
-    _this.verificarReglasTipoCreditoCampos = _this.verificarReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
     _this.fetchDataCamposReglasTipoCreditoCampos = _this.fetchDataCamposReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
     _this.verificarCamposReglasTipoCreditoCampos = _this.verificarCamposReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
     _this.fetchDataValoresReglasTipoCreditoCampos = _this.fetchDataValoresReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
     _this.verificarValoresReglasTipoCreditoCampos = _this.verificarValoresReglasTipoCreditoCampos.bind(_assertThisInitialized(_this));
     _this.verifyTypeCreditFinal = _this.verifyTypeCreditFinal.bind(_assertThisInitialized(_this));
+    _this.checkFinishMethods = _this.checkFinishMethods.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -122,6 +137,12 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
+              for (var i = 0; i < result.recordset.length; i++) {
+                result.recordset[i].active = false;
+              }
+
+              ;
+
               _this2.setState({
                 tablasOrginales: result.recordset
               });
@@ -134,6 +155,10 @@ function (_React$Component) {
     key: "selectTable",
     value: function selectTable(index) {
       var existeTablaEnConf = false;
+      this.state.tablasOrginales[index].active = !this.state.tablasOrginales[index].active;
+      this.setState({
+        tablasOrginales: this.state.tablasOrginales
+      });
 
       for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
         if (this.state.tablasOrginales[index].ID == this.state.tablasSeleccionadas[i].ID) {
@@ -166,15 +191,14 @@ function (_React$Component) {
           });
         }
 
-        this.agregarOpciones(this.state.tablasOrginales[index].ID);
+        this.verificarProcesosAClasificar(this.state.tablasOrginales[index].ID);
       }
     } //metodo para agregar tipo de credito, tipo de cliente, criterios de clasificacion por tabla
 
   }, {
-    key: "agregarOpciones",
-    value: function agregarOpciones(index) {
-      //opcionesTablasSeleccionadas
-      this.obtenerTipoCredito(index);
+    key: "verificarProcesosAClasificar",
+    value: function verificarProcesosAClasificar(index) {//opcionesTablasSeleccionadas
+      //this.obtenerTipoCredito(index);
     }
   }, {
     key: "obtenerTipoCredito",
@@ -196,16 +220,18 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              var tablasSelCopiaTemp = _toConsumableArray(_this3.state.opcionesTablasSeleccionadas);
+              if (result.recordset.length > 0) {
+                var tablasSelCopiaTemp = _toConsumableArray(_this3.state.opcionesTablasSeleccionadas);
 
-              if (tablasSelCopiaTemp[_this3.state.tablasSeleccionadas.length - 1] == undefined) tablasSelCopiaTemp[_this3.state.tablasSeleccionadas.length - 1] = {};
-              tablasSelCopiaTemp[_this3.state.tablasSeleccionadas.length - 1].tipoCreditoNombre = result.recordset[0].nombre;
+                if (tablasSelCopiaTemp[_this3.state.tablasSeleccionadas.length - 1] == undefined) tablasSelCopiaTemp[_this3.state.tablasSeleccionadas.length - 1] = {};
+                tablasSelCopiaTemp[_this3.state.tablasSeleccionadas.length - 1].tipoCreditoNombre = result.recordset[0].nombre;
 
-              _this3.setState({
-                opcionesTablasSeleccionadas: tablasSelCopiaTemp
-              });
+                _this3.setState({
+                  opcionesTablasSeleccionadas: tablasSelCopiaTemp
+                });
 
-              _this3.obtenerTipoCreditoCampos(result.recordset[0].ID);
+                _this3.obtenerTipoCreditoCampos(result.recordset[0].ID);
+              }
             });
           }
         });
@@ -257,9 +283,10 @@ function (_React$Component) {
     key: "creandoArreglos",
     value: function creandoArreglos() {
       camposGuardar = [];
+      tamanoFinalBandera = this.state.tablasOrginales.length, tamanoActualBandera = 0;
 
-      for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
-        this.tablasGuardarCampos(this.state.tablasSeleccionadas[i].ID);
+      for (var i = 0; i < this.state.tablasOrginales.length; i++) {
+        this.tablasGuardarCampos(this.state.tablasOrginales[i].ID, i);
       }
 
       ;
@@ -286,7 +313,7 @@ function (_React$Component) {
 
   }, {
     key: "tablasGuardarCampos",
-    value: function tablasGuardarCampos(tablaID) {
+    value: function tablasGuardarCampos(tablaID, posicionArregloTablasSel) {
       var _this5 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
@@ -332,7 +359,7 @@ function (_React$Component) {
                 pool.request() // or: new sql.Request(pool1)
                 .query("select * from " + tabla, function (err, result) {
                   if (result != undefined) {
-                    _this5.verificarGuardarCampos(tablaID, result.recordset);
+                    _this5.verificarGuardarCampos(tablaID, result.recordset, posicionArregloTablasSel);
                   } else {//agregar error fallo connecion tabla (no existe o malos campos)
                   }
                 });
@@ -344,7 +371,7 @@ function (_React$Component) {
     }
   }, {
     key: "verificarGuardarCampos",
-    value: function verificarGuardarCampos(tablaID, valoresTabla) {
+    value: function verificarGuardarCampos(tablaID, valoresTabla, posicionArregloTablasSel) {
       var _this6 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
@@ -374,15 +401,23 @@ function (_React$Component) {
               var camposAGuardarPrestamo = result.recordset.filter(function (object) {
                 return object.tabla.localeCompare("Préstamo") == 0;
               });
+              arregloCamposTablasSeleccionadas.splice(posicionArregloTablasSel, 0, result.recordset);
 
               if (identificadorCliente.length == 0 && identificadorPrestamo.length == 0) {
                 alert("Tiene que ingresar un campo Identificador para Cliente o para Préstamo");
               } else {
                 //viendo si se llama metodo crear arreglo para clientes y prestamos o solo uno
+                tamanoActualBandera++;
+
                 if (identificadorCliente.length > 0 && identificadorPrestamo.length > 0) {
-                  myWorker.postMessage(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, false]);
-                  myWorker.postMessage(["iniciarArregloPrestamos", valoresTabla, identificadorCliente[0].nombre, identificadorPrestamo[0].nombre, identificadorCliente[0].tipo, identificadorPrestamo[0].tipo, camposAGuardarPrestamo, true]);
+                  //myWorker.postMessage(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, false]);
+                  //myWorker.postMessage(["iniciarArregloPrestamos", valoresTabla, identificadorCliente[0].nombre, identificadorPrestamo[0].nombre, identificadorCliente[0].tipo, identificadorPrestamo[0].tipo, camposAGuardarPrestamo, true]);
+                  (0, _ClasificarCreditoD.constructor)(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, false]);
+                  (0, _ClasificarCreditoD.constructor)(["iniciarArregloPrestamos", valoresTabla, identificadorCliente[0].nombre, identificadorPrestamo[0].nombre, identificadorCliente[0].tipo, identificadorPrestamo[0].tipo, camposAGuardarPrestamo, true]);
                   camposGuardar.concat(result.recordset);
+
+                  _this6.iniciarCalculo(true, true, true, true);
+
                   var self = _this6;
 
                   myWorker.onmessage = function (e) {
@@ -393,9 +428,12 @@ function (_React$Component) {
                   };
                 } else {
                   if (identificadorCliente.length > 0) {
-                    myWorker.postMessage(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, true]);
+                    //myWorker.postMessage(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, true]);
+                    (0, _ClasificarCreditoD.constructor)(["iniciarArregloClientes", valoresTabla, identificadorCliente[0].nombre, identificadorCliente[0].tipo, camposAGuardarCliente, true]);
                     var _self = _this6;
                     camposGuardar.concat(result.recordset);
+
+                    _this6.iniciarCalculo(false, false, true, false);
 
                     myWorker.onmessage = function (e) {
                       console.log("llamado de vuelta");
@@ -418,37 +456,55 @@ function (_React$Component) {
     key: "iniciarCalculo",
     value: function iniciarCalculo(verificarComportamientoPago, verificarTipoCredito, verificarTipoCliente, verificarClasCategoria) {
       //como no tiene id prestamo o cliente, no se puede calcular comportamiento plan pago, agregar mensaje bitacora  // si verificarComportamientoPago == false
-      for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
-        var calcularComportamientoPago = false;
-        var primeraVezEntra = true; //agregar valores de tabla a arreglo global de clientes, prestamos y pagos en ClasificarCartera.js
-        //como no tiene id prestamo o cliente, no se puede calcular comportamiento plan pago, agregar mensaje bitacora  // si verificarComportamientoPago == false
+      if (tamanoActualBandera == tamanoFinalBandera) {
+        banderaGuardarResultadosTamActual = 0;
+        banderaGuardarResultadosTamFinal = 0;
 
-        if (verificarComportamientoPago && $("#ComportamientoPago" + i).prop('checked') == true) calcularComportamientoPago = true;
+        for (var i = 0; i < this.state.tablasOrginales.length; i++) {
+          var calcularComportamientoPago = false;
+          var primeraVezEntra = true; //agregar valores de tabla a arreglo global de clientes, prestamos y pagos en ClasificarCartera.js
+          //como no tiene id prestamo o cliente, no se puede calcular comportamiento plan pago, agregar mensaje bitacora  // si verificarComportamientoPago == false
 
-        if (calcularComportamientoPago) {
-          this.fetchDataComportamientoPago(this.state.tablasSeleccionadas[i].ID);
+          /*if(verificarComportamientoPago && $("#ComportamientoPago"+i).prop('checked') == true)
+              calcularComportamientoPago = true;*/
+          //if(calcularComportamientoPago) {
 
-          if (primeraVezEntra) {
-            primeraVezEntra = false;
+          this.fetchDataComportamientoPago(this.state.tablasOrginales[i].ID); //banderaGuardarResultadosTamFinal++;
+
+          /*if(primeraVezEntra) {
+              primeraVezEntra = false;
           }
+          }
+          if(verificarTipoCredito) {*/
+          //this.fetchDataTipoCredito(this.state.tablasOrginales[i].ID);
+
+          banderaGuardarResultadosTamFinal++; //}
         }
 
-        if (verificarTipoCredito) {
-          this.fetchDataTipoCredito(this.state.tablasSeleccionadas[i].ID);
-        }
+        ;
       }
-
-      ;
     }
     /*      
         *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
                         INICIAR ARREGLOS
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
         *****   *****   *****       *****   *****   *****   *****
     */
 
     /*      
         *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
                         COMPORTAMIENTO PAGO
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
         *****   *****   *****       *****   *****   *****   *****
     */
 
@@ -468,6 +524,7 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
@@ -496,6 +553,7 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
@@ -530,6 +588,7 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
@@ -564,6 +623,7 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
@@ -613,6 +673,7 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
@@ -626,7 +687,11 @@ function (_React$Component) {
   }, {
     key: "initWebWorkerComportamientoPago",
     value: function initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago) {
-      myWorker.postMessage(["comportamientoPago", camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago]);
+      //myWorker.postMessage(["comportamientoPago", camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago]);
+      console.log('AHHHHHH');
+      (0, _ClasificarCreditoD.constructor)(["comportamientoPago", camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago]);
+      banderaGuardarResultadosTamActual++;
+      this.checkFinishMethods();
     }
   }, {
     key: "getFieldsFromCamposTable",
@@ -643,6 +708,7 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
@@ -753,24 +819,35 @@ function (_React$Component) {
         }
     */
 
-    /*      
+    /*  
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****    
         *****   *****   *****       *****   *****   *****   *****
                         COMPORTAMIENTO PAGO
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
         *****   *****   *****       *****   *****   *****   *****
     */
 
     /*      
         *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
                         TIPO DE CREDITOS
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
         *****   *****   *****       *****   *****   *****   *****
     */
 
   }, {
     key: "fetchDataTipoCredito",
-    value: function fetchDataTipoCredito(tablaID) {
+    value: function fetchDataTipoCredito() {
       var _this12 = this;
 
-      console.log("tablaID = " + tablaID);
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
         var rolledBack = false;
@@ -778,21 +855,21 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from TipoCredito where tablaID = " + tablaID, function (err, result) {
+        request.query("select * from TipoCredito", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
             transaction.commit(function (err) {
               //arregloCamposTipoCreditos: Cada posicion del arreglo corresponde a la del tipo de credito
-              var arregloCamposTipoCreditos = [];
-              console.log(result.recordset);
-              tamanoFinalBandera = result.recordset.length;
+              var arregloReglasTipoCreditos = [];
+              tamanoFinalBandera = result.recordset.length, tamanoActualBandera = 0;
 
               for (var i = 0; i < result.recordset.length; i++) {
-                _this12.fetchDataTipoCreditoCampos(result.recordset[i], arregloCamposTipoCreditos, i, result.recordset);
+                _this12.fetchDataReglasTipoCreditoCampos(result.recordset[i], arregloReglasTipoCreditos, i, result.recordset);
               }
             });
           }
@@ -800,8 +877,8 @@ function (_React$Component) {
       }); // fin transaction
     }
   }, {
-    key: "fetchDataTipoCreditoCampos",
-    value: function fetchDataTipoCreditoCampos(tipoCredito, arregloCamposTipoCreditos, i, arregloTipoCreditos) {
+    key: "fetchDataReglasTipoCreditoCampos",
+    value: function fetchDataReglasTipoCreditoCampos(tipoCredito, arregloReglasTipoCreditos, i, arregloTipoCreditos) {
       var _this13 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
@@ -811,85 +888,19 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from TipoCreditoCampo where tipoCreditoID = " + tipoCredito.ID, function (err, result) {
+        request.query("select * from Reglas where tipoTablaRes = 'TipoCredito' and idTipoTabla=" + tipoCredito.ID, function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
             transaction.commit(function (err) {
-              console.log('TipoCreditoCampo');
-              console.log(result.recordset);
               tamanoActualBandera++;
-              arregloCamposTipoCreditos[i] = result.recordset;
+              arregloReglasTipoCreditos[i] = result.recordset;
 
-              _this13.verificarReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos);
-            });
-          }
-        });
-      }); // fin transaction
-    }
-  }, {
-    key: "verificarReglasTipoCreditoCampos",
-    value: function verificarReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos) {
-      console.log("tamanoActualBandera = " + tamanoActualBandera);
-      console.log("tamanoFinalBandera = " + tamanoFinalBandera); //AQUI arregloCamposTipoCreditos verificar si tiene campos
-
-      if (tamanoActualBandera == tamanoFinalBandera) {
-        //arregloReglasDeCamposTipoCreditos: Cada posicion del arreglo corresponde a la del campo de tipo de credito
-        var arregloReglasDeCamposTipoCreditos = [];
-        tamanoActualBandera = 0, tamanoFinalBandera = 0;
-
-        for (var i = 0; i < arregloCamposTipoCreditos.length; i++) {
-          for (var j = 0; j < arregloCamposTipoCreditos[i].length; j++) {
-            tamanoFinalBandera++;
-          }
-
-          ;
-        }
-
-        ;
-
-        for (var i = 0; i < arregloCamposTipoCreditos.length; i++) {
-          if (arregloReglasDeCamposTipoCreditos[i] == undefined) arregloReglasDeCamposTipoCreditos[i] = [];
-
-          for (var j = 0; j < arregloCamposTipoCreditos[i].length; j++) {
-            this.fetchDataReglasTipoCreditoCampos(arregloCamposTipoCreditos[i][j], arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos);
-          }
-
-          ;
-        }
-
-        ;
-      }
-    }
-  }, {
-    key: "fetchDataReglasTipoCreditoCampos",
-    value: function fetchDataReglasTipoCreditoCampos(tipoCredito, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos) {
-      var _this14 = this;
-
-      var transaction = new _mssql["default"].Transaction(this.props.pool);
-      transaction.begin(function (err) {
-        var rolledBack = false;
-        transaction.on('rollback', function (aborted) {
-          rolledBack = true;
-        });
-        var request = new _mssql["default"].Request(transaction);
-        request.query("select * from Reglas where ID = " + tipoCredito.reglaID, function (err, result) {
-          if (err) {
-            if (!rolledBack) {
-              console.log(err);
-              transaction.rollback(function (err) {});
-            }
-          } else {
-            transaction.commit(function (err) {
-              console.log('Reglas');
-              console.log(result.recordset);
-              tamanoActualBandera++;
-              arregloReglasDeCamposTipoCreditos[i][j] = result.recordset[0];
-
-              _this14.verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos);
+              _this13.verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
             });
           }
         });
@@ -897,12 +908,12 @@ function (_React$Component) {
     }
   }, {
     key: "verificarCamposReglasTipoCreditoCampos",
-    value: function verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos) {
+    value: function verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos) {
       if (tamanoActualBandera == tamanoFinalBandera) {
         tamanoActualBandera = 0, tamanoFinalBandera = 0;
 
-        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
-          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
             tamanoFinalBandera++;
           }
 
@@ -911,9 +922,9 @@ function (_React$Component) {
 
         ;
 
-        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
-          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
-            this.fetchDataCamposReglasTipoCreditoCampos(arregloReglasDeCamposTipoCreditos[i][j], arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos);
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+            this.fetchDataCamposReglasTipoCreditoCampos(arregloReglasTipoCreditos[i][j], arregloReglasTipoCreditos, i, j, arregloTipoCreditos);
           }
 
           ;
@@ -924,8 +935,8 @@ function (_React$Component) {
     }
   }, {
     key: "fetchDataCamposReglasTipoCreditoCampos",
-    value: function fetchDataCamposReglasTipoCreditoCampos(regla, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos) {
-      var _this15 = this;
+    value: function fetchDataCamposReglasTipoCreditoCampos(regla, arregloReglasTipoCreditos, i, j, arregloTipoCreditos) {
+      var _this14 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
@@ -938,16 +949,15 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
             transaction.commit(function (err) {
-              console.log('Campos');
-              console.log(result.recordset);
               tamanoActualBandera++;
-              arregloReglasDeCamposTipoCreditos[i][j].campoValor = result.recordset[0];
+              arregloReglasTipoCreditos[i][j].campoValor = result.recordset[0];
 
-              _this15.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos);
+              _this14.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
             });
           }
         });
@@ -955,13 +965,13 @@ function (_React$Component) {
     }
   }, {
     key: "verificarValoresReglasTipoCreditoCampos",
-    value: function verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos) {
+    value: function verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos) {
       if (tamanoActualBandera == tamanoFinalBandera) {
         tamanoActualBandera = 0, tamanoFinalBandera = 0;
 
-        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
-          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
-            var idsValores = arregloReglasDeCamposTipoCreditos[i][j].valor.split(",");
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+            var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
 
             for (var k = 0; k < idsValores.length; k++) {
               tamanoFinalBandera++;
@@ -975,12 +985,12 @@ function (_React$Component) {
 
         ;
 
-        for (var i = 0; i < arregloReglasDeCamposTipoCreditos.length; i++) {
-          for (var j = 0; j < arregloReglasDeCamposTipoCreditos[i].length; j++) {
-            var idsValores = arregloReglasDeCamposTipoCreditos[i][j].valor.split(",");
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+          for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+            var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
 
             for (var k = 0; k < idsValores.length; k++) {
-              this.fetchDataValoresReglasTipoCreditoCampos(idsValores[k], arregloReglasDeCamposTipoCreditos[i][j].esListaValor, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos);
+              this.fetchDataValoresReglasTipoCreditoCampos(idsValores[k], arregloReglasTipoCreditos[i][j].esListaValor, arregloReglasTipoCreditos, i, j, arregloTipoCreditos);
             }
 
             ;
@@ -994,8 +1004,8 @@ function (_React$Component) {
     }
   }, {
     key: "fetchDataValoresReglasTipoCreditoCampos",
-    value: function fetchDataValoresReglasTipoCreditoCampos(id, esLista, arregloReglasDeCamposTipoCreditos, i, j, arregloTipoCreditos, arregloCamposTipoCreditos) {
-      var _this16 = this;
+    value: function fetchDataValoresReglasTipoCreditoCampos(id, esLista, arregloReglasTipoCreditos, i, j, arregloTipoCreditos) {
+      var _this15 = this;
 
       var tabla;
       if (esLista) tabla = 'VariablesdeLista';else tabla = 'Campos';
@@ -1010,17 +1020,16 @@ function (_React$Component) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
+              banderaGuardarResultadosTamActual++;
               transaction.rollback(function (err) {});
             }
           } else {
             transaction.commit(function (err) {
-              console.log(tabla);
-              console.log(result.recordset);
               tamanoActualBandera++;
-              if (arregloReglasDeCamposTipoCreditos[i][j].valorValores == undefined) arregloReglasDeCamposTipoCreditos[i][j].valorValores = [];
-              arregloReglasDeCamposTipoCreditos[i][j].valorValores.push(result.recordset[0]);
+              if (arregloReglasTipoCreditos[i][j].valorValores == undefined) arregloReglasTipoCreditos[i][j].valorValores = [];
+              arregloReglasTipoCreditos[i][j].valorValores.push(result.recordset[0]);
 
-              _this16.verifyTypeCreditFinal(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos);
+              _this15.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos);
             });
           }
         });
@@ -1028,20 +1037,25 @@ function (_React$Component) {
     }
   }, {
     key: "verifyTypeCreditFinal",
-    value: function verifyTypeCreditFinal(arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos) {
-      console.log("tamanoActualBandera = " + tamanoActualBandera);
-      console.log("tamanoFinalBandera = " + tamanoFinalBandera);
-
+    value: function verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos) {
       if (tamanoActualBandera == tamanoFinalBandera) {
         console.log(arregloTipoCreditos);
-        console.log(arregloCamposTipoCreditos);
-        console.log(arregloReglasDeCamposTipoCreditos);
-        myWorker.postMessage(["tiposCredito", arregloTipoCreditos, arregloCamposTipoCreditos, arregloReglasDeCamposTipoCreditos]);
+        console.log(arregloReglasTipoCreditos); //myWorker.postMessage(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);
+
+        (0, _ClasificarCreditoD.constructor)(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);
+        banderaGuardarResultadosTamActual++;
+        this.checkFinishMethods();
       }
     }
-    /*      
+    /* 
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****     
         *****   *****   *****       *****   *****   *****   *****
                         TIPO DE CREDITOS
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
+        *****   *****   *****       *****   *****   *****   *****
         *****   *****   *****       *****   *****   *****   *****
     */
 
@@ -1051,6 +1065,23 @@ function (_React$Component) {
         *****   *****   *****       *****   *****   *****   *****
     */
 
+  }, {
+    key: "checkFinishMethods",
+    value: function checkFinishMethods() {
+      console.log("banderaGuardarResultadosTamActual = " + banderaGuardarResultadosTamActual);
+      console.log("banderaGuardarResultadosTamFinal = " + banderaGuardarResultadosTamFinal);
+
+      if (banderaGuardarResultadosTamActual == banderaGuardarResultadosTamFinal) {
+        console.log("FIN DE CALCULOS");
+        console.log("GUARDANDO CAMPOS");
+
+        for (var i = 0; i < arregloCamposTablasSeleccionadas.length; i++) {
+          console.log(arregloCamposTablasSeleccionadas[i]);
+        }
+
+        ;
+      }
+    }
   }, {
     key: "iterateProperties",
     value: function iterateProperties(arreglo) {
@@ -1130,7 +1161,7 @@ function (_React$Component) {
   }, {
     key: "saveResultFieldInt",
     value: function saveResultFieldInt(idObjetoV, objetoV, nombreV, valorV) {
-      var _this17 = this;
+      var _this16 = this;
 
       var identificador = idObjetoV;
       var objeto = objetoV;
@@ -1144,7 +1175,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("insert into ResultadosInt values ('" + idObjeto + "', '" + objeto + "', '" + nombre + "', '" + _this17.formatDateCreation(fecha) + "', " + valor + ")", function (err, result) {
+        request.query("insert into ResultadosInt values ('" + idObjeto + "', '" + objeto + "', '" + nombre + "', '" + _this16.formatDateCreation(fecha) + "', " + valor + ")", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -1159,7 +1190,7 @@ function (_React$Component) {
   }, {
     key: "saveResultFieldString",
     value: function saveResultFieldString(idObjetoV, objetoV, nombreV, valorV) {
-      var _this18 = this;
+      var _this17 = this;
 
       var identificador = idObjetoV;
       var objeto = objetoV;
@@ -1173,7 +1204,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("insert into ResultadosString values ('" + idObjeto + "', '" + objeto + "', '" + nombre + "', '" + _this18.formatDateCreation(fecha) + "', '" + valor + "')", function (err, result) {
+        request.query("insert into ResultadosString values ('" + idObjeto + "', '" + objeto + "', '" + nombre + "', '" + _this17.formatDateCreation(fecha) + "', '" + valor + "')", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -1201,6 +1232,8 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
+      var _ref;
+
       return _react["default"].createElement("div", {
         style: {
           height: "85vh",
@@ -1233,11 +1266,110 @@ function (_React$Component) {
           width: "100%",
           height: "76%"
         }
-      }, _react["default"].createElement(_ConfiguracionTablasClasificar["default"], {
-        tablasSeleccionadas: this.state.tablasSeleccionadas,
-        widthActual: this.state.widthActual,
-        opcionesTabla: this.state.opcionesTablasSeleccionadas
-      }, " ")), _react["default"].createElement("div", {
+      }, _react["default"].createElement("div", {
+        style: (_ref = {
+          height: "100%",
+          overflowX: "scroll",
+          overflowY: "hidden",
+          whiteSpace: "nowrap",
+          borderRadius: "5px",
+          padding: "1% 0%",
+          border: "solid 3px #cfd8dc"
+        }, _defineProperty(_ref, "borderRadius", "5px"), _defineProperty(_ref, "marginTop", "2%"), _ref)
+      }, _react["default"].createElement("div", {
+        style: {
+          height: "100%",
+          width: "100%",
+          display: "inline-block",
+          position: "relative"
+        }
+      }, _react["default"].createElement("div", {
+        style: {
+          height: "95%",
+          width: "95%",
+          backgroundColor: "white",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          borderRadius: "5px",
+          overflowY: "scroll"
+        }
+      }, _react["default"].createElement("div", {
+        className: "text-center",
+        style: {
+          borderBottom: "solid 4px #cfd8dc"
+        }
+      }, _react["default"].createElement("h3", null, "Criterios de Clasificaci\xF3n")), _react["default"].createElement("div", {
+        style: {
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderBottom: "solid 3px #eceff1"
+        }
+      }, _react["default"].createElement("div", {
+        style: {
+          width: "90%",
+          height: "60%",
+          textAlign: "center",
+          display: "table"
+        }
+      }, _react["default"].createElement("h5", {
+        style: {
+          display: "table-cell",
+          verticalAlign: "middle"
+        }
+      }, "Capacidad de Pago"))), _react["default"].createElement("div", {
+        style: {
+          width: "100%",
+          height: "25%"
+        }
+      }), _react["default"].createElement("div", {
+        style: {
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "solid 3px #eceff1"
+        }
+      }, _react["default"].createElement("div", {
+        style: {
+          width: "90%",
+          height: "60%",
+          textAlign: "center",
+          display: "table"
+        }
+      }, _react["default"].createElement("h5", {
+        style: {
+          display: "table-cell",
+          verticalAlign: "middle"
+        }
+      }, "Comportamiento de Pago"))), _react["default"].createElement("div", {
+        style: {
+          width: "100%",
+          height: "25%",
+          overflowY: "scroll"
+        }
+      }), _react["default"].createElement("div", {
+        className: "text-center",
+        style: {
+          borderBottom: "solid 4px #cfd8dc",
+          borderTop: "solid 4px #cfd8dc"
+        }
+      }, _react["default"].createElement("h3", null, "Tipo de Cr\xE9dito")), _react["default"].createElement("div", {
+        style: {
+          width: "100%",
+          height: "25%",
+          overflowY: "scroll"
+        }
+      }), _react["default"].createElement("div", {
+        className: "text-center",
+        style: {
+          borderBottom: "solid 4px #cfd8dc",
+          borderTop: "solid 4px #cfd8dc"
+        }
+      }, _react["default"].createElement("h3", null, "Categorias de Clasificaci\xF3n")))))), _react["default"].createElement("div", {
         style: {
           width: "100%",
           height: "6%",

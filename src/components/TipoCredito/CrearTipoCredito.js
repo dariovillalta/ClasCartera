@@ -29,7 +29,7 @@ export default class CrearTipoCredito extends React.Component {
                         rolledBack = true;
                     });
                     const request = new sql.Request(transaction);
-                    request.query("insert into TipoCredito (tablaID, nombre, descripcion) values ("+this.props.tablaID+", '"+nombre+"', '"+descripcion+"')", (err, result) => {
+                    request.query("insert into TipoCredito (nombre, descripcion) values ('"+nombre+"', '"+descripcion+"')", (err, result) => {
                         if (err) {
                             if (!rolledBack) {
                                 console.log(err);
@@ -103,7 +103,6 @@ export default class CrearTipoCredito extends React.Component {
                                 <nav aria-label="breadcrumb">
                                     <ol className={"breadcrumb"}>
                                         <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
-                                        <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoTablas}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla</a></li>
                                         <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoSelCreditos}><a href="#" className={"breadcrumb-link"}>Seleccionar Cr&eacute;dito</a></li>
                                         <li className={"breadcrumb-item active"} aria-current="page">Crear Cr&eacute;dito</li>
                                     </ol>

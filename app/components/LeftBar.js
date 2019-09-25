@@ -95,7 +95,7 @@ function (_React$Component) {
         style: {
           color: "white"
         }
-      }, "Clasificar Cart\xE9ra"))), _react["default"].createElement("li", {
+      }, "Clasificar Cartera"))), _react["default"].createElement("li", {
         className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",

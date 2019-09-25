@@ -43,7 +43,8 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(VerReporteria).call(this, props));
     _this.state = {
-      seleccionoFiltro: false
+      seleccionoFiltro: false,
+      arregloReglasFiltros: []
     };
     _this.terminoSeleccionFiltro = _this.terminoSeleccionFiltro.bind(_assertThisInitialized(_this));
     _this.retornoSeleccionFiltro = _this.retornoSeleccionFiltro.bind(_assertThisInitialized(_this));
@@ -53,6 +54,16 @@ function (_React$Component) {
   _createClass(VerReporteria, [{
     key: "terminoSeleccionFiltro",
     value: function terminoSeleccionFiltro() {
+      for (var i = 0; i < arregloReglasFiltros.length; i++) {
+        arregloReglasFiltros[i];
+        var condicionRegla = getEvalCodeCondition(reglasEstimacionesDeterioro[n][m], "arregloCreditos[j][k]");
+
+        if (!eval(condicionRegla)) {
+          arregloResultados.splice(i, 1);
+        }
+      }
+
+      ;
       this.setState({
         seleccionoFiltro: true
       });
@@ -76,7 +87,7 @@ function (_React$Component) {
           className: "page-header"
         }, _react["default"].createElement("h2", {
           className: "pageheader-title"
-        }, "Ver Reporteria"), _react["default"].createElement("div", {
+        }, "Ver Reporter\xEDa"), _react["default"].createElement("div", {
           className: "page-breadcrumb"
         }, _react["default"].createElement("nav", {
           "aria-label": "breadcrumb"
@@ -87,7 +98,8 @@ function (_React$Component) {
           "aria-current": "page"
         }, "Selecci\xF3n de Filtro"))))))), _react["default"].createElement(_CrearFiltro["default"], {
           pool: this.props.pool,
-          callbackComponent: this.terminoSeleccionFiltro
+          callbackComponent: this.terminoSeleccionFiltro,
+          arregloReglasFiltros: this.state.arregloReglasFiltros
         }, " "));
       } else {
         return _react["default"].createElement("div", null, _react["default"].createElement(_ResultadoReporteria["default"], {

@@ -61,7 +61,7 @@ function (_React$Component) {
               rolledBack = true;
             });
             var request = new _mssql["default"].Request(transaction);
-            request.query("insert into TipoCreditoCampo (tipoCreditoID, tablaID, reglaID, nombre, descripcion) values (" + _this2.props.creditoID + "," + _this2.props.tablaID + "," + _this2.props.reglaID + ",'" + nombre + "','" + descripcion + "')", function (err, result) {
+            request.query("insert into TipoCreditoCampo (tipoCreditoID, reglaID, nombre, descripcion) values (" + _this2.props.creditoID + "," + _this2.props.reglaID + ",'" + nombre + "','" + descripcion + "')", function (err, result) {
               if (err) {
                 if (!rolledBack) {
                   console.log(err);
