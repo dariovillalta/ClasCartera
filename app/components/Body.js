@@ -33,6 +33,8 @@ var _Home = _interopRequireDefault(require("./Home.js"));
 
 var _CategoriaClasificacion = _interopRequireDefault(require("./CategoriaClasificacion/CategoriaClasificacion.js"));
 
+var _CriteriosDeterioro = _interopRequireDefault(require("./CriteriosDeterioro/CriteriosDeterioro.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -53,7 +55,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-//import CriteriosDeterioro from './CriteriosDeterioro/CriteriosDeterioro.js';
 //const importacionODBC = new Worker("./components/odbcMSSQL.js");
 var Body =
 /*#__PURE__*/
@@ -105,7 +106,8 @@ function (_React$Component) {
           showTypeCreditComponent: this.props.showTypeCreditComponent,
           showClasificationCriteriaComponent: this.props.showClasificationCriteriaComponent,
           showListsComponent: this.props.showListsComponent,
-          showCatClass: this.props.showCatClass
+          showCatClass: this.props.showCatClass,
+          showDeteriorationCriteria: this.props.showDeteriorationCriteria
         }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
           mensaje: this.state.mensajeLoadingScreen
         }, " ") : _react["default"].createElement("div", null));
@@ -162,7 +164,7 @@ function (_React$Component) {
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));
       } else if (this.props.router.showDeteriorationCriteria) {
-        return _react["default"].createElement("div", null, _react["default"].createElement(_CategoriaClasificacion["default"], {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_CriteriosDeterioro["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));

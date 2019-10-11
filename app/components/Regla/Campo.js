@@ -47,7 +47,7 @@ function (_React$Component) {
     value: function checkFieldType() {
       var valor = $('#campo').val();
 
-      if (valor.length > 0) {
+      if (valor.length > 0 && valor.localeCompare("M0ra") != 0) {
         var campoSeleccionado = this.props.campos[valor];
 
         if (campoSeleccionado.tipo.indexOf("int") == 0) {
@@ -59,6 +59,8 @@ function (_React$Component) {
         } else if (campoSeleccionado.tipo.indexOf("varchar") == 0) {
           this.props.esTexto();
         }
+      } else if (valor.length > 0 && valor.localeCompare("M0ra") == 0) {
+        this.props.esNumero();
       }
     }
   }, {
@@ -82,7 +84,9 @@ function (_React$Component) {
         onChange: this.checkFieldType
       }, _react["default"].createElement("option", {
         value: ""
-      }, "Seleccione un campo..."), this.props.campos.map(function (campo, i) {
+      }, "Seleccione un campo..."), _react["default"].createElement("option", {
+        value: "M0ra"
+      }, "D\xEDas de Mora"), this.props.campos.map(function (campo, i) {
         return _react["default"].createElement("option", {
           value: i,
           key: i

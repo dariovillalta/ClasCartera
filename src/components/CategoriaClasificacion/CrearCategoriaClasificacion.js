@@ -18,52 +18,65 @@ export default class CrearCategoriaClasificacion extends React.Component {
     }
 
     guardarTipoCredito() {
-        let nombre = $("#nombreTipoCredito").val();
-        let descripcion = $("#descripcionTipoCredito").val();
-        if(nombre.length > 0 && nombre.length < 41) {
-            if(descripcion.length < 701) {
-                const transaction = new sql.Transaction( this.props.pool );
-                transaction.begin(err => {
-                    var rolledBack = false;
-                    transaction.on('rollback', aborted => {
-                        rolledBack = true;
-                    });
-                    const request = new sql.Request(transaction);
-                    request.query("insert into TipoCredito (tablaID, nombre, descripcion) values ("+this.props.tablaID+", '"+nombre+"', '"+descripcion+"')", (err, result) => {
-                        if (err) {
-                            if (!rolledBack) {
-                                console.log(err);
-                                transaction.rollback(err => {
+        let categoria = $("#categoriaCategoriaClasificacion").val();
+        let tipoCredito = $("#nombreTipoCreditoCategoriaClasificacion").val();
+        let descripcion = $("#descripcionCategoriaClasificacion").val();
+        if(categoria.length > 0 && categoria.length < 6) {
+            if(tipoCredito.length > 0 && tipoCredito.length < 61) {
+                if(descripcion.length < 401) {
+                    const transaction = new sql.Transaction( this.props.pool );
+                    transaction.begin(err => {
+                        var rolledBack = false;
+                        transaction.on('rollback', aborted => {
+                            rolledBack = true;
+                        });
+                        const request = new sql.Request(transaction);
+                        request.query("insert into CategoriaClasificacion (categoria, tipoCredito, descripcion) values ('"+categoria+"', '"+tipoCredito+"', '"+descripcion+"')", (err, result) => {
+                            if (err) {
+                                if (!rolledBack) {
+                                    console.log(err);
+                                    transaction.rollback(err => {
+                                    });
+                                }
+                            } else {
+                                transaction.commit(err => {
+                                    this.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
+                                    this.setState({
+                                        errorCreacionTipoCredito: {campo: '', descripcion: '', mostrar: false}
+                                    });
                                 });
                             }
-                        } else {
-                            transaction.commit(err => {
-                                this.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
-                                this.setState({
-                                    errorCreacionTipoCredito: {campo: '', descripcion: '', mostrar: false}
-                                });
-                            });
-                        }
+                        });
+                    }); // fin transaction
+                } else {
+                    let campo = "Descripción";
+                    let descripcionN;
+                    if(descripcion.length > 400)
+                        descripcionN = "El campo debe tener una longitud menor a 400.";
+                    this.setState({
+                        errorCreacionTipoCredito: {campo: campo, descripcion: descripcionN, mostrar: true}
                     });
-                }); // fin transaction
+                }
             } else {
-                let campo = "Descripción";
+                let campo = "Nombre de Tipo de Crédito";
                 let descripcionN;
-                if(descripcion.length > 700)
-                    descripcionN = "El campo debe tener una longitud menor a 700.";
+                if(tipoCredito.length == 0)
+                    descripcionN = "El campo debe tener una longitud mayor a 0.";
+                else if(tipoCredito.length > 60)
+                    descripcionN = "El campo debe tener una longitud menor a 60.";
                 this.setState({
                     errorCreacionTipoCredito: {campo: campo, descripcion: descripcionN, mostrar: true}
                 });
             }
         } else {
-            let campo = "Nombre";
-            let descripcion;
-            if(nombre.length == 0)
-                descripcion = "El campo debe tener una longitud mayor a 0.";
-            else if(guardarCampo.length > 700)
-                descripcion = "El campo debe tener una longitud menor a 700.";
+            let campo = "Categoria";
+            let descripcionN;
+            if(categoria.length == 0)
+                descripcionN = "El campo debe tener una longitud mayor a 0.";
+            else if(categoria.length > 5)
+                descripcionN = "El campo debe tener una longitud menor a 5.";
             this.setState({
-                errorCreacionTipoCredito: {campo: campo, descripcion: descripcion, mostrar: true}
+                errorCreacionTipoCredito: {campo: campo, descripcion: descripcionN, mostrar: true}
             });
         }
     }
@@ -103,9 +116,8 @@ export default class CrearCategoriaClasificacion extends React.Component {
                                 <nav aria-label="breadcrumb">
                                     <ol className={"breadcrumb"}>
                                         <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
-                                        <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoTablas}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla</a></li>
-                                        <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoSelCreditos}><a href="#" className={"breadcrumb-link"}>Seleccionar Cr&eacute;dito</a></li>
-                                        <li className={"breadcrumb-item active"} aria-current="page">Crear Cr&eacute;dito</li>
+                                        <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoSelCategoriaClasificacion}><a href="#" className={"breadcrumb-link"}>Seleccionar Categoria de Clasificaci&oacute;n</a></li>
+                                        <li className={"breadcrumb-item active"} aria-current="page">Crear Categoria de Clasificaci&oacute;n</li>
                                     </ol>
                                 </nav>
                             </div>
@@ -117,8 +129,18 @@ export default class CrearCategoriaClasificacion extends React.Component {
                         <div className={"card"} style={{width: "100%"}}>
                             <div className={"card-body"} style={{width: "100%"}}>
                                 <div className={"d-inline-block text-center form-group"} style={{width: "100%"}}>
+                                    <h2 className="text-muted">Categoría</h2>
+                                    <input id="categoriaCategoriaClasificacion" type="text" style={{width: "100%"}} className={"form-control"}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"col-xl-12 col-12"}>
+                        <div className={"card"} style={{width: "100%"}}>
+                            <div className={"card-body"} style={{width: "100%"}}>
+                                <div className={"d-inline-block text-center form-group"} style={{width: "100%"}}>
                                     <h2 className="text-muted">Nombre</h2>
-                                    <input id="nombreTipoCredito" type="text" style={{width: "100%"}} className={"form-control"}/>
+                                    <input id="nombreTipoCreditoCategoriaClasificacion" type="text" style={{width: "100%"}} className={"form-control"}/>
                                 </div>
                             </div>
                         </div>
@@ -128,7 +150,7 @@ export default class CrearCategoriaClasificacion extends React.Component {
                             <div className={"card-body"} style={{width: "100%"}}>
                                 <div className={"d-inline-block text-center form-group"} style={{width: "100%"}}>
                                     <h2 className="text-muted">Descripci&oacute;n</h2>
-                                    <textarea id="descripcionTipoCredito" type="text" style={{width: "100%"}} className={"form-control"}></textarea>
+                                    <textarea id="descripcionCategoriaClasificacion" type="text" style={{width: "100%"}} className={"form-control"}></textarea>
                                 </div>
                             </div>
                         </div>

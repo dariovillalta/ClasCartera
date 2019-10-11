@@ -13,7 +13,7 @@ import DescargarReporteria from './Reporteria/DescargarReporteria.js';
 import Graficos from './Graficos/Graficos.js';
 import Home from './Home.js';
 import CategoriaClasificacion from './CategoriaClasificacion/CategoriaClasificacion.js';
-//import CriteriosDeterioro from './CriteriosDeterioro/CriteriosDeterioro.js';
+import CriteriosDeterioro from './CriteriosDeterioro/CriteriosDeterioro.js';
 
 //const importacionODBC = new Worker("./components/odbcMSSQL.js");
 
@@ -54,7 +54,8 @@ export default class Body extends React.Component {
                         showTypeCreditComponent={this.props.showTypeCreditComponent}
                         showClasificationCriteriaComponent={this.props.showClasificationCriteriaComponent}
                         showListsComponent={this.props.showListsComponent}
-                        showCatClass={this.props.showCatClass}> </Configuracion>
+                        showCatClass={this.props.showCatClass}
+                        showDeteriorationCriteria={this.props.showDeteriorationCriteria}> </Configuracion>
                     { this.state.showLoadingScreen ? (
                         <LoadingScreen mensaje={this.state.mensajeLoadingScreen}> </LoadingScreen>
                     ) : (
@@ -131,7 +132,7 @@ export default class Body extends React.Component {
         } else if(this.props.router.showDeteriorationCriteria) {
             return (
                 <div>
-                    <CategoriaClasificacion pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </CategoriaClasificacion>
+                    <CriteriosDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </CriteriosDeterioro>
                 </div>
             );
         } else {

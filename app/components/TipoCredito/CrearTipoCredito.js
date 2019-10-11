@@ -73,58 +73,80 @@ function (_React$Component) {
 
       var nombre = $("#nombreTipoCredito").val();
       var descripcion = $("#descripcionTipoCredito").val();
+      var tipoCreditoPadreID = $("#tipoCreditoID").val();
+
+      if (tipoCreditoPadreID == null || tipoCreditoPadreID.toString().length == 0 || tipoCreditoPadreID == "null") {
+        tipoCreditoPadreID = -1;
+      }
 
       if (nombre.length > 0 && nombre.length < 41) {
         if (descripcion.length < 701) {
-          var transaction = new _mssql["default"].Transaction(this.props.pool);
-          transaction.begin(function (err) {
-            var rolledBack = false;
-            transaction.on('rollback', function (aborted) {
-              rolledBack = true;
-            });
-            var request = new _mssql["default"].Request(transaction);
-            request.query("insert into TipoCredito (nombre, descripcion) values ('" + nombre + "', '" + descripcion + "')", function (err, result) {
-              if (err) {
-                if (!rolledBack) {
-                  console.log(err);
-                  transaction.rollback(function (err) {});
-                }
-              } else {
-                transaction.commit(function (err) {
-                  _this2.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
+          if (!isNaN(tipoCreditoPadreID)) {
+            var transaction = new _mssql["default"].Transaction(this.props.pool);
+            transaction.begin(function (err) {
+              var rolledBack = false;
+              transaction.on('rollback', function (aborted) {
+                rolledBack = true;
+              });
+              var request = new _mssql["default"].Request(transaction);
+              request.query("insert into TipoCredito (nombre, descripcion, tipoCreditoPadreID) values ('" + nombre + "', '" + descripcion + "'," + tipoCreditoPadreID + ")", function (err, result) {
+                if (err) {
+                  if (!rolledBack) {
+                    console.log(err);
+                    transaction.rollback(function (err) {});
+                  }
+                } else {
+                  transaction.commit(function (err) {
+                    _this2.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
 
-                  _this2.setState({
-                    errorCreacionTipoCredito: {
-                      campo: '',
-                      descripcion: '',
-                      mostrar: false
-                    }
+                    _this2.setState({
+                      errorCreacionTipoCredito: {
+                        campo: '',
+                        descripcion: '',
+                        mostrar: false
+                      }
+                    });
+
+                    _this2.props.loadTypeCredit();
                   });
-                });
+                }
+              });
+            }); // fin transaction
+          } else {
+            var campo = "Tipo Credito Padre";
+            var descripcionN;
+            if (isNaN(tipoCreditoPadreID)) descripcionN = "El campo debe ser un número válido.";
+            this.setState({
+              errorCreacionTipoCredito: {
+                campo: campo,
+                descripcion: descripcionN,
+                mostrar: true
               }
             });
-          }); // fin transaction
+          }
         } else {
-          var campo = "Descripción";
-          var descripcionN;
-          if (descripcion.length > 700) descripcionN = "El campo debe tener una longitud menor a 700.";
+          var _campo = "Descripción";
+
+          var _descripcionN;
+
+          if (descripcion.length > 700) _descripcionN = "El campo debe tener una longitud menor a 700.";
           this.setState({
             errorCreacionTipoCredito: {
-              campo: campo,
-              descripcion: descripcionN,
+              campo: _campo,
+              descripcion: _descripcionN,
               mostrar: true
             }
           });
         }
       } else {
-        var _campo = "Nombre";
+        var _campo2 = "Nombre";
 
         var _descripcion;
 
         if (nombre.length == 0) _descripcion = "El campo debe tener una longitud mayor a 0.";else if (guardarCampo.length > 700) _descripcion = "El campo debe tener una longitud menor a 700.";
         this.setState({
           errorCreacionTipoCredito: {
-            campo: _campo,
+            campo: _campo2,
             descripcion: _descripcion,
             mostrar: true
           }
@@ -214,7 +236,7 @@ function (_React$Component) {
       }, _react["default"].createElement("a", {
         href: "#",
         className: "breadcrumb-link"
-      }, "Seleccionar Cr\xE9dito")), _react["default"].createElement("li", {
+      }, "Seleccionar Tipo de Cr\xE9dito")), _react["default"].createElement("li", {
         className: "breadcrumb-item active",
         "aria-current": "page"
       }, "Crear Cr\xE9dito"))))))), _react["default"].createElement("div", {
@@ -271,7 +293,30 @@ function (_React$Component) {
           width: "100%"
         },
         className: "form-control"
-      })))))), this.state.errorCreacionTipoCredito.mostrar ? _react["default"].createElement(_ErrorMessage["default"], {
+      }))))), _react["default"].createElement("div", {
+        className: "col-xl-12 col-12"
+      }, _react["default"].createElement("div", {
+        className: "card"
+      }, _react["default"].createElement("div", {
+        className: "card-body"
+      }, _react["default"].createElement("div", {
+        className: "d-inline-block text-center",
+        style: {
+          width: "100%"
+        }
+      }, _react["default"].createElement("h2", {
+        className: "text-muted"
+      }, "Tipo de Cr\xE9dito Padre"), _react["default"].createElement("select", {
+        id: "tipoCreditoID",
+        className: "form-control form-control-lg"
+      }, _react["default"].createElement("option", {
+        value: "null"
+      }, "Ninguno"), this.props.tipoCreditos.map(function (tipoDeCredito, i) {
+        return _react["default"].createElement("option", {
+          value: tipoDeCredito.ID,
+          key: tipoDeCredito.ID
+        }, tipoDeCredito.nombre);
+      }))))))), this.state.errorCreacionTipoCredito.mostrar ? _react["default"].createElement(_ErrorMessage["default"], {
         campo: this.state.errorCreacionTipoCredito.campo,
         descripcion: this.state.errorCreacionTipoCredito.descripcion,
         dismissTableError: this.dismissTypeCreditNewError

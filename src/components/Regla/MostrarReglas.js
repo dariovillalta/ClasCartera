@@ -28,7 +28,7 @@ export default class MostrarReglas extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from Reglas where tipoTablaRes = '"+this.props.tipoTablaRes+"' and idTipoTabla = "+this.props.idTipoTabla, (err, result) => {
+            request.query("select * from Reglas where nombreTablaRes = '"+this.props.tipoTablaRes+"' and idTipoTabla = "+this.props.idTipoTabla, (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);

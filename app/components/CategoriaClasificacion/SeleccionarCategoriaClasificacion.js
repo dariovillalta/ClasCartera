@@ -43,23 +43,23 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(SeleccionarCategoriaClasificacion).call(this, props));
     _this.state = {
-      tipoCreditos: [],
-      mostrarCreacionTipoCredito: false
+      categoriasClasificacion: [],
+      mostrarCategoriaClasificacion: false
     };
-    _this.loadTypeCredit = _this.loadTypeCredit.bind(_assertThisInitialized(_this));
-    _this.goCreateTypeCredit = _this.goCreateTypeCredit.bind(_assertThisInitialized(_this));
-    _this.returnChooseTypeCredit = _this.returnChooseTypeCredit.bind(_assertThisInitialized(_this));
+    _this.loadClassificationCategory = _this.loadClassificationCategory.bind(_assertThisInitialized(_this));
+    _this.goCreateClassificationCategory = _this.goCreateClassificationCategory.bind(_assertThisInitialized(_this));
+    _this.returnChooseClassificationCategory = _this.returnChooseClassificationCategory.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(SeleccionarCategoriaClasificacion, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      this.loadTypeCredit();
+      this.loadClassificationCategory();
     }
   }, {
-    key: "loadTypeCredit",
-    value: function loadTypeCredit() {
+    key: "loadClassificationCategory",
+    value: function loadClassificationCategory() {
       var _this2 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
@@ -69,7 +69,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from TipoCredito where tablaID = " + _this2.props.tablaID, function (err, result) {
+        request.query("select * from CategoriaClasificacion", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -78,7 +78,7 @@ function (_React$Component) {
           } else {
             transaction.commit(function (err) {
               _this2.setState({
-                tipoCreditos: result.recordset
+                categoriasClasificacion: result.recordset
               });
             });
           }
@@ -86,31 +86,29 @@ function (_React$Component) {
       }); // fin transaction
     }
   }, {
-    key: "goCreateTypeCredit",
-    value: function goCreateTypeCredit() {
+    key: "goCreateClassificationCategory",
+    value: function goCreateClassificationCategory() {
       this.setState({
-        mostrarCreacionTipoCredito: true
+        mostrarCategoriaClasificacion: true
       });
     }
   }, {
-    key: "returnChooseTypeCredit",
-    value: function returnChooseTypeCredit() {
+    key: "returnChooseClassificationCategory",
+    value: function returnChooseClassificationCategory() {
       this.setState({
-        mostrarCreacionTipoCredito: false
+        mostrarCategoriaClasificacion: false
       });
-      this.loadTypeCredit();
+      this.loadClassificationCategory();
     }
   }, {
     key: "render",
     value: function render() {
       var _this3 = this;
 
-      if (this.state.mostrarCreacionTipoCredito) {
-        return _react["default"].createElement("div", null, _react["default"].createElement(CrearTipoCredito, {
-          tablaID: this.props.tablaID,
+      if (this.state.mostrarCategoriaClasificacion) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_CrearCategoriaClasificacion["default"], {
           pool: this.props.pool,
-          retornoSelCreditos: this.returnChooseTypeCredit,
-          retornoTablas: this.props.retornoTablas,
+          retornoSelCategoriaClasificacion: this.returnChooseClassificationCategory,
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));
       } else {
@@ -136,19 +134,12 @@ function (_React$Component) {
           href: "#",
           className: "breadcrumb-link"
         }, "Configuraci\xF3n")), _react["default"].createElement("li", {
-          className: "breadcrumb-item",
-          "aria-current": "page",
-          onClick: this.props.retornoTablas
-        }, _react["default"].createElement("a", {
-          href: "#",
-          className: "breadcrumb-link"
-        }, "Seleccionar Tabla")), _react["default"].createElement("li", {
           className: "breadcrumb-item active",
           "aria-current": "page"
-        }, "Seleccionar Tipo de Cr\xE9dito"))))))), _react["default"].createElement("div", {
+        }, "Seleccionar Categoria de Clasificaci\xF3n"))))))), _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("button", {
-          onClick: this.goCreateTypeCredit,
+          onClick: this.goCreateClassificationCategory,
           className: "btn btn-success btn-block col-xl-10 col-10",
           style: {
             color: "white",
@@ -167,17 +158,17 @@ function (_React$Component) {
           className: "card-body"
         }, _react["default"].createElement("div", {
           className: "row border-top border-bottom addPaddingToConfig"
-        }, this.state.tipoCreditos.map(function (tipoCredito, i) {
+        }, this.state.categoriasClasificacion.map(function (categoriaClasificacion, i) {
           return _react["default"].createElement("a", {
             className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
             onClick: function onClick() {
-              return _this3.props.seleccionarCredito(tipoCredito.ID, tipoCredito.nombre);
+              return _this3.props.seleccionarCategoriaClasificacion(categoriaClasificacion.ID, categoriaClasificacion.nombre);
             },
-            key: tipoCredito.ID
-          }, tipoCredito.nombre);
-        }), this.state.tipoCreditos.length == 0 ? _react["default"].createElement("a", {
+            key: categoriaClasificacion.ID
+          }, categoriaClasificacion.categoria, " | ", categoriaClasificacion.tipoCredito);
+        }), this.state.categoriasClasificacion.length == 0 ? _react["default"].createElement("a", {
           className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
-        }, "No existen tipos de cr\xE9ditos creados") : _react["default"].createElement("span", null)))))));
+        }, "No existen categorias de clasificaci\xF3n creados") : _react["default"].createElement("span", null)))))));
       }
     }
   }]);

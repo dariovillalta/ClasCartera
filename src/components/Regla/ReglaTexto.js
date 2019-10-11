@@ -49,9 +49,15 @@ export default class ReglaTexto extends React.Component {
                     }
                 } else {
                     transaction.commit(err => {
-                        this.setState({
-                            texto: result.recordset[0].nombre
-                        });
+                        if(this.props.regla.campoCampoID != -1) {
+                            this.setState({
+                                texto: result.recordset[0].nombre
+                            });
+                        } else if(this.props.regla.campoCampoID == -1) {
+                            this.setState({
+                                texto: "Mora"
+                            });
+                        }
                     });
                 }
             });

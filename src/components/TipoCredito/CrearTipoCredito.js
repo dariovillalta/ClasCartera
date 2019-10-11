@@ -20,32 +20,47 @@ export default class CrearTipoCredito extends React.Component {
     guardarTipoCredito() {
         let nombre = $("#nombreTipoCredito").val();
         let descripcion = $("#descripcionTipoCredito").val();
+        let tipoCreditoPadreID = $("#tipoCreditoID").val();
+        if(tipoCreditoPadreID == null || tipoCreditoPadreID.toString().length == 0 || tipoCreditoPadreID == "null") {
+            tipoCreditoPadreID = -1;
+        }
         if(nombre.length > 0 && nombre.length < 41) {
             if(descripcion.length < 701) {
-                const transaction = new sql.Transaction( this.props.pool );
-                transaction.begin(err => {
-                    var rolledBack = false;
-                    transaction.on('rollback', aborted => {
-                        rolledBack = true;
-                    });
-                    const request = new sql.Request(transaction);
-                    request.query("insert into TipoCredito (nombre, descripcion) values ('"+nombre+"', '"+descripcion+"')", (err, result) => {
-                        if (err) {
-                            if (!rolledBack) {
-                                console.log(err);
-                                transaction.rollback(err => {
+                if(!isNaN(tipoCreditoPadreID)) {
+                    const transaction = new sql.Transaction( this.props.pool );
+                    transaction.begin(err => {
+                        var rolledBack = false;
+                        transaction.on('rollback', aborted => {
+                            rolledBack = true;
+                        });
+                        const request = new sql.Request(transaction);
+                        request.query("insert into TipoCredito (nombre, descripcion, tipoCreditoPadreID) values ('"+nombre+"', '"+descripcion+"',"+tipoCreditoPadreID+")", (err, result) => {
+                            if (err) {
+                                if (!rolledBack) {
+                                    console.log(err);
+                                    transaction.rollback(err => {
+                                    });
+                                }
+                            } else {
+                                transaction.commit(err => {
+                                    this.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
+                                    this.setState({
+                                        errorCreacionTipoCredito: {campo: '', descripcion: '', mostrar: false}
+                                    });
+                                    this.props.loadTypeCredit();
                                 });
                             }
-                        } else {
-                            transaction.commit(err => {
-                                this.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
-                                this.setState({
-                                    errorCreacionTipoCredito: {campo: '', descripcion: '', mostrar: false}
-                                });
-                            });
-                        }
+                        });
+                    }); // fin transaction
+                } else {
+                    let campo = "Tipo Credito Padre";
+                    let descripcionN;
+                    if(isNaN(tipoCreditoPadreID))
+                        descripcionN = "El campo debe ser un número válido.";
+                    this.setState({
+                        errorCreacionTipoCredito: {campo: campo, descripcion: descripcionN, mostrar: true}
                     });
-                }); // fin transaction
+                }
             } else {
                 let campo = "Descripción";
                 let descripcionN;
@@ -103,7 +118,7 @@ export default class CrearTipoCredito extends React.Component {
                                 <nav aria-label="breadcrumb">
                                     <ol className={"breadcrumb"}>
                                         <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
-                                        <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoSelCreditos}><a href="#" className={"breadcrumb-link"}>Seleccionar Cr&eacute;dito</a></li>
+                                        <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoSelCreditos}><a href="#" className={"breadcrumb-link"}>Seleccionar Tipo de Cr&eacute;dito</a></li>
                                         <li className={"breadcrumb-item active"} aria-current="page">Crear Cr&eacute;dito</li>
                                     </ol>
                                 </nav>
@@ -128,6 +143,22 @@ export default class CrearTipoCredito extends React.Component {
                                 <div className={"d-inline-block text-center form-group"} style={{width: "100%"}}>
                                     <h2 className="text-muted">Descripci&oacute;n</h2>
                                     <textarea id="descripcionTipoCredito" type="text" style={{width: "100%"}} className={"form-control"}></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"col-xl-12 col-12"}>
+                        <div className={"card"}>
+                            <div className={"card-body"}>
+                                <div className={"d-inline-block text-center"} style={{width: "100%"}}>
+                                    <h2 className="text-muted">Tipo de Crédito Padre</h2>
+                                    <select id="tipoCreditoID" className={"form-control form-control-lg"}>
+                                        <option value="null">Ninguno</option>
+                                        {this.props.tipoCreditos.map((tipoDeCredito, i) => {
+                                                return <option value={tipoDeCredito.ID} key={tipoDeCredito.ID}>{tipoDeCredito.nombre}</option>
+                                            }
+                                        )}
+                                    </select>
                                 </div>
                             </div>
                         </div>

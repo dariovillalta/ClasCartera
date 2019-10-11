@@ -13,8 +13,6 @@ var _SeleccionarTipoCredito = _interopRequireDefault(require("./SeleccionarTipoC
 
 var _MostrarReglas = _interopRequireDefault(require("../Regla/MostrarReglas.js"));
 
-var _GuardarTipoCreditoCampo = _interopRequireDefault(require("./GuardarTipoCreditoCampo.js"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -49,16 +47,10 @@ function (_React$Component) {
     _this.state = {
       idCreditoSeleccionado: -1,
       nombreCreditoSeleccionado: "",
-      mostrarTabla: "selCredit",
-      regla: {},
-      campoTexto: '',
-      operacion: '',
-      valorTexto: ''
+      mostrarTabla: "selCredit"
     };
     _this.updateCreditSelectedID = _this.updateCreditSelectedID.bind(_assertThisInitialized(_this));
     _this.returnSelCredit = _this.returnSelCredit.bind(_assertThisInitialized(_this));
-    _this.updateVarCreation = _this.updateVarCreation.bind(_assertThisInitialized(_this));
-    _this.returnVarCreation = _this.returnVarCreation.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -77,30 +69,6 @@ function (_React$Component) {
       this.setState({
         idCreditoSeleccionado: -1,
         mostrarTabla: "selCredit"
-      });
-    }
-  }, {
-    key: "updateVarCreation",
-    value: function updateVarCreation(reglaID, campoTexto, operacion, valorTexto) {
-      this.setState({
-        regla: {
-          ID: reglaID,
-          campo: campoTexto,
-          operacion: operacion,
-          valor: valorTexto
-        },
-        mostrarTabla: "saveTypeCreditField",
-        campoTexto: campoTexto,
-        operacion: operacion,
-        valorTexto: valorTexto
-      });
-    }
-  }, {
-    key: "returnVarCreation",
-    value: function returnVarCreation() {
-      this.setState({
-        regla: {},
-        mostrarTabla: "selVar"
       });
     }
   }, {

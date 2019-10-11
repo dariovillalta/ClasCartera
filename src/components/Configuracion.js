@@ -33,7 +33,6 @@ export default class Configuracion extends React.Component {
                                     <a className={"btn btn-outline-success btn-block btnWhiteColorHover fontSize1EM"} onClick={this.props.showDeteriorationCriteria}>Criterios por Deterioro</a>
                                     <a className={"btn btn-outline-brand btn-block btnWhiteColorHover fontSize1EM"}>Mantenimiento de Usuarios</a>
                                     <a className={"btn btn-outline-danger btn-block btnWhiteColorHover fontSize1EM"} onClick={this.props.showListsComponent}>Listas</a>
-                                    <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>Variables Auxiliares</a>
                                 </div>
                             </div>
                         </div>

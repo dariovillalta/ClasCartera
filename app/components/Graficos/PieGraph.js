@@ -27,6 +27,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+var c3 = require("c3");
+
+var d3 = require("d3");
+
 var PieGraph =
 /*#__PURE__*/
 function (_React$Component) {
@@ -39,11 +43,46 @@ function (_React$Component) {
   }
 
   _createClass(PieGraph, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var chartClientes = c3.generate({
+        bindto: "#resultado",
+        data: {
+          columns: [['Créditos Buenos', 5620029.11], ['Créditos Especialmente Mencionados', 7981023], ['Créditos Bajo Norma', 13420089.78], ['Créditos de Dudosa Recuperación', 7419023.52], ['Créditos de Pérdida', 2570891.44]],
+          type: 'pie',
+          colors: {
+            data1: '#5969ff',
+            data2: '#ff407b',
+            data3: '#b39ddb',
+            data4: '#80deea',
+            data5: '#ffcc80'
+          }
+        },
+        pie: {
+          label: {
+            format: function format(value, ratio, id) {
+              return d3.format('$')(value);
+            }
+          }
+        }
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      return _react["default"].createElement("div", null, _react["default"].createElement("h3", {
+      return _react["default"].createElement("div", {
+        className: "row"
+      }, _react["default"].createElement("div", {
+        className: "col-xl-12 col-12"
+      }, _react["default"].createElement("div", {
+        className: "card"
+      }, _react["default"].createElement("h5", {
         className: "card-header"
-      }, "PIE"));
+      }, "Gr\xE1fico"), _react["default"].createElement("div", {
+        className: "card-body"
+      }, _react["default"].createElement("div", {
+        id: "resultado"
+      })))));
     }
   }]);
 

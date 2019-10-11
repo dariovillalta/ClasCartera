@@ -7,19 +7,19 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tipoCreditos: [],
-            mostrarCreacionTipoCredito: false
+            categoriasClasificacion: [],
+            mostrarCategoriaClasificacion: false
         }
-        this.loadTypeCredit = this.loadTypeCredit.bind(this);
-        this.goCreateTypeCredit = this.goCreateTypeCredit.bind(this);
-        this.returnChooseTypeCredit = this.returnChooseTypeCredit.bind(this);
+        this.loadClassificationCategory = this.loadClassificationCategory.bind(this);
+        this.goCreateClassificationCategory = this.goCreateClassificationCategory.bind(this);
+        this.returnChooseClassificationCategory = this.returnChooseClassificationCategory.bind(this);
     }
 
     componentDidMount() {
-        this.loadTypeCredit();
+        this.loadClassificationCategory();
     }
 
-    loadTypeCredit() {
+    loadClassificationCategory() {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -27,7 +27,7 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from TipoCredito where tablaID = "+this.props.tablaID, (err, result) => {
+            request.query("select * from CategoriaClasificacion", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -37,7 +37,7 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
                 } else {
                     transaction.commit(err => {
                         this.setState({
-                            tipoCreditos: result.recordset
+                            categoriasClasificacion: result.recordset
                         });
                     });
                 }
@@ -45,24 +45,24 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
         }); // fin transaction
     }
 
-    goCreateTypeCredit() {
+    goCreateClassificationCategory() {
         this.setState({
-            mostrarCreacionTipoCredito: true
+            mostrarCategoriaClasificacion: true
         });
     }
 
-    returnChooseTypeCredit() {
+    returnChooseClassificationCategory() {
         this.setState({
-            mostrarCreacionTipoCredito: false
+            mostrarCategoriaClasificacion: false
         });
-        this.loadTypeCredit();
+        this.loadClassificationCategory();
     }
 
     render() {
-        if(this.state.mostrarCreacionTipoCredito) {
+        if(this.state.mostrarCategoriaClasificacion) {
             return (
                 <div>
-                    <CrearTipoCredito tablaID={this.props.tablaID} pool={this.props.pool} retornoSelCreditos={this.returnChooseTypeCredit} retornoTablas={this.props.retornoTablas} showConfigurationComponent={this.props.showConfigurationComponent}> </CrearTipoCredito>
+                    <CrearCategoriaClasificacion pool={this.props.pool} retornoSelCategoriaClasificacion={this.returnChooseClassificationCategory} showConfigurationComponent={this.props.showConfigurationComponent}> </CrearCategoriaClasificacion>
                 </div>
             );
         } else {
@@ -76,8 +76,7 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
                                     <nav aria-label="breadcrumb">
                                         <ol className={"breadcrumb"}>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
-                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoTablas}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla</a></li>
-                                            <li className={"breadcrumb-item active"} aria-current="page">Seleccionar Tipo de Cr&eacute;dito</li>
+                                            <li className={"breadcrumb-item active"} aria-current="page">Seleccionar Categoria de Clasificaci&oacute;n</li>
                                         </ol>
                                     </nav>
                                 </div>
@@ -85,7 +84,7 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
                         </div>
                     </div>
                     <div className={"row"}>
-                        <button onClick={this.goCreateTypeCredit} className={"btn btn-success btn-block col-xl-10 col-10"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold", margin: "0 auto", display: "block"}}>Crear</button>
+                        <button onClick={this.goCreateClassificationCategory} className={"btn btn-success btn-block col-xl-10 col-10"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold", margin: "0 auto", display: "block"}}>Crear</button>
                     </div>
                     <br/>
                     <div className={"row"}>
@@ -93,11 +92,11 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
                             <div className={"card influencer-profile-data"}>
                                 <div className={"card-body"}>
                                     <div className={"row border-top border-bottom addPaddingToConfig"}>
-                                        {this.state.tipoCreditos.map((tipoCredito, i) =>
-                                            <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionarCredito(tipoCredito.ID, tipoCredito.nombre)} key={tipoCredito.ID}>{tipoCredito.nombre}</a>
+                                        {this.state.categoriasClasificacion.map((categoriaClasificacion, i) =>
+                                            <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionarCategoriaClasificacion(categoriaClasificacion.ID, categoriaClasificacion.nombre)} key={categoriaClasificacion.ID}>{categoriaClasificacion.categoria} | {categoriaClasificacion.tipoCredito}</a>
                                         )}
-                                        { this.state.tipoCreditos.length == 0 ? (
-                                            <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>No existen tipos de cr&eacute;ditos creados</a>
+                                        { this.state.categoriasClasificacion.length == 0 ? (
+                                            <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>No existen categorias de clasificación creados</a>
                                         ) : (
                                             <span></span>
                                         )}

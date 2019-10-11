@@ -54,16 +54,13 @@ function (_React$Component) {
   _createClass(VerReporteria, [{
     key: "terminoSeleccionFiltro",
     value: function terminoSeleccionFiltro() {
-      for (var i = 0; i < arregloReglasFiltros.length; i++) {
-        arregloReglasFiltros[i];
-        var condicionRegla = getEvalCodeCondition(reglasEstimacionesDeterioro[n][m], "arregloCreditos[j][k]");
-
-        if (!eval(condicionRegla)) {
-          arregloResultados.splice(i, 1);
-        }
-      }
-
-      ;
+      /*for (var i = 0; i < arregloReglasFiltros.length; i++) {
+          arregloReglasFiltros[i]
+          var condicionRegla = getEvalCodeCondition(reglasEstimacionesDeterioro[n][m], "arregloCreditos[j][k]");
+          if( !eval(condicionRegla) ) {
+              arregloResultados.splice(i, 1);
+          }
+      };*/
       this.setState({
         seleccionoFiltro: true
       });

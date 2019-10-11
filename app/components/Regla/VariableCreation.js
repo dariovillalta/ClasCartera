@@ -178,24 +178,56 @@ function (_React$Component) {
       var seleccionCampoIDSelect = $("#campo").val();
 
       if (seleccionCampoIDSelect.length > 0) {
-        var campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
-        var campoID = this.state.campos[seleccionCampoIDSelect].ID;
-        var campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
-        var operacion = $("input[name='operacionRadio']:checked").val();
+        var campoTablaID;
+        var campoID;
+        var campoTipo;
+        var operacion;
         var operacionTipo;
-        if (operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0)) operacionTipo = "relacional";else if (operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0)) operacionTipo = "algebraica";else if (operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0)) operacionTipo = "excel";
-        var valorLista = $("#selectLista").val(); //ID Tabla
+        var valorLista; //ID Tabla
 
-        var valorCampos = $("#camposDeLista").val();
+        var valorCampos;
         var esListaValor, esCampoValor;
 
-        if (valorLista != undefined && valorLista.localeCompare("table") == 0) {
-          esListaValor = false;
-          esCampoValor = true;
-          valorLista = this.props.tablaID;
-        } else if (valorLista != undefined && valorLista.length > 0) {
-          esListaValor = true;
-          esCampoValor = false;
+        if (seleccionCampoIDSelect.localeCompare("M0ra") != 0) {
+          campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
+          campoID = this.state.campos[seleccionCampoIDSelect].ID;
+          campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
+          operacion = $("input[name='operacionRadio']:checked").val();
+          operacionTipo;
+          if (operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0)) operacionTipo = "relacional";else if (operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0)) operacionTipo = "algebraica";else if (operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0)) operacionTipo = "excel";
+          valorLista = $("#selectLista").val(); //ID Tabla
+
+          valorCampos = $("#camposDeLista").val();
+          esListaValor, esCampoValor;
+
+          if (valorLista != undefined && valorLista.localeCompare("table") == 0) {
+            esListaValor = false;
+            esCampoValor = true;
+            valorLista = this.props.tablaID;
+          } else if (valorLista != undefined && valorLista.length > 0) {
+            esListaValor = true;
+            esCampoValor = false;
+          }
+        } else {
+          campoTablaID = -1;
+          campoID = -1;
+          campoTipo = "int";
+          operacion = $("input[name='operacionRadio']:checked").val();
+          operacionTipo;
+          if (operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0)) operacionTipo = "relacional";else if (operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0)) operacionTipo = "algebraica";else if (operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0)) operacionTipo = "excel";
+          valorLista = $("#selectLista").val(); //ID Tabla
+
+          valorCampos = $("#camposDeLista").val();
+          esListaValor, esCampoValor;
+
+          if (valorLista != undefined && valorLista.localeCompare("table") == 0) {
+            esListaValor = false;
+            esCampoValor = true;
+            valorLista = this.props.tablaID;
+          } else if (valorLista != undefined && valorLista.length > 0) {
+            esListaValor = true;
+            esCampoValor = false;
+          }
         }
 
         console.log("//////////////////////");
@@ -237,7 +269,7 @@ function (_React$Component) {
                               rolledBack = true;
                             });
                             var request = new _mssql["default"].Request(transaction);
-                            request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, tipoTablaRes, idTipoTabla) values (" + campoTablaID + ", " + campoID + ", '" + campoTipo + "', '" + operacion + "', '" + operacionTipo + "','" + valorCampos + "', '', '" + esListaValor + "', '" + esCampoValor + "', " + valorLista + ", '" + _this3.props.tipoTablaRes + "', " + _this3.props.idTipoTabla + ")", function (err, result) {
+                            request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, nombreTablaRes, idTipoTabla) values (" + campoTablaID + ", " + campoID + ", '" + campoTipo + "', '" + operacion + "', '" + operacionTipo + "','" + valorCampos + "', '', '" + esListaValor + "', '" + esCampoValor + "', " + valorLista + ", '" + _this3.props.tipoTablaRes + "', " + _this3.props.idTipoTabla + ")", function (err, result) {
                               if (err) {
                                 if (!rolledBack) {
                                   console.log(err);

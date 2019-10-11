@@ -71,7 +71,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from Reglas where tipoTablaRes = '" + _this2.props.tipoTablaRes + "' and idTipoTabla = " + _this2.props.idTipoTabla, function (err, result) {
+        request.query("select * from Reglas where nombreTablaRes = '" + _this2.props.tipoTablaRes + "' and idTipoTabla = " + _this2.props.idTipoTabla, function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);

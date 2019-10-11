@@ -27,6 +27,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+var c3 = require("c3");
+
+var d3 = require("d3");
+
 var LineGraph =
 /*#__PURE__*/
 function (_React$Component) {
@@ -39,11 +43,31 @@ function (_React$Component) {
   }
 
   _createClass(LineGraph, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var chart = c3.generate({
+        bindto: "#resultado",
+        data: {
+          columns: [['data1', 30, 200, 100, 400, 150, 250], ['data2', 50, 20, 10, 40, 15, 25]]
+        }
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      return _react["default"].createElement("div", null, _react["default"].createElement("h3", {
+      return _react["default"].createElement("div", {
+        className: "row"
+      }, _react["default"].createElement("div", {
+        className: "col-xl-12 col-12"
+      }, _react["default"].createElement("div", {
+        className: "card"
+      }, _react["default"].createElement("h5", {
         className: "card-header"
-      }, "LINE"));
+      }, "Gr\xE1fico"), _react["default"].createElement("div", {
+        className: "card-body"
+      }, _react["default"].createElement("div", {
+        id: "resultado"
+      })))));
     }
   }]);
 

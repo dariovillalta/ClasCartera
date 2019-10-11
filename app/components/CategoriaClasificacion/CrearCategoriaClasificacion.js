@@ -71,61 +71,77 @@ function (_React$Component) {
     value: function guardarTipoCredito() {
       var _this2 = this;
 
-      var nombre = $("#nombreTipoCredito").val();
-      var descripcion = $("#descripcionTipoCredito").val();
+      var categoria = $("#categoriaCategoriaClasificacion").val();
+      var tipoCredito = $("#nombreTipoCreditoCategoriaClasificacion").val();
+      var descripcion = $("#descripcionCategoriaClasificacion").val();
 
-      if (nombre.length > 0 && nombre.length < 41) {
-        if (descripcion.length < 701) {
-          var transaction = new _mssql["default"].Transaction(this.props.pool);
-          transaction.begin(function (err) {
-            var rolledBack = false;
-            transaction.on('rollback', function (aborted) {
-              rolledBack = true;
-            });
-            var request = new _mssql["default"].Request(transaction);
-            request.query("insert into TipoCredito (tablaID, nombre, descripcion) values (" + _this2.props.tablaID + ", '" + nombre + "', '" + descripcion + "')", function (err, result) {
-              if (err) {
-                if (!rolledBack) {
-                  console.log(err);
-                  transaction.rollback(function (err) {});
-                }
-              } else {
-                transaction.commit(function (err) {
-                  _this2.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
+      if (categoria.length > 0 && categoria.length < 6) {
+        if (tipoCredito.length > 0 && tipoCredito.length < 61) {
+          if (descripcion.length < 401) {
+            var transaction = new _mssql["default"].Transaction(this.props.pool);
+            transaction.begin(function (err) {
+              var rolledBack = false;
+              transaction.on('rollback', function (aborted) {
+                rolledBack = true;
+              });
+              var request = new _mssql["default"].Request(transaction);
+              request.query("insert into CategoriaClasificacion (categoria, tipoCredito, descripcion) values ('" + categoria + "', '" + tipoCredito + "', '" + descripcion + "')", function (err, result) {
+                if (err) {
+                  if (!rolledBack) {
+                    console.log(err);
+                    transaction.rollback(function (err) {});
+                  }
+                } else {
+                  transaction.commit(function (err) {
+                    _this2.showSuccesMessage("Exito", "Tipo de crédito creado con éxito.");
 
-                  _this2.setState({
-                    errorCreacionTipoCredito: {
-                      campo: '',
-                      descripcion: '',
-                      mostrar: false
-                    }
+                    _this2.setState({
+                      errorCreacionTipoCredito: {
+                        campo: '',
+                        descripcion: '',
+                        mostrar: false
+                      }
+                    });
                   });
-                });
+                }
+              });
+            }); // fin transaction
+          } else {
+            var campo = "Descripción";
+            var descripcionN;
+            if (descripcion.length > 400) descripcionN = "El campo debe tener una longitud menor a 400.";
+            this.setState({
+              errorCreacionTipoCredito: {
+                campo: campo,
+                descripcion: descripcionN,
+                mostrar: true
               }
             });
-          }); // fin transaction
+          }
         } else {
-          var campo = "Descripción";
-          var descripcionN;
-          if (descripcion.length > 700) descripcionN = "El campo debe tener una longitud menor a 700.";
+          var _campo = "Nombre de Tipo de Crédito";
+
+          var _descripcionN;
+
+          if (tipoCredito.length == 0) _descripcionN = "El campo debe tener una longitud mayor a 0.";else if (tipoCredito.length > 60) _descripcionN = "El campo debe tener una longitud menor a 60.";
           this.setState({
             errorCreacionTipoCredito: {
-              campo: campo,
-              descripcion: descripcionN,
+              campo: _campo,
+              descripcion: _descripcionN,
               mostrar: true
             }
           });
         }
       } else {
-        var _campo = "Nombre";
+        var _campo2 = "Categoria";
 
-        var _descripcion;
+        var _descripcionN2;
 
-        if (nombre.length == 0) _descripcion = "El campo debe tener una longitud mayor a 0.";else if (guardarCampo.length > 700) _descripcion = "El campo debe tener una longitud menor a 700.";
+        if (categoria.length == 0) _descripcionN2 = "El campo debe tener una longitud mayor a 0.";else if (categoria.length > 5) _descripcionN2 = "El campo debe tener una longitud menor a 5.";
         this.setState({
           errorCreacionTipoCredito: {
-            campo: _campo,
-            descripcion: _descripcion,
+            campo: _campo2,
+            descripcion: _descripcionN2,
             mostrar: true
           }
         });
@@ -210,21 +226,14 @@ function (_React$Component) {
       }, "Configuraci\xF3n")), _react["default"].createElement("li", {
         className: "breadcrumb-item",
         "aria-current": "page",
-        onClick: this.props.retornoTablas
+        onClick: this.props.retornoSelCategoriaClasificacion
       }, _react["default"].createElement("a", {
         href: "#",
         className: "breadcrumb-link"
-      }, "Seleccionar Tabla")), _react["default"].createElement("li", {
-        className: "breadcrumb-item",
-        "aria-current": "page",
-        onClick: this.props.retornoSelCreditos
-      }, _react["default"].createElement("a", {
-        href: "#",
-        className: "breadcrumb-link"
-      }, "Seleccionar Cr\xE9dito")), _react["default"].createElement("li", {
+      }, "Seleccionar Categoria de Clasificaci\xF3n")), _react["default"].createElement("li", {
         className: "breadcrumb-item active",
         "aria-current": "page"
-      }, "Crear Cr\xE9dito"))))))), _react["default"].createElement("div", {
+      }, "Crear Categoria de Clasificaci\xF3n"))))))), _react["default"].createElement("div", {
         className: "row"
       }, _react["default"].createElement("div", {
         className: "col-xl-12 col-12"
@@ -245,8 +254,34 @@ function (_React$Component) {
         }
       }, _react["default"].createElement("h2", {
         className: "text-muted"
+      }, "Categor\xEDa"), _react["default"].createElement("input", {
+        id: "categoriaCategoriaClasificacion",
+        type: "text",
+        style: {
+          width: "100%"
+        },
+        className: "form-control"
+      }))))), _react["default"].createElement("div", {
+        className: "col-xl-12 col-12"
+      }, _react["default"].createElement("div", {
+        className: "card",
+        style: {
+          width: "100%"
+        }
+      }, _react["default"].createElement("div", {
+        className: "card-body",
+        style: {
+          width: "100%"
+        }
+      }, _react["default"].createElement("div", {
+        className: "d-inline-block text-center form-group",
+        style: {
+          width: "100%"
+        }
+      }, _react["default"].createElement("h2", {
+        className: "text-muted"
       }, "Nombre"), _react["default"].createElement("input", {
-        id: "nombreTipoCredito",
+        id: "nombreTipoCreditoCategoriaClasificacion",
         type: "text",
         style: {
           width: "100%"
@@ -272,7 +307,7 @@ function (_React$Component) {
       }, _react["default"].createElement("h2", {
         className: "text-muted"
       }, "Descripci\xF3n"), _react["default"].createElement("textarea", {
-        id: "descripcionTipoCredito",
+        id: "descripcionCategoriaClasificacion",
         type: "text",
         style: {
           width: "100%"

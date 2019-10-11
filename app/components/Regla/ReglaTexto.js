@@ -93,9 +93,15 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              _this2.setState({
-                texto: result.recordset[0].nombre
-              });
+              if (_this2.props.regla.campoCampoID != -1) {
+                _this2.setState({
+                  texto: result.recordset[0].nombre
+                });
+              } else if (_this2.props.regla.campoCampoID == -1) {
+                _this2.setState({
+                  texto: "Mora"
+                });
+              }
             });
           }
         });

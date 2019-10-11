@@ -114,27 +114,60 @@ export default class VariableCreation extends React.Component {
         console.log("listaID = "+listaID)*/
         let seleccionCampoIDSelect = $("#campo").val();
         if(seleccionCampoIDSelect.length > 0) {
-            let campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
-            let campoID = this.state.campos[seleccionCampoIDSelect].ID;
-            let campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
-            let operacion = $("input[name='operacionRadio']:checked").val();
+            let campoTablaID;
+            let campoID;
+            let campoTipo;
+            let operacion;
             let operacionTipo;
-            if(operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0))
-                operacionTipo = "relacional";
-            else if(operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0))
-                operacionTipo = "algebraica";
-            else if(operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0))
-                operacionTipo = "excel";
-            let valorLista = $("#selectLista").val();   //ID Tabla
-            let valorCampos = $("#camposDeLista").val();
+            let valorLista;   //ID Tabla
+            let valorCampos;
             let esListaValor, esCampoValor;
-            if(valorLista != undefined && valorLista.localeCompare("table") == 0) {
-                esListaValor = false;
-                esCampoValor = true;
-                valorLista = this.props.tablaID;
-            } else if(valorLista != undefined && valorLista.length > 0) {
-                esListaValor = true;
-                esCampoValor = false;
+            if(seleccionCampoIDSelect.localeCompare("M0ra") != 0) {
+                campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
+                campoID = this.state.campos[seleccionCampoIDSelect].ID;
+                campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
+                operacion = $("input[name='operacionRadio']:checked").val();
+                operacionTipo;
+                if(operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0))
+                    operacionTipo = "relacional";
+                else if(operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0))
+                    operacionTipo = "algebraica";
+                else if(operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0))
+                    operacionTipo = "excel";
+                valorLista = $("#selectLista").val();   //ID Tabla
+                valorCampos = $("#camposDeLista").val();
+                esListaValor, esCampoValor;
+                if(valorLista != undefined && valorLista.localeCompare("table") == 0) {
+                    esListaValor = false;
+                    esCampoValor = true;
+                    valorLista = this.props.tablaID;
+                } else if(valorLista != undefined && valorLista.length > 0) {
+                    esListaValor = true;
+                    esCampoValor = false;
+                }
+            } else {
+                campoTablaID = -1;
+                campoID = -1;
+                campoTipo = "int";
+                operacion = $("input[name='operacionRadio']:checked").val();
+                operacionTipo;
+                if(operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0))
+                    operacionTipo = "relacional";
+                else if(operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0))
+                    operacionTipo = "algebraica";
+                else if(operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0))
+                    operacionTipo = "excel";
+                valorLista = $("#selectLista").val();   //ID Tabla
+                valorCampos = $("#camposDeLista").val();
+                esListaValor, esCampoValor;
+                if(valorLista != undefined && valorLista.localeCompare("table") == 0) {
+                    esListaValor = false;
+                    esCampoValor = true;
+                    valorLista = this.props.tablaID;
+                } else if(valorLista != undefined && valorLista.length > 0) {
+                    esListaValor = true;
+                    esCampoValor = false;
+                }
             }
             console.log("//////////////////////");
             console.log("//////////////////////");
@@ -168,7 +201,7 @@ export default class VariableCreation extends React.Component {
                                                         rolledBack = true;
                                                     });
                                                     const request = new sql.Request(transaction);
-                                                    request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, tipoTablaRes, idTipoTabla) values ("+campoTablaID+", "+campoID+", '"+campoTipo+"', '"+operacion+"', '"+operacionTipo+"','"+valorCampos+"', '', '"+esListaValor+"', '"+esCampoValor+"', "+valorLista+", '"+this.props.tipoTablaRes+"', "+this.props.idTipoTabla+")", (err, result) => {
+                                                    request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, nombreTablaRes, idTipoTabla) values ("+campoTablaID+", "+campoID+", '"+campoTipo+"', '"+operacion+"', '"+operacionTipo+"','"+valorCampos+"', '', '"+esListaValor+"', '"+esCampoValor+"', "+valorLista+", '"+this.props.tipoTablaRes+"', "+this.props.idTipoTabla+")", (err, result) => {
                                                         if (err) {
                                                             if (!rolledBack) {
                                                                 console.log(err);

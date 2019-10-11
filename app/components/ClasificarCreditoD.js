@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.constructor = constructor;
+exports.retornarClientes = retornarClientes;
+exports.retornarPrestamos = retornarPrestamos;
 
 var _momentMin = _interopRequireDefault(require("../libs/moment/min/moment.min.js"));
 
@@ -20,9 +22,13 @@ function constructor(arreglo) {
   } else if (arreglo[0].localeCompare("comportamientoPago") == 0) {
     comportamientoPago(arreglo[1], arreglo[2], arreglo[3], arreglo[4], arreglo[5]);
   } else if (arreglo[0].localeCompare("tiposCredito") == 0) {
+    console.log("JIJIJIJIJIJIJIJIJIJI");
     tipoCredito(arreglo[1], arreglo[2], arreglo[3]);
-  } else if (arreglo[0].localeCompare("traerResultados") == 0) {
-    retornarArreglos(arreglo[1], arreglo[2], arreglo[3], arreglo[4]);
+  } else if (arreglo[0].localeCompare("categoriasClasificacion") == 0) {
+    console.log("JOJOJOJOJOJOJOJOJOJO");
+    categoriasClasificacion(arreglo[1], arreglo[2], arreglo[3]);
+  } else if (arreglo[0].localeCompare("estimacionDeterioro") == 0) {
+    estimacionDeterioro(arreglo[1]);
   }
 }
 /*		HACER  METODO GUARDAR VALIDACION PARA GUARDAR A TABLAS (Porque fue calificado el prestamo)	*/
@@ -220,23 +226,28 @@ function clasificarCreditos(arregloCreditosTodos) {
 	OUTPUT: arreglo a guardar
 */
 
+/*function retornarArreglos (retornarClientes, retornarCreditos, retornarPagos, retornarPlanPagos) {
+	if(retornarClientes) {
+		postMessage(["guardarResultados", arregloClientes]);
+	}
+	if(retornarCreditos) {
+		postMessage(["guardarResultados", arregloPrestamos]);
+	}
+	if(retornarPagos) {
+		postMessage(["guardarResultados", arregloPagos]);
+	}
+	if(retornarPlanPagos) {
+		postMessage(["guardarResultados", arregloPlanPagos]);
+	}
+}*/
 
-function retornarArreglos(retornarClientes, retornarCreditos, retornarPagos, retornarPlanPagos) {
-  if (retornarClientes) {
-    postMessage(["guardarResultados", arregloClientes]);
-  }
 
-  if (retornarCreditos) {
-    postMessage(["guardarResultados", arregloPrestamos]);
-  }
+function retornarClientes() {
+  return arregloClientes;
+}
 
-  if (retornarPagos) {
-    postMessage(["guardarResultados", arregloPagos]);
-  }
-
-  if (retornarPlanPagos) {
-    postMessage(["guardarResultados", arregloPlanPagos]);
-  }
+function retornarPrestamos() {
+  return arregloCreditos;
 }
 /*			COMPORTAMIENTO DE PAGO			*/
 
@@ -549,17 +560,97 @@ function tipoCredito(tiposCreditos, reglasTiposCreditos) {
         for (var m = 0; m < reglasTiposCreditos[n].length; m++) {
           //reglasTiposCreditos[n][m]
           var objeto = '';
+          console.log('reglasTiposCreditos[n][m]');
+          console.log(reglasTiposCreditos[n][m]);
           if (reglasTiposCreditos[n][m].campoValor.tabla.localeCompare("Cliente") == 0) objeto = "arregloClientes[i]";else objeto = "arregloCreditos[i][j]";
+          /*console.log('n = '+n+'\tm = '+m);
+          console.log('reglasTiposCreditos[n][m]');
+          console.log(reglasTiposCreditos[n][m]);
+          console.log('reglasTiposCreditos[n][m].valorValores');
+          console.log(reglasTiposCreditos[n][m].valorValores);*/
+
           var condicionRegla = getEvalCodeCondition(reglasTiposCreditos[n][m], objeto);
+          /*console.log('condicionRegla');
+          console.log(condicionRegla);*/
 
           if (eval(condicionRegla)) {
-            contadorCumpleParametros++;
+            contadorCumpleParametros++; //console.log('CUMPLIO');
           } else {
+            //console.log('NO CUMPLIO');
             break;
           }
+          /*console.log('contadorCumpleParametros');
+          console.log(contadorCumpleParametros);
+          console.log('reglasTiposCreditos[n].length');
+          console.log(reglasTiposCreditos[n].length);*/
+
 
           if (reglasTiposCreditos[n].length - 1 == m && contadorCumpleParametros == reglasTiposCreditos[n].length) {
             arregloCreditos[i][j].tipoCredito = tiposCreditos[n].nombre;
+            arregloCreditos[i][j].tipoCreditoID = tiposCreditos[n].ID;
+          }
+        }
+
+        ;
+      }
+
+      ;
+    }
+
+    ;
+  }
+
+  ;
+}
+/* ================================		CATEGORIAS DE CLASIFICACION		================================ */
+
+/*		
+	DEF: Metodo para actualizar el campo de tipo de credito de prestamo
+	INPUT: tipos de creditos, reglas de tipos de creditos, valores de clientes a evaluar
+	OUTPUT:
+
+	n = arreglo de tipos de creditos = [tipo1, tipo2 ...]
+	m = arreglo de reglas de tipos de creditos = [[regla1, regla2], [regla3, regla2]]
+*/
+
+
+function categoriasClasificacion(tiposCreditos, reglasTiposCreditos) {
+  console.log("categoriasClasificacion  categoriasClasificacion  categoriasClasificacion");
+
+  for (var i = 0; i < arregloCreditos.length; i++) {
+    for (var j = 0; j < arregloCreditos[i].length; j++) {
+      arregloCreditos[i][j].categoriaClasificacion = 'No Tiene';
+
+      for (var n = 0; n < tiposCreditos.length; n++) {
+        var contadorCumpleParametros = 0;
+
+        for (var m = 0; m < reglasTiposCreditos[n].length; m++) {
+          //reglasTiposCreditos[n][m]
+          var objeto = '';
+          if (reglasTiposCreditos[n][m].campoValor.tabla.localeCompare("Cliente") == 0) objeto = "arregloClientes[i]";else objeto = "arregloCreditos[i][j]";
+          /*console.log('n = '+n+'\tm = '+m);
+          console.log('reglasTiposCreditos[n][m]');
+          console.log(reglasTiposCreditos[n][m]);
+          console.log('reglasTiposCreditos[n][m].valorValores');
+          console.log(reglasTiposCreditos[n][m].valorValores);*/
+
+          var condicionRegla = getEvalCodeCondition(reglasTiposCreditos[n][m], objeto);
+
+          if (eval(condicionRegla)) {
+            contadorCumpleParametros++; //console.log('CUMPLIO');
+          } else {
+            //console.log('NO CUMPLIO');
+            break;
+          }
+          /*console.log('contadorCumpleParametros');
+          console.log(contadorCumpleParametros);
+          console.log('reglasTiposCreditos[n].length');
+          console.log(reglasTiposCreditos[n].length);*/
+
+
+          if (reglasTiposCreditos[n].length - 1 == m && contadorCumpleParametros == reglasTiposCreditos[n].length) {
+            arregloCreditos[i][j].categoriaClasificacion = tiposCreditos[n].tipoCredito;
+            arregloCreditos[i][j].categoriaClasificacionID = tiposCreditos[n].ID;
           }
         }
 
@@ -586,39 +677,20 @@ function tipoCredito(tiposCreditos, reglasTiposCreditos) {
 */
 
 
-function estimacionDeterioro(estimacionesDeterioro, camposEstimacionesDeterioro, reglasEstimacionesDeterioro, camposDeSaldo) {
+function estimacionDeterioro(estimacionesDeterioro) {
   for (var i = 0; i < arregloClientes.length; i++) {
     arregloClientes[i].estimacionDeterioro = 0;
 
-    for (var j = 0; j < arregloCreditos.length; j++) {
-      for (var k = 0; k < arregloCreditos[i].length; k++) {
-        arregloCreditos[j][k].estimacionDeterioro = 0;
-        arregloCreditos[j][k].categoriaEstimacionDeterioro = 'No Tiene';
+    for (var j = 0; j < arregloCreditos[i].length; j++) {
+      arregloCreditos[i][j].estimacionDeterioro = 0;
+      arregloCreditos[i][j].categoriaEstimacionDeterioro = 'No Tiene';
 
-        for (var n = 0; n < estimacionesDeterioro.length; n++) {
-          var contadorCumpleParametros = 0;
-
-          for (var m = 0; m < reglasEstimacionesDeterioro[n].length; m++) {
-            //reglasTiposCreditos[n][m]
-            var condicionRegla = getEvalCodeCondition(reglasEstimacionesDeterioro[n][m], "arregloCreditos[j][k]");
-
-            if (eval(condicionRegla)) {
-              contadorCumpleParametros++;
-            } else {
-              break;
-            }
-
-            if (reglasEstimacionesDeterioro[n].length == 1 && contadorCumpleParametros == reglasEstimacionesDeterioro[n].length) {
-              arregloCreditos[j][k].estimacionDeterioro = arregloCreditos[j][k][camposDeSaldo.nombre] * estimacionesDeterioro[n].estimacionDeterioro;
-              arregloCreditos[j][k].categoriaEstimacionDeterioro = estimacionesDeterioro[n].nombre;
-              arregloClientes[i].estimacionDeterioro += arregloCreditos[j][k].estimacionDeterioro;
-            }
-          }
-
-          ;
+      for (var n = 0; n < estimacionesDeterioro.length; n++) {
+        if (estimacionesDeterioro[n].categoriaClasPadre == arregloCreditos[i][j].categoriaClasificacionID && estimacionesDeterioro[n].tipoDeCredito == arregloCreditos[i][j].tipoCreditoID && estimacionesDeterioro[n].inicioMora <= arregloCreditos[i][j].diasMora && estimacionesDeterioro[n].finMora >= arregloCreditos[i][j].diasMora) {
+          arregloCreditos[i][j].estimacionDeterioro = arregloCreditos[i][j].t0talC4pitalPagado * estimacionesDeterioro[n].estimacionDeterioro;
+          arregloCreditos[i][j].categoriaEstimacionDeterioro = estimacionesDeterioro[n].categoria;
+          arregloClientes[i].estimacionDeterioro += arregloCreditos[i][j].estimacionDeterioro;
         }
-
-        ;
       }
 
       ;

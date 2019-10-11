@@ -9,17 +9,439 @@ import MessageModal from '../MessageModal.js';
 const campos = [ {nombre: "varchar"}, {nombre: "bit"}, {nombre: "date"}, {nombre: "int"} ];
 let funciones = [ {funcion: "idCliente", texto: "ID de Cliente"}, {funcion: "fecha", texto: "fecha"}, {nombre: "date"}, {nombre: "int"} ];
 
-export default class ConfiguracionTablas extends React.Component {
+var tamBanderaActual = 0, tamBanderaFinal = 0;
+
+export default class ResultadosReporteria extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: -1, indiceX: -1, indiceY: -1}
+            mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: -1, indiceX: -1, indiceY: -1},
+            resultadosClientes: [],
+            resultadosPrestamos: []
         }
         //this.loadTables = this.loadTables.bind(this);
+        this.getFiltersString = this.getFiltersString.bind(this);
+        this.getFilterQuery = this.getFilterQuery.bind(this);
+        this.getObjectsID = this.getObjectsID.bind(this);
+        this.getObjectsField = this.getObjectsField.bind(this);
+        this.binaryInsertClient = this.binaryInsertClient.bind(this);
+        this.binaryInsertCredit = this.binaryInsertCredit.bind(this);
+        this.binaryInsertCreditField = this.binaryInsertCreditField.bind(this);
+        this.verificarFinClientes = this.verificarFinClientes.bind(this);
     }
 
     componentDidMount() {
-        //this.loadTables();
+        this.getFiltersString();
+    }
+
+    getFiltersString () {
+        var resultadoQueryIDs = '';
+        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
+            resultadoQueryIDs += this.getFilterQuery(this.props.arregloDeFiltrosIDs[i]);
+        };*/
+        var resultadoQueryInt = '';
+        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
+            resultadoQueryInt += this.getFilterQuery(this.props.arregloDeFiltrosInt[i]);
+        };*/
+        var resultadoQueryDecimal = '';
+        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
+            resultadoQueryDecimal += this.getFilterQuery(this.props.arregloDeFiltrosDecimal[i]);
+        };*/
+        var resultadoQueryDate = '';
+        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
+            resultadoQueryDate += this.getFilterQuery(this.props.arregloDeFiltrosDate[i]);
+        };*/
+        var resultadoQueryBool = '';
+        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
+            resultadoQueryBool += this.getFilterQuery(this.props.arregloDeFiltrosBool[i]);
+        };*/
+        var resultadoQueryString = '';
+        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
+            resultadoQueryString += this.getFilterQuery(this.props.arregloDeFiltrosString[i]);
+        };*/
+        this.getObjectsID(" where idPadre = '-1'"+resultadoQueryIDs, resultadoQueryInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, true);
+        //this.getObjectsID(" where idPadre != '-1'"+resultadoQueryIDs, resultadoQueryInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, false);
+        /*var self = this;
+        setTimeout(function(){
+            self.getObjectsID(" where idPadre != '-1'"+resultadoQueryIDs, resultadoQueryInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, false);
+        }, 2000);*/
+    }
+
+    getFilterQuery(filtro) {
+        //if (filtro.)
+    }
+
+    getObjectsID(queryStringID, queryStringInt, queryStringDecimal, queryStringDate, queryStringBool, queryStringString, esCliente) {
+        //traer id de resultados de base de datos
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select * from ResultadosID "+queryStringID, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        //binary insert ID
+                        tamBanderaActual = 0, tamBanderaFinal = result.recordset.length;
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            if(esCliente)
+                                this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "identificador", []);
+                            else
+                                this.binaryInsertCredit(result.recordset[i], this.state.resultadosPrestamos , "ID", "idPadre", "identificador");
+                            this.getObjectsField(result.recordset[i].identificador, queryStringInt, queryStringDecimal, queryStringDate, queryStringBool, queryStringString, esCliente);
+                            if(esCliente)
+                                this.verificarFinClientes();
+                        };
+                        console.log("resultados");
+                        console.log(this.state.resultadosClientes);
+                        console.log(this.state.resultadosPrestamos);
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    getObjectsField(idObjeto, queryStringInt, queryStringDecimal, queryStringDate, queryStringBool, queryStringString, esCliente) {
+        tamBanderaActual++;
+        //traer campos de resultados de base de datos
+        const transaction1 = new sql.Transaction( this.props.pool );
+        transaction1.begin(err => {
+            var rolledBack = false;
+            transaction1.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request1 = new sql.Request(transaction1);
+            request1.query("select * from ResultadosInt where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction1.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction1.commit(err => {
+                        //binary insert ID
+                        if(result.recordset.length > 0) {
+                            for (var i = 0; i < result.recordset.length; i++) {
+                                if(esCliente)
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                else
+                                    this.binaryInsertCreditField(result.recordset[i]);
+                            };
+                        }
+                    });
+                }
+            });
+        }); // fin transaction1
+
+        const transaction2 = new sql.Transaction( this.props.pool );
+        transaction2.begin(err => {
+            var rolledBack = false;
+            transaction2.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request2 = new sql.Request(transaction2);
+            request2.query("select * from ResultadosDecimal where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction2.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction2.commit(err => {
+                        //binary insert ID
+                        if(result.recordset.length > 0) {
+                            for (var i = 0; i < result.recordset.length; i++) {
+                                if(esCliente)
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                else
+                                    this.binaryInsertCreditField(result.recordset[i]);
+                            };
+                        }
+                    });
+                }
+            });
+        }); // fin transaction2
+
+        /*const transaction3 = new sql.Transaction( this.props.pool );
+        transaction3.begin(err => {
+            var rolledBack = false;
+            transaction3.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request3 = new sql.Request(transaction3);
+            request3.query("select * from ResultadosDate where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction3.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction3.commit(err => {
+                        //binary insert ID
+                        if(result.recordset.length > 0) {
+                            for (var i = 0; i < result.recordset.length; i++) {
+                                if(esCliente)
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                else
+                                    this.binaryInsertCreditField(result.recordset[i]);
+                            };
+                        }
+                    });
+                }
+            });
+        });*/ // fin transaction3
+
+        const transaction4 = new sql.Transaction( this.props.pool );
+        transaction4.begin(err => {
+            var rolledBack = false;
+            transaction4.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request4 = new sql.Request(transaction4);
+            request4.query("select * from ResultadosBool where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction4.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction4.commit(err => {
+                        //binary insert ID
+                        if(result.recordset.length > 0) {
+                            for (var i = 0; i < result.recordset.length; i++) {
+                                if(esCliente)
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                else
+                                    this.binaryInsertCreditField(result.recordset[i]);
+                            };
+                        }
+                    });
+                }
+            });
+        }); // fin transaction4
+
+        const transaction5 = new sql.Transaction( this.props.pool );
+        transaction5.begin(err => {
+            var rolledBack = false;
+            transaction5.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request5 = new sql.Request(transaction5);
+            request5.query("select * from ResultadosString where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction5.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction5.commit(err => {
+                        //binary insert ID
+                        if(result.recordset.length > 0) {
+                            for (var i = 0; i < result.recordset.length; i++) {
+                                if(esCliente)
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                else
+                                    this.binaryInsertCreditField(result.recordset[i]);
+                            };
+                        }
+                    });
+                }
+            });
+        }); // fin transaction5
+    }
+
+    binaryInsertClient(newValue, array, field, fieldsToSave, startVal, endVal){
+        var length = array.length;
+        var start = typeof(startVal) != 'undefined' ? startVal : 0;
+        var end = typeof(endVal) != 'undefined' ? endVal : length - 1;//!! endVal could be 0 don't use || syntax
+        var m = start + Math.floor((end - start)/2);
+        if(length == 0) {
+            var newObject = {ID: newValue[field]};
+            for (var i = 0; i < fieldsToSave.length; i++) {
+                newObject[fieldsToSave[i].nombre] = fieldsToSave[i].valor;
+            };
+            // 1. Make a shallow copy of the items
+            let prestamos = [...this.state.resultadosClientes];
+            // 3. Replace the property you're intested in
+            prestamos.push(newObject);
+            // 5. Set the state to our new copy
+            this.setState({
+                resultadosClientes: prestamos
+            });
+            //array.push(newObject);
+            return;
+        }
+        if( newValue[field].localeCompare(array[m].ID) == 0 ) {
+            for (var i = 0; i < fieldsToSave.length; i++) {
+                array[m][fieldsToSave[i].nombre] = fieldsToSave[i].valor;
+            };
+            return;
+        }
+        if( newValue[field].localeCompare(array[end].ID) > 0 ) {
+            var newObject = {ID: newValue[field]};
+            for (var i = 0; i < fieldsToSave.length; i++) {
+                newObject[fieldsToSave[i].nombre] = fieldsToSave[i].valor;
+            };
+            // 1. Make a shallow copy of the items
+            let prestamos = [...this.state.resultadosClientes];
+            // 3. Replace the property you're intested in
+            prestamos.splice(end + 1, 0, newObject);
+            // 5. Set the state to our new copy
+            this.setState({
+                resultadosClientes: prestamos
+            });
+            //array.splice(end + 1, 0, newObject);
+            return;
+        }
+        if( newValue[field].localeCompare(array[start].ID) < 0 ) {//!!
+            var newObject = {ID: newValue[field]};
+            for (var i = 0; i < fieldsToSave.length; i++) {
+                newObject[fieldsToSave[i].nombre] = fieldsToSave[i].valor;
+            };
+            // 1. Make a shallow copy of the items
+            let prestamos = [...this.state.resultadosClientes];
+            // 3. Replace the property you're intested in
+            prestamos.splice(start, 0, newObject);
+            // 5. Set the state to our new copy
+            this.setState({
+                resultadosClientes: prestamos
+            });
+            //array.splice(start, 0, newObject);
+            return;
+        }
+        if(start >= end){
+            return;
+        }
+        if( newValue[field].localeCompare(array[m].ID) < 0 ){
+            this.binaryInsertClient(newValue, array, field, fieldsToSave, start, m - 1);
+            return;
+        }
+        if( newValue[field].localeCompare(array[m].ID) > 0 ){
+            this.binaryInsertClient(newValue, array, field, fieldsToSave, m + 1, end);
+            return;
+        }
+    }
+
+    binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCredit, startVal, endVal){
+        var length = array.length;
+        var start = typeof(startVal) != 'undefined' ? startVal : 0;
+        var end = typeof(endVal) != 'undefined' ? endVal : length - 1;
+        var m = start + Math.floor((end - start)/2);
+        if(length == 0) {
+            if(this.state.resultadosClientes.length > 0) {
+                if(this.state.resultadosPrestamos[0] == undefined)
+                    this.state.resultadosPrestamos[0] = [];
+                var newObjectCredito = {ID: newValue[fieldCredit]};
+                this.state.resultadosPrestamos[0].push(newObjectCredito);
+            }
+            return;
+        }
+        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[m][fieldClient]) == 0 ) {
+            var newObjectCredito = {ID: newValue[fieldCredit]};
+            // 1. Make a shallow copy of the items
+            let prestamos = [...this.state.resultadosPrestamos];
+            // 2. Make a shallow copy of the item you want to mutate
+            let prestamo = [...prestamos[m]];
+            // 3. Replace the property you're intested in
+            prestamo.push(newObjectCredito);
+            // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+            prestamos[m] = prestamo;
+            // 5. Set the state to our new copy
+            this.setState({
+                resultadosPrestamos: prestamos
+            });
+            //this.state.resultadosPrestamos[m].push(newObjectCredito);
+            return;
+        }
+        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[end][fieldClient]) > 0) {
+            var newObjectCredito = {ID: newValue[fieldCredit]};
+            var newArray = [newObjectCredito];
+            // 1. Make a shallow copy of the items
+            let prestamos = [...this.state.resultadosPrestamos];
+            // 3. Replace the property you're intested in
+            prestamos.splice(end + 1, 0, newArray);
+            // 5. Set the state to our new copy
+            this.setState({
+                resultadosPrestamos: prestamos
+            });
+            //this.state.resultadosPrestamos.splice(end + 1, 0, newArray);
+            return;
+        }
+        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[start][fieldClient]) < 0 ) {
+            var newObjectCredito = {ID: newValue[fieldCredit]};
+            var newArray = [newObjectCredito];
+            // 1. Make a shallow copy of the items
+            let prestamos = [...this.state.resultadosPrestamos];
+            // 3. Replace the property you're intested in
+            prestamos.splice(start, 0, newArray);
+            // 5. Set the state to our new copy
+            this.setState({
+                resultadosPrestamos: prestamos
+            });
+            //this.state.resultadosPrestamos.splice(start, 0, newArray);
+            return;
+        }
+        if(start >= end){
+            return;
+        }
+        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[m][fieldClient]) < 0 ) {
+            this.binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCredit, start, m - 1);
+            return;
+        }
+        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[m][fieldClient]) > 0 ) {
+            this.binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCredit, m + 1, end);
+            return;
+        }
+    }
+
+    binaryInsertCreditField(newValue){
+        for (var i = 0; i < this.state.resultadosPrestamos.length; i++) {
+            for (var j = 0; j < this.state.resultadosPrestamos[i].length; j++) {
+                if(this.state.resultadosPrestamos[i][j].ID.localeCompare(newValue.idObjeto) == 0) {
+                    //this.state.resultadosPrestamos[i][j][newValue.nombre] = newValue.valor;
+                    // 1. Make a shallow copy of the items
+                    let prestamos = [...this.state.resultadosPrestamos];
+                    // 2. Make a shallow copy of the item you want to mutate
+                    let prestamo = {...prestamos[i][j]};
+                    // 3. Replace the property you're intested in
+                    prestamo[newValue.nombre] = newValue.valor;
+                    // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                    prestamos[i][j] = prestamo;
+                    // 5. Set the state to our new copy
+                    this.setState({
+                        resultadosPrestamos: prestamos
+                    });
+                    return;
+                }
+            };
+        };
+    }
+
+    verificarFinClientes() {
+        console.log("tamBanderaActual = "+tamBanderaActual);
+        console.log("tamBanderaFinal = "+tamBanderaFinal);
+        if(tamBanderaActual == tamBanderaFinal) {
+            console.log("ENTROOO");
+        }
     }
 
     /*======_______====== ======_______======   MENSAJES MODAL    ======_______====== ======_______======*/
@@ -78,41 +500,33 @@ export default class ConfiguracionTablas extends React.Component {
                 </div>
                 <div className={"row"} style={{width: "100%"}}>
                     <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"} style={{width: "100%"}}>
-                            <Accordion key={"0"} showTrash={true} allowMultipleOpen>
-                                <div className={"border-top"}>
+                        {this.state.resultadosClientes.map((cliente, i) => (
+                            <div key={cliente.ID} style={{margin: "3% 0%"}}>
+                                <Accordion showTrash={false} allowMultipleOpen color={"#ffffff"}>
+                                    <div label={cliente.ID + " | " + cliente.nombreCliente}>
 
-                                    <div className={"border-top alert alert-primary"} style={{margin: "3% 0%"}}>
-                                        <div className={"row"}>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Tabla</h4>
-                                                <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d"}} className={"alert-heading"} >TEST</h4>
+
+                                        { this.state.resultadosPrestamos[i] != undefined ? (
+                                            <div>
+                                                {this.state.resultadosPrestamos[i].map((prestamo, j) => (
+                                                    <div key={prestamo.ID}>
+                                                        {
+                                                            Object.keys(this.state.resultadosPrestamos[i][j]).map((propiedad, k) => (
+                                                                <div key={k} style={{display: "inline-block", padding: "1% 3%"}} className={"border-top border-bottom border-left border-right"}>
+                                                                    <h4 className={"col-form-label text-center"}>{this.state.resultadosPrestamos[i][j][propiedad]}</h4>
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Nombre de Campo</h4>
-                                                <input id={"campoNombre"} type="text" className={"form-control"}/>
-                                            </div>
-                                        </div>
-                                        <div className={"row"}>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Tipo</h4>
-                                                <select id={"campoTipo"} className={"form-control"}>
-                                                    <option value="" key="0">Seleccione un tipo de variable...</option>
-                                                </select>
-                                            </div>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Guardar Campo en Resultados</h4>
-                                                <div className={"switch-button switch-button-yesno"} style={{margin:"0 auto", display:"block"}}>
-                                                    <input type="checkbox" defaultChecked name={"campoGuardar"} id={"campoGuardar"}/><span>
-                                                    <label htmlFor={"campoGuardar"}></label></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className={"row"}>
-                                            <button className={"btn btn-light btn-block col-xl-10 col-10"} style={{margin: "0 auto", display: "block"}}>Crear</button>
-                                        </div>
+                                        ) : (
+                                            <span></span>
+                                        )}
                                     </div>
-                                </div>
-                            </Accordion>
+                                </Accordion>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 { this.state.mensajeModal.mostrarMensaje ? (

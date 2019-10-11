@@ -7,6 +7,8 @@ exports["default"] = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
+var _mssql = _interopRequireDefault(require("mssql"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -27,22 +29,22 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-//faltan warning
-//light
-var Configuracion =
+var SeleccionarCriterioDeterioro =
 /*#__PURE__*/
 function (_React$Component) {
-  _inherits(Configuracion, _React$Component);
+  _inherits(SeleccionarCriterioDeterioro, _React$Component);
 
-  function Configuracion() {
-    _classCallCheck(this, Configuracion);
+  function SeleccionarCriterioDeterioro(props) {
+    _classCallCheck(this, SeleccionarCriterioDeterioro);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Configuracion).apply(this, arguments));
+    return _possibleConstructorReturn(this, _getPrototypeOf(SeleccionarCriterioDeterioro).call(this, props));
   }
 
-  _createClass(Configuracion, [{
+  _createClass(SeleccionarCriterioDeterioro, [{
     key: "render",
     value: function render() {
+      var _this = this;
+
       return _react["default"].createElement("div", null, _react["default"].createElement("div", {
         className: "row"
       }, _react["default"].createElement("div", {
@@ -58,9 +60,28 @@ function (_React$Component) {
       }, _react["default"].createElement("ol", {
         className: "breadcrumb"
       }, _react["default"].createElement("li", {
+        className: "breadcrumb-item",
+        "aria-current": "page",
+        onClick: this.props.showConfigurationComponent
+      }, _react["default"].createElement("a", {
+        href: "#",
+        className: "breadcrumb-link"
+      }, "Configuraci\xF3n")), _react["default"].createElement("li", {
         className: "breadcrumb-item active",
         "aria-current": "page"
-      }, "Configuraci\xF3n"))))))), _react["default"].createElement("div", {
+      }, "Seleccionar Criterio de Deterioro"))))))), _react["default"].createElement("div", {
+        className: "row"
+      }, _react["default"].createElement("button", {
+        onClick: this.props.goCrearCredito,
+        className: "btn btn-success btn-block col-xl-10 col-10",
+        style: {
+          color: "white",
+          fontSize: "1.2em",
+          fontWeight: "bold",
+          margin: "0 auto",
+          display: "block"
+        }
+      }, "Crear")), _react["default"].createElement("br", null), _react["default"].createElement("div", {
         className: "row"
       }, _react["default"].createElement("div", {
         className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
@@ -70,32 +91,22 @@ function (_React$Component) {
         className: "card-body"
       }, _react["default"].createElement("div", {
         className: "row border-top border-bottom addPaddingToConfig"
-      }, _react["default"].createElement("a", {
-        className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM",
-        onClick: this.props.showTableConfigurationComponent
-      }, "Tablas"), _react["default"].createElement("a", {
-        className: "btn btn-outline-primary btn-block btnWhiteColorHover fontSize1EM",
-        onClick: this.props.showClasificationCriteriaComponent
-      }, "Criterios de Clasificaci\xF3n"), _react["default"].createElement("a", {
-        className: "btn btn-outline-secondary btn-block btnWhiteColorHover fontSize1EM",
-        onClick: this.props.showTypeCreditComponent
-      }, "Tipos de Cr\xE9ditos"), _react["default"].createElement("a", {
-        className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
-        onClick: this.props.showCatClass
-      }, "Categorias de Clasificaci\xF3n"), _react["default"].createElement("a", {
-        className: "btn btn-outline-success btn-block btnWhiteColorHover fontSize1EM",
-        onClick: this.props.showDeteriorationCriteria
-      }, "Criterios por Deterioro"), _react["default"].createElement("a", {
-        className: "btn btn-outline-brand btn-block btnWhiteColorHover fontSize1EM"
-      }, "Mantenimiento de Usuarios"), _react["default"].createElement("a", {
-        className: "btn btn-outline-danger btn-block btnWhiteColorHover fontSize1EM",
-        onClick: this.props.showListsComponent
-      }, "Listas")))))));
+      }, this.props.estimacionesDeterioro.map(function (estimacionDeterioro, i) {
+        return _react["default"].createElement("a", {
+          className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
+          onClick: function onClick() {
+            return _this.props.seleccionarCriterio(estimacionDeterioro.ID, estimacionDeterioro.categoria);
+          },
+          key: estimacionDeterioro.ID
+        }, estimacionDeterioro.categoria);
+      }), this.props.estimacionesDeterioro.length == 0 ? _react["default"].createElement("a", {
+        className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
+      }, "No existen criterios de deterioro creados") : _react["default"].createElement("span", null)))))));
     }
   }]);
 
-  return Configuracion;
+  return SeleccionarCriterioDeterioro;
 }(_react["default"].Component);
 
-exports["default"] = Configuracion;
-//# sourceMappingURL=Configuracion.js.map
+exports["default"] = SeleccionarCriterioDeterioro;
+//# sourceMappingURL=SeleccionarCriterioDeterioro.js.map

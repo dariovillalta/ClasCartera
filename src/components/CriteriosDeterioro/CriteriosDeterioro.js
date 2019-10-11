@@ -2,8 +2,8 @@ import React from 'react';
 import sql from 'mssql';
 
 import SeleccionarCriterioDeterioro from './SeleccionarCriterioDeterioro.js';
-import MostrarReglas from '../Regla/MostrarReglas.js';
-import GuardarTipoCreditoCampo from './GuardarTipoCreditoCampo.js';
+import CrearCriterioDeterioro from './CrearCriterioDeterioro.js';
+//import EditarCriterioDeterioro from './EditarCriterioDeterioro.js';
 
 export default class CriteriosDeterioro extends React.Component {
     constructor(props) {
@@ -12,61 +12,84 @@ export default class CriteriosDeterioro extends React.Component {
             idCriterioDeterioro: -1,
             nombreCriterioDeterioroSeleccionado: "",
             mostrarComponente: "selCrit",
-            regla: {},
-            campoTexto: '',
-            operacion: '',
-            valorTexto: ''
+            estimacionesDeterioro: []
         }
-        this.updateDeterCriteriaID = this.updateDeterCriteriaID.bind(this);
-        this.returnSelCredit = this.returnSelCredit.bind(this);
-        this.updateVarCreation = this.updateVarCreation.bind(this);
-        this.returnVarCreation = this.returnVarCreation.bind(this);
+        this.goCreateCriteria = this.goCreateCriteria.bind(this);
+        this.goSelectCriteria = this.goSelectCriteria.bind(this);
+        this.goEditCriteria = this.goEditCriteria.bind(this);
+        this.loadCriterioDet = this.loadCriterioDet.bind(this);
     }
 
-    updateDeterCriteriaID (id, nombre) {
+    componentDidMount() {
+        this.loadCriterioDet();
+    }
+
+    loadCriterioDet() {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select * from CriterioDeterioro", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        this.setState({
+                            estimacionesDeterioro: result.recordset
+                        });
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    goCreateCriteria () {
         this.setState({
-            idCriterioDeterioro: id,
-            mostrarComponente: "selVar",
-            nombreCriterioDeterioroSeleccionado: nombre
+            mostrarComponente: "crearCrit"
         });
     }
 
-    returnSelDeterCriteria () {
+    goSelectCriteria () {
+        this.loadCriterioDet();
         this.setState({
             idCriterioDeterioro: -1,
-            mostrarTabla: "selCrit",
-            nombreCriterioDeterioroSeleccionado: ""
+            nombreCriterioDeterioroSeleccionado: "",
+            mostrarComponente: "selCrit"
         });
     }
 
-    updateVarCreation(reglaID, campoTexto, operacion, valorTexto) {
+    goEditCriteria (id, nombre) {
         this.setState({
-            regla: {ID: reglaID, campo: campoTexto, operacion: operacion, valor: valorTexto},
-            mostrarTabla: "saveTypeCreditField",
-            campoTexto: campoTexto,
-            operacion: operacion,
-            valorTexto: valorTexto
+            idCriterioDeterioro: id,
+            nombreCriterioDeterioroSeleccionado: nombre,
+            mostrarComponente: "editCrit"
         });
-    };
-
-    returnVarCreation() {
-        this.setState({
-            regla: {},
-            mostrarTabla: "selVar"
-        });
-    };
+    }
 
     render() {
-        if(this.state.mostrarComponente.localeCompare("selCrit") == 0) {
+        if(this.state.mostrarComponente.localeCompare("crearCrit") == 0) {
             return (
                 <div>
-                    <SeleccionarCriterioDeterioro pool={this.props.pool} seleccionarCriterio={this.updateDeterCriteriaID} showConfigurationComponent={this.props.showConfigurationComponent}> </SeleccionarCriterioDeterioro>
+                    <CrearCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} returnSelCrit={this.goSelectCriteria}> </CrearCriterioDeterioro>
                 </div>
             );
-        } else if(this.state.mostrarComponente.localeCompare("selVar") == 0) {
+        } else if(this.state.mostrarComponente.localeCompare("selCrit") == 0) {
             return (
                 <div>
-                    <MostrarReglas pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} returnPrevComponent={this.returnSelDeterCriteria} returnPrevComponentName={"Seleccionar Criterio de Deterioro"} campoTexto={this.state.campoTexto} tipoTablaRes={"CriterioDeterioro"} idTipoTabla={this.state.idCriterioDeterioro}> </MostrarReglas>
+                    <SeleccionarCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} seleccionarCriterio={this.goEditCriteria} goCrearCredito={this.goCreateCriteria} estimacionesDeterioro={this.state.estimacionesDeterioro}> </SeleccionarCriterioDeterioro>
+                </div>
+            );
+        } else if(this.state.mostrarComponente.localeCompare("editCrit") == 0) {
+            return (
+                <div>
+                    <CrearCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} returnSelCrit={this.goSelectCriteria}> </CrearCriterioDeterioro>
                 </div>
             );
         }

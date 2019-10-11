@@ -41,6 +41,7 @@
     "configure": "0.0.1",
     "d3": "5.11.0",
     "electron-is-dev": "^1.1.0",
+    "inputmask": "4.0.9",
     "mssql": "^5.1.0",
     "node-addon-api": "^1.6.3",
     "node-gyp": "^5.0.1",

@@ -14,13 +14,13 @@ export default class VerReporteria extends React.Component {
     }
 
     terminoSeleccionFiltro () {
-        for (var i = 0; i < arregloReglasFiltros.length; i++) {
+        /*for (var i = 0; i < arregloReglasFiltros.length; i++) {
             arregloReglasFiltros[i]
             var condicionRegla = getEvalCodeCondition(reglasEstimacionesDeterioro[n][m], "arregloCreditos[j][k]");
             if( !eval(condicionRegla) ) {
                 arregloResultados.splice(i, 1);
             }
-        };
+        };*/
         this.setState({
             seleccionoFiltro: true
         });

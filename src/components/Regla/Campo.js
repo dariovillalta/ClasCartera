@@ -8,7 +8,7 @@ export default class Campo extends React.Component {
 
     checkFieldType() {
         let valor = $('#campo').val();
-        if(valor.length > 0) {
+        if(valor.length > 0 && valor.localeCompare("M0ra") != 0) {
             let campoSeleccionado = this.props.campos[valor];
             if(campoSeleccionado.tipo.indexOf("int") == 0) {
                 this.props.esNumero();
@@ -19,6 +19,8 @@ export default class Campo extends React.Component {
             } else if(campoSeleccionado.tipo.indexOf("varchar") == 0) {
                 this.props.esTexto();
             }
+        } else if(valor.length > 0 && valor.localeCompare("M0ra") == 0) {
+            this.props.esNumero();
         }
     }
     
@@ -33,6 +35,7 @@ export default class Campo extends React.Component {
                                 <div className={"form-group"}>
                                     <select id="campo" className={"form-control form-control-lg"} onChange={this.checkFieldType}>
                                         <option value="">Seleccione un campo...</option>
+                                        <option value="M0ra">Días de Mora</option>
                                         {this.props.campos.map((campo, i) =>
                                             <option value={i} key={i}>{campo.nombre}</option>
                                         )}
