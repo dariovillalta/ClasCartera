@@ -207,9 +207,60 @@ function (_React$Component) {
       }
     }
   }, {
-    key: "loadElementsOfLists",
-    value: function loadElementsOfLists() {
+    key: "updateElementList",
+    value: function updateElementList(i, elemento) {
       var _this5 = this;
+
+      var idLista = this.state.listaSeleccionada;
+      var nombre = $("#nombreElemento" + i).val();
+      var valor = $("#valorElementoNuevo").val();
+      var tipo = $("#listaTipoNuevo").val();
+
+      if (idLista != undefined && !isNaN(idLista)) {
+        if (nombre.length > 0 && nombre.length < 51) {
+          if (valor.length > 0 && valor.length < 501) {
+            if (tipo.length > 0 && tipo.length < 26) {
+              var transaction = new _mssql["default"].Transaction(this.props.pool);
+              transaction.begin(function (err) {
+                var rolledBack = false;
+                transaction.on('rollback', function (aborted) {
+                  rolledBack = true;
+                });
+                var request = new _mssql["default"].Request(transaction);
+                request.query("update VariablesdeLista set listaID = " + idLista + ", valor = '" + valor + "', nombre = '" + nombre + "', tipo = '" + tipo + "' and ID = " + elemento.ID, function (err, result) {
+                  if (err) {
+                    if (!rolledBack) {
+                      console.log(err);
+                      transaction.rollback(function (err) {});
+                    }
+                  } else {
+                    transaction.commit(function (err) {
+                      _this5.loadElementsOfLists();
+
+                      $("#nombreElementoNuevo").val("");
+                      $("#valorElementoNuevo").val("");
+                      $("#listaTipoNuevo").val("");
+                    });
+                  }
+                });
+              }); // fin transaction
+            } else {
+              alert("Error");
+            }
+          } else {
+            alert("Error");
+          }
+        } else {
+          alert("Error");
+        }
+      } else {
+        alert("Error");
+      }
+    }
+  }, {
+    key: "deleteElementList",
+    value: function deleteElementList(elemento) {
+      var _this6 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
@@ -218,7 +269,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from VariablesdeLista where listaID = " + _this5.state.listaSeleccionada, function (err, result) {
+        request.query("delete VariablesdeLista where ID = " + elemento.ID, function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -226,7 +277,37 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              _this5.setState({
+              _this6.loadElementsOfLists();
+
+              $("#nombreElementoNuevo").val("");
+              $("#valorElementoNuevo").val("");
+              $("#listaTipoNuevo").val("");
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "loadElementsOfLists",
+    value: function loadElementsOfLists() {
+      var _this7 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from VariablesdeLista where listaID = " + _this7.state.listaSeleccionada, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              _this7.setState({
                 variablesDeLista: result.recordset
               });
             });
@@ -237,7 +318,7 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this6 = this;
+      var _this8 = this;
 
       if (this.state.mostrar.localeCompare("selLista") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement("div", {
@@ -308,7 +389,7 @@ function (_React$Component) {
           return _react["default"].createElement("a", {
             className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
             onClick: function onClick() {
-              return _this6.seleccionarLista(lista.ID, lista.nombre);
+              return _this8.seleccionarLista(lista.ID, lista.nombre);
             },
             key: lista.ID
           }, lista.nombre);
@@ -454,7 +535,7 @@ function (_React$Component) {
               paddingLeft: "2%"
             },
             className: "alert-heading"
-          }, _this6.state.listaSeleccionadaNombre)), _react["default"].createElement("div", {
+          }, _this8.state.listaSeleccionadaNombre)), _react["default"].createElement("div", {
             className: "form-group col-xl-6 col-6"
           }, _react["default"].createElement("label", {
             className: "col-form-label"
@@ -495,7 +576,9 @@ function (_React$Component) {
               width: "100%"
             }
           }, _react["default"].createElement("button", {
-            onClick: _this6.createElementList,
+            onClick: function onClick() {
+              return _this8.updateElementList(i, elemento);
+            },
             className: "btn btn-success btn-block col-xl-5 col-5",
             style: {
               color: "white",
@@ -505,7 +588,9 @@ function (_React$Component) {
               display: "block"
             }
           }, "Guardar"), _react["default"].createElement("button", {
-            onClick: _this6.deleteElementList,
+            onClick: function onClick() {
+              return _this8.deleteElementList(elemento);
+            },
             className: "btn btn-danger btn-block col-xl-5 col-5",
             style: {
               color: "white",

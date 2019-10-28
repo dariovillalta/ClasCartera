@@ -1,5 +1,6 @@
 import React from 'react';
 import sql from 'mssql';
+import Inputmask from "inputmask";
 
 import ErrorMessage from '../ErrorMessage.js';
 import MessageModal from '../MessageModal.js';
@@ -15,6 +16,10 @@ export default class CrearCategoriaClasificacion extends React.Component {
         this.dismissTypeCreditNewError = this.dismissTypeCreditNewError.bind(this);
         this.showSuccesMessage = this.showSuccesMessage.bind(this);
         this.dismissMessageModal = this.dismissMessageModal.bind(this);
+    }
+
+    componentDidMount() {
+        Inputmask({"mask": "(I)|(II)|(III)|(IV)|(V)"}).mask($("#categoriaCategoriaClasificacion"));
     }
 
     guardarTipoCredito() {
@@ -164,6 +169,7 @@ export default class CrearCategoriaClasificacion extends React.Component {
                 <div className={"text-center"}>
                     <a onClick={this.guardarTipoCredito} className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}}>Crear</a>
                 </div>
+                <br/>
                 { this.state.mensajeModal.mostrarMensaje ? (
                     <MessageModal esError={this.state.mensajeModal.esError} esConfirmar={this.state.mensajeModal.esConfirmar} dismissMessage={this.dismissMessageModal} confirmFunction={this.confirmMessageModal} titulo={this.state.mensajeModal.titulo} mensaje={this.state.mensajeModal.mensaje}> </MessageModal>
                 ) : (

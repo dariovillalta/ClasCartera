@@ -131,7 +131,7 @@ export default class Valor extends React.Component {
 	                </div>
 	            </div>
             );
-        } else if(this.props.esBoolean) {
+        } else if(this.props.esBoolean || this.props.esPequenoDeudor) {
             return (
                 <div className={"row"}>
                     <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
@@ -197,6 +197,41 @@ export default class Valor extends React.Component {
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+                </div>
+            );
+        } else if(this.props.esGranDeudor) {
+            return (
+                <div className={"row"}>
+                    <div className={"col-sm-4 col-4"}>
+                        <div className={"card"}>
+                            <div className={"card-body"}>
+                                <div className={"d-inline-block text-center"} style={{width: "100%"}}>
+                                    <h2 className="text-muted">Capital Mínimo</h2>
+                                    <input id="capitalMinimo" type="text" className={"form-control"}  style={{width: "100%"}}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"col-sm-4 col-4"}>
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-inline-block text-center"  style={{width: "100%"}}>
+                                    <h2 className="text-muted">Tiempo Mínimo</h2>
+                                    <input id="tiempoMinimo" type="text" className={"form-control"}  style={{width: "100%"}}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"col-sm-4 col-4"}>
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-inline-block text-center"  style={{width: "100%"}}>
+                                    <h2 className="text-muted">Porcentaje Mínimo</h2>
+                                    <input id="porcentajeMinimo" type="text" className={"form-control"}  style={{width: "100%"}}/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

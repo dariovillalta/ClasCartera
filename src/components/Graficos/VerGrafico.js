@@ -13,19 +13,19 @@ export default class VerGrafico extends React.Component {
         if(this.props.tipoGraficoSeleccionado.localeCompare("pie") == 0) {
             return (
                 <div>
-                    <PieGraph pool={this.props.pool}> </PieGraph>
+                    <PieGraph fechaInicio={this.props.fechaInicio} fechaFinal={this.props.fechaInicio} nombreEtiqueta={this.props.nombreEtiqueta} tablaEtiqueta={this.props.tablaEtiqueta} nombreNumerico={this.props.nombreNumerico} tablaNumerico={this.props.tablaNumerico} pool={this.props.pool}> </PieGraph>
                 </div>
             );
         } else if(this.props.tipoGraficoSeleccionado.localeCompare("bar") == 0) {
             return (
                 <div>
-                    <BarGraph pool={this.props.pool}> </BarGraph>
+                    <BarGraph fechaInicio={this.props.fechaInicio} fechaFinal={this.props.fechaInicio} nombreEtiqueta={this.props.nombreEtiqueta} tablaEtiqueta={this.props.tablaEtiqueta} nombreNumerico={this.props.nombreNumerico} tablaNumerico={this.props.tablaNumerico} pool={this.props.pool}> </BarGraph>
                 </div>
             );
         } else if(this.props.tipoGraficoSeleccionado.localeCompare("line") == 0) {
             return (
                 <div>
-                    <LineGraph pool={this.props.pool}> </LineGraph>
+                    <LineGraph fechaInicio={this.props.fechaInicio} fechaFinal={this.props.fechaInicio} nombreEtiqueta={this.props.nombreEtiqueta} tablaEtiqueta={this.props.tablaEtiqueta} nombreNumerico={this.props.nombreNumerico} tablaNumerico={this.props.tablaNumerico} pool={this.props.pool}> </LineGraph>
                 </div>
             );
         }

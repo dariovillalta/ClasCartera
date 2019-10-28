@@ -7,10 +7,16 @@ export default class VerReporteria extends React.Component {
         super(props);
         this.state = {
             seleccionoFiltro: false,
-            arregloReglasFiltros: []
+            arregloReglasFiltros: [],
+            filtrosInt: [],
+            filtrosDecimal: [],
+            filtrosDate: [],
+            filtrosBool: [],
+            filtrosString: []
         }
         this.terminoSeleccionFiltro = this.terminoSeleccionFiltro.bind(this);
         this.retornoSeleccionFiltro = this.retornoSeleccionFiltro.bind(this);
+        this.updatefilter = this.updatefilter.bind(this);
     }
 
     terminoSeleccionFiltro () {
@@ -24,12 +30,46 @@ export default class VerReporteria extends React.Component {
         this.setState({
             seleccionoFiltro: true
         });
+        console.log(this.state.filtrosInt);
+        console.log(this.state.filtrosDecimal);
+        console.log(this.state.filtrosBool);
+        console.log(this.state.filtrosDate);
+        console.log(this.state.filtrosString);
     }
 
     retornoSeleccionFiltro () {
         this.setState({
-            seleccionoFiltro: false
+            seleccionoFiltro: false,
+            filtrosInt: [],
+            filtrosDecimal: [],
+            filtrosBool: [],
+            filtrosDate: [],
+            filtrosString: []
         });
+    }
+
+    updatefilter(filtro) {
+        if(filtro[0].tipo.localeCompare("int") == 0){
+            this.setState({
+                filtrosInt: filtro
+            });
+        } else if(filtro[0].tipo.localeCompare("decimal") == 0){
+            this.setState({
+                filtrosDecimal: filtro
+            });
+        } else if(filtro[0].tipo.localeCompare("bool") == 0){
+            this.setState({
+                filtrosBool: filtro
+            });
+        } else if(filtro[0].tipo.localeCompare("date") == 0){
+            this.setState({
+                filtrosDate: filtro
+            });
+        } else if(filtro[0].tipo.localeCompare("varchar") == 0){
+            this.setState({
+                filtrosString: filtro
+            });
+        }
     }
 
     render() {
@@ -50,13 +90,13 @@ export default class VerReporteria extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <CrearFiltro pool={this.props.pool} callbackComponent={this.terminoSeleccionFiltro} arregloReglasFiltros={this.state.arregloReglasFiltros}> </CrearFiltro>
+                    <CrearFiltro updatefilter={this.updatefilter} pool={this.props.pool} callbackComponent={this.terminoSeleccionFiltro} arregloReglasFiltros={this.state.arregloReglasFiltros}> </CrearFiltro>
                 </div>
             );
         } else {
             return (
                 <div>
-                    <ResultadoReporteria pool={this.props.pool} retornoSeleccionFiltro={this.retornoSeleccionFiltro}> </ResultadoReporteria>
+                    <ResultadoReporteria showLoadingScreen={this.props.showLoadingScreen} hideLoadingScreen={this.props.hideLoadingScreen} filtrosInt={this.state.filtrosInt} filtrosDecimal={this.state.filtrosDecimal} filtrosDate={this.state.filtrosDate} filtrosBool={this.state.filtrosBool} filtrosString={this.state.filtrosString} pool={this.props.pool} retornoSeleccionFiltro={this.retornoSeleccionFiltro}> </ResultadoReporteria>
                 </div>
             );
         }

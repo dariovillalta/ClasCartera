@@ -9,7 +9,14 @@ export default class Graficos extends React.Component {
         super(props);
         this.state = {
             procesoAtual: "selGrafico",
-            tipoGraficoSeleccionado: ""
+            tipoGraficoSeleccionado: "",
+            nombreEtiqueta: "",
+            tablaEtiqueta: "",
+            nombreNumerico: "",
+            tablaNumerico: "",
+            fechaInicio: "",
+            fechaFinal: ""
+
         }
         this.terminoSeleccionGrafico = this.terminoSeleccionGrafico.bind(this);
         this.retornoSeleccionGrafico = this.retornoSeleccionGrafico.bind(this);
@@ -33,9 +40,15 @@ export default class Graficos extends React.Component {
         });
     }
 
-    terminoConfigGrafico () {
+    terminoConfigGrafico (etiquetaNombre, etiquetaTabla, numericoNombre, numericoTabla, fechaInicio, fechaFinal) {
         this.setState({
-            procesoAtual: "crearFiltro"
+            procesoAtual: "crearFiltro",
+            nombreEtiqueta: etiquetaNombre,
+            tablaEtiqueta: etiquetaTabla,
+            nombreNumerico: numericoNombre,
+            tablaNumerico: numericoTabla,
+            fechaInicio: fechaInicio,
+            fechaFinal: fechaFinal
         });
     }
 
@@ -141,7 +154,7 @@ export default class Graficos extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <VerGrafico pool={this.props.pool} tipoGraficoSeleccionado={this.state.tipoGraficoSeleccionado}> </VerGrafico>
+                    <VerGrafico fechaInicio={this.props.fechaInicio} fechaFinal={this.props.fechaInicio} pool={this.props.pool} nombreEtiqueta={this.state.nombreEtiqueta} tablaEtiqueta={this.state.tablaEtiqueta} nombreNumerico={this.state.nombreNumerico} tablaNumerico={this.state.tablaNumerico} tipoGraficoSeleccionado={this.state.tipoGraficoSeleccionado}> </VerGrafico>
                 </div>
             );
         }

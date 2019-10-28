@@ -25,9 +25,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -44,6 +44,9 @@ var config = {
     max: 40,
     min: 0,
     idleTimeoutMillis: 60000
+  },
+  options: {
+    useUTC: false
   }
 };
 var pool = new _mssql["default"].ConnectionPool(config, function (err) {
@@ -75,8 +78,9 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this));
     _this.state = {
-      isLoggedIn: true,
-      userName: null // or using a configuration object
+      isLoggedIn: false,
+      userName: null,
+      permision: "" // or using a configuration object
 
       /*const connectionString = {
           connectionString: 'DSN=ClasificacionCartera',
@@ -93,10 +97,28 @@ function (_React$Component) {
       // connection2 is now an open Connection
 
     };
+    _this.login = _this.login.bind(_assertThisInitialized(_this));
+    _this.logOff = _this.logOff.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(App, [{
+    key: "login",
+    value: function login(userName, permision) {
+      this.setState({
+        isLoggedIn: true,
+        userName: null,
+        permision: permision
+      });
+    }
+  }, {
+    key: "logOff",
+    value: function logOff() {
+      this.setState({
+        isLoggedIn: false
+      });
+    }
+  }, {
     key: "select",
     value: function select() {
       var config = {
@@ -128,10 +150,13 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var logged = this.state.isLoggedIn;
-      return _react["default"].createElement("div", null, logged ? _react["default"].createElement(_Layout["default"], {
+      return _react["default"].createElement("div", null, this.state.isLoggedIn ? _react["default"].createElement(_Layout["default"], {
+        userName: this.state.userName,
+        permision: this.state.permision,
+        logOff: this.logOff,
         pool: pool
       }, " ") : _react["default"].createElement(_LoginPage["default"], {
+        login: this.login,
         pool: pool
       }, " "));
     }

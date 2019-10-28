@@ -146,6 +146,79 @@ export default class CrearYSeleccionarLista extends React.Component {
             alert("Error");
         }
     }
+    updateElementList(i, elemento) {
+        let idLista = this.state.listaSeleccionada;
+        let nombre = $("#nombreElemento"+i).val();
+        let valor = $("#valorElementoNuevo").val();
+        let tipo = $("#listaTipoNuevo").val();
+        if(idLista != undefined && !isNaN(idLista)) {
+            if(nombre.length > 0 && nombre.length < 51) {
+                if(valor.length > 0 && valor.length < 501) {
+                    if(tipo.length > 0 && tipo.length < 26) {
+                        const transaction = new sql.Transaction( this.props.pool );
+                        transaction.begin(err => {
+                            var rolledBack = false;
+                            transaction.on('rollback', aborted => {
+                                rolledBack = true;
+                            });
+                            const request = new sql.Request(transaction);
+                            request.query("update VariablesdeLista set listaID = "+idLista+", valor = '"+valor+"', nombre = '"+nombre+"', tipo = '"+tipo+"' and ID = "+elemento.ID, (err, result) => {
+                                if (err) {
+                                    if (!rolledBack) {
+                                        console.log(err);
+                                        transaction.rollback(err => {
+                                        });
+                                    }
+                                } else {
+                                    transaction.commit(err => {
+                                        this.loadElementsOfLists();
+                                        $("#nombreElementoNuevo").val("");
+                                        $("#valorElementoNuevo").val("");
+                                        $("#listaTipoNuevo").val("");
+                                    });
+                                }
+                            });
+                        }); // fin transaction
+                    } else {
+                        alert("Error");
+                    }
+                } else {
+                    alert("Error");
+                }
+            } else {
+                alert("Error");
+            }
+        } else {
+            alert("Error");
+        }
+    }
+
+    deleteElementList(elemento) {
+        const transaction = new sql.Transaction( this.props.pool );
+                        transaction.begin(err => {
+                            var rolledBack = false;
+                            transaction.on('rollback', aborted => {
+                                rolledBack = true;
+                            });
+                            const request = new sql.Request(transaction);
+                            request.query("delete VariablesdeLista where ID = "+elemento.ID, (err, result) => {
+                                if (err) {
+                                    if (!rolledBack) {
+                                        console.log(err);
+                                        transaction.rollback(err => {
+                                        });
+                                    }
+                                } else {
+                                    transaction.commit(err => {
+                                        this.loadElementsOfLists();
+                                        $("#nombreElementoNuevo").val("");
+                                        $("#valorElementoNuevo").val("");
+                                        $("#listaTipoNuevo").val("");
+                                    });
+                                }
+                            });
+                        }); // fin transaction
+    }
 
     loadElementsOfLists() {
         const transaction = new sql.Transaction( this.props.pool );
@@ -321,8 +394,8 @@ export default class CrearYSeleccionarLista extends React.Component {
                                                 </div>
                                             </div>
                                             <div className={"row"} style={{width: "100%"}}>
-                                                <button onClick={this.createElementList} className={"btn btn-success btn-block col-xl-5 col-5"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold", margin: "0 auto", display: "block"}}>Guardar</button>
-                                                <button onClick={this.deleteElementList} className={"btn btn-danger btn-block col-xl-5 col-5"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold", margin: "0 auto", display: "block"}}>Eliminar</button>
+                                                <button onClick={() => this.updateElementList(i, elemento)} className={"btn btn-success btn-block col-xl-5 col-5"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold", margin: "0 auto", display: "block"}}>Guardar</button>
+                                                <button onClick={() => this.deleteElementList(elemento)} className={"btn btn-danger btn-block col-xl-5 col-5"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold", margin: "0 auto", display: "block"}}>Eliminar</button>
                                             </div>
                                             <div className={"row"} style={{width: "100%"}}>
                                                 <br/>

@@ -11,6 +11,8 @@ var _mssql = _interopRequireDefault(require("mssql"));
 
 var _CrearTipoCredito = _interopRequireDefault(require("./CrearTipoCredito.js"));
 
+var _EditarTipoCredito = _interopRequireDefault(require("./EditarTipoCredito.js"));
+
 var _Accordion = _interopRequireDefault(require("../Accordion/Accordion.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -47,13 +49,16 @@ function (_React$Component) {
     _this.state = {
       tipoCreditos: [],
       tipoCreditosHijos: [],
-      mostrarCreacionTipoCredito: false
+      creditoSel: {},
+      mostrarVista: "selTipoCredito"
     };
     _this.loadTypeCredit = _this.loadTypeCredit.bind(_assertThisInitialized(_this));
     _this.goCreateTypeCredit = _this.goCreateTypeCredit.bind(_assertThisInitialized(_this));
     _this.returnChooseTypeCredit = _this.returnChooseTypeCredit.bind(_assertThisInitialized(_this));
     _this.createCreditTypeSonsArray = _this.createCreditTypeSonsArray.bind(_assertThisInitialized(_this));
     _this.insertCreditTypeSon = _this.insertCreditTypeSon.bind(_assertThisInitialized(_this));
+    _this.entrarEdit = _this.entrarEdit.bind(_assertThisInitialized(_this));
+    _this.returnEditCredit = _this.returnEditCredit.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -144,23 +149,38 @@ function (_React$Component) {
     key: "goCreateTypeCredit",
     value: function goCreateTypeCredit() {
       this.setState({
-        mostrarCreacionTipoCredito: true
+        mostrarVista: "crearTipoCredito"
       });
     }
   }, {
     key: "returnChooseTypeCredit",
     value: function returnChooseTypeCredit() {
       this.setState({
-        mostrarCreacionTipoCredito: false
+        mostrarVista: "selTipoCredito"
       });
       this.loadTypeCredit();
+    }
+  }, {
+    key: "entrarEdit",
+    value: function entrarEdit(tipoCreditoN) {
+      this.setState({
+        creditoSel: tipoCreditoN,
+        mostrarVista: "editTipoCredito"
+      });
+    }
+  }, {
+    key: "returnEditCredit",
+    value: function returnEditCredit() {
+      this.setState({
+        mostrarVista: "editTipoCredito"
+      });
     }
   }, {
     key: "render",
     value: function render() {
       var _this4 = this;
 
-      if (this.state.mostrarCreacionTipoCredito) {
+      if (this.state.mostrarVista.localeCompare("crearTipoCredito") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_CrearTipoCredito["default"], {
           tablaID: this.props.tablaID,
           pool: this.props.pool,
@@ -170,7 +190,19 @@ function (_React$Component) {
           tipoCreditos: this.state.tipoCreditos,
           loadTypeCredit: this.loadTypeCredit
         }, " "));
-      } else {
+      } else if (this.state.mostrarVista.localeCompare("editTipoCredito") == 0) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_EditarTipoCredito["default"], {
+          tablaID: this.props.tablaID,
+          seleccionarCredito: this.props.seleccionarCredito,
+          pool: this.props.pool,
+          tipoCredito: this.state.creditoSel,
+          retornoSelCreditos: this.returnChooseTypeCredit,
+          retornoTablas: this.props.retornoTablas,
+          showConfigurationComponent: this.props.showConfigurationComponent,
+          tipoCreditos: this.state.tipoCreditos,
+          loadTypeCredit: this.loadTypeCredit
+        }, " "));
+      } else if (this.state.mostrarVista.localeCompare("selTipoCredito") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {
@@ -215,19 +247,23 @@ function (_React$Component) {
           return _react["default"].createElement(_Accordion["default"], {
             key: tipoCredito.ID,
             showTrash: false,
+            showEdit: true,
+            editVariable: function editVariable() {
+              return _this4.entrarEdit(tipoCredito);
+            },
             allowMultipleOpen: true,
             color: "#ffffff"
           }, _react["default"].createElement("div", {
             label: tipoCredito.nombre,
             key: tipoCredito.ID
-          }, _this4.state.tipoCreditosHijos[i] != undefined ? _react["default"].createElement("div", null, _this4.state.tipoCreditosHijos[i].map(function (tipoCredito, j) {
+          }, _this4.state.tipoCreditosHijos[i] != undefined ? _react["default"].createElement("div", null, _this4.state.tipoCreditosHijos[i].map(function (tipoCreditoH, j) {
             return _react["default"].createElement("a", {
               className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
               onClick: function onClick() {
-                return _this4.props.seleccionarCredito(tipoCredito.ID, tipoCredito.nombre);
+                return _this4.entrarEdit(tipoCreditoH);
               },
-              key: tipoCredito.ID
-            }, tipoCredito.nombre);
+              key: tipoCreditoH.ID
+            }, tipoCreditoH.nombre);
           }), _this4.state.tipoCreditosHijos[i].length == 0 ? _react["default"].createElement("a", {
             className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
           }, "No existen tipos de cr\xE9ditos creados") : _react["default"].createElement("span", null)) : _react["default"].createElement("span", null)));

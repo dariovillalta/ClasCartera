@@ -83,7 +83,7 @@ function (_React$Component) {
         style: {
           color: "white"
         }
-      }, "Inicio"))), _react["default"].createElement("li", {
+      }, "Inicio"))), this.props.permision.localeCompare("admin") == 0 || this.props.permision.localeCompare("calculo") == 0 ? _react["default"].createElement("li", {
         className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",
@@ -95,7 +95,7 @@ function (_React$Component) {
         style: {
           color: "white"
         }
-      }, "Clasificar Cartera"))), _react["default"].createElement("li", {
+      }, "Clasificar Cartera"))) : _react["default"].createElement("span", null), _react["default"].createElement("li", {
         className: "nav-item "
       }, _react["default"].createElement("a", {
         className: "nav-link",

@@ -32,6 +32,11 @@ export default class AccordionTile extends React.Component {
           ) : (
             <span></span>
           )}
+          { this.props.showEdit ? (
+            <img onClick={this.props.editVariable} src={"../assets/edit.png"} style={{height: "20px", width: "20px", display: "block", float: "right", marginRight: "10px"}}></img>
+          ) : (
+            <span></span>
+          )}
         </div>
         {isOpen && (
           <div className={"card-body"} style={{backgroundColor: this.props.color}}>

@@ -52,6 +52,7 @@ function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       this.loadTables();
+      console.log(this.state.tablas);
     }
   }, {
     key: "loadTables",
@@ -65,7 +66,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from Tablas", function (err, result) {
+        request.query("select * from Tablas where funcion ='Pagos de Préstamos' or funcion ='Plan de Pagos'", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -82,10 +83,19 @@ function (_React$Component) {
       }); // fin transaction
     }
   }, {
+    key: "selTabla",
+    value: function selTabla(tabla, index) {
+      this.state.tablas[index].selected = true;
+      console.log(this.state.tablas);
+      this.props.seleccionarTabla(tabla.ID, tabla.nombre);
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this3 = this;
 
+      var claseNoSel = "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM";
+      var claseSel = "btn btn-info btn-block btnWhiteColorHover fontSize1EM";
       return _react["default"].createElement("div", null, _react["default"].createElement("div", {
         className: "row"
       }, _react["default"].createElement("div", {
@@ -98,9 +108,9 @@ function (_React$Component) {
         className: "row border-top border-bottom addPaddingToConfig"
       }, this.state.tablas.map(function (tabla, i) {
         return _react["default"].createElement("a", {
-          className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
+          className: tabla.selected ? claseSel : claseNoSel,
           onClick: function onClick() {
-            return _this3.props.seleccionarTabla(tabla.ID, tabla.nombre);
+            return _this3.selTabla(tabla, i);
           },
           key: i
         }, tabla.nombre);

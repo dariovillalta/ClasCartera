@@ -7,7 +7,7 @@ import MessageModal from '../MessageModal.js';
 
 const campos = [ {nombre: "varchar"}, {nombre: "bit"}, {nombre: "date"}, {nombre: "int"}, {nombre: "decimal"} ];
 const tablas = [ {nombre: "Cliente"}, {nombre: "Préstamo"}, {nombre: "Pagos"}, {nombre: "PlanPagos"} ];
-const funciones = [ {nombre: "Identificador"}, {nombre: "Otro"} ];
+const funciones = [ {nombre: "Identificador"}, {nombre: "Nombre Cliente"}, {nombre: "Otro"} ];
 //let funciones = [ {funcion: "idCliente", texto: "ID de Cliente"}, {funcion: "fecha", texto: "fecha"}, {nombre: "date"}, {nombre: "int"} ];
 
 export default class ConfiguracionCampos extends React.Component {
@@ -467,13 +467,13 @@ export default class ConfiguracionCampos extends React.Component {
                             <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d"}} className={"alert-heading"} >{this.props.nombreTablaSeleccionada}</h4>
                         </div>
                         <div className={"form-group col-xl-6 col-6"}>
-                            <h4 className={"col-form-label text-center"}>Nombre de Campo</h4>
+                            <h4 className={"col-form-label text-center"}>Nombre de Columna</h4>
                             <input id={"campoNombre"} type="text" className={"form-control"}/>
                         </div>
                     </div>
                     <div className={"row"}>
                         <div className={"form-group col-xl-6 col-6"}>
-                            <h4 className={"col-form-label text-center"}>Tabla</h4>
+                            <h4 className={"col-form-label text-center"}>Objeto</h4>
                             <select id={"campoTabla"} className={"form-control"} /*onChange={this.checkFieldType.bind(this)}*/>
                                 <option value="" key="0">Seleccione a que objeto pertenece el campo...</option>
                                 {tablas.map((campo, k) =>
@@ -529,13 +529,13 @@ export default class ConfiguracionCampos extends React.Component {
                                         <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d"}} className={"alert-heading"} >{this.props.nombreTablaSeleccionada}</h4>
                                     </div>
                                     <div className={"form-group col-xl-6 col-6"}>
-                                        <h4 className={"col-form-label text-center"}>Nombre de Campo</h4>
+                                        <h4 className={"col-form-label text-center"}>Nombre de Columna</h4>
                                         <InlineEdit id={"campoNombre"+i} texto={campo.nombre}> </InlineEdit>
                                     </div>
                                 </div>
                                 <div className={"row"}>
                                     <div className="form-group col-xl-6 col-6">
-                                        <h4 className={"col-form-label text-center"}>Tabla</h4>
+                                        <h4 className={"col-form-label text-center"}>Objeto</h4>
                                         <select id={"campoTabla"+i} className={"form-control"} defaultValue={campo.tabla}>
                                             <option value="" key="0">Seleccione a que objeto pertenece el campo...</option>
                                             {tablas.map((campoSelect, k) =>

@@ -213,21 +213,7 @@ function (_React$Component) {
             style: {
               whiteSpace: "nowrap"
             }
-          }, _react["default"].createElement(_ReglaTexto["default"], {
-            onRef: function onRef(ref) {
-              return _this3.ReglaTexto1 = ref;
-            },
-            regla: regla,
-            esCampo: true,
-            pool: _this3.props.pool
-          }), " ", regla.operacion, " ", _react["default"].createElement(_ReglaTexto["default"], {
-            onRef: function onRef(ref) {
-              return _this3.ReglaTexto2 = ref;
-            },
-            regla: regla,
-            esCampo: false,
-            pool: _this3.props.pool
-          }));
+          }, regla.texto);
         }), this.state.reglas.length == 0 ? _react["default"].createElement("a", {
           className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
         }, "No existen variables creadas") : _react["default"].createElement("span", null)))))));

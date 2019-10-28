@@ -239,7 +239,7 @@ function (_React$Component) {
       }, "Seleccionar Tipo de Cr\xE9dito")), _react["default"].createElement("li", {
         className: "breadcrumb-item active",
         "aria-current": "page"
-      }, "Crear Cr\xE9dito"))))))), _react["default"].createElement("div", {
+      }, "Crear Tipo de Cr\xE9dito"))))))), _react["default"].createElement("div", {
         className: "row"
       }, _react["default"].createElement("div", {
         className: "col-xl-12 col-12"
@@ -330,7 +330,7 @@ function (_React$Component) {
           fontSize: "1.2em",
           fontWeight: "bold"
         }
-      }, "Crear")), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
+      }, "Crear")), _react["default"].createElement("br", null), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
         esError: this.state.mensajeModal.esError,
         esConfirmar: this.state.mensajeModal.esConfirmar,
         dismissMessage: this.dismissMessageModal,

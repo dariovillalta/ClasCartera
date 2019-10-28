@@ -13,6 +13,8 @@ var _SeleccionarCriterioDeterioro = _interopRequireDefault(require("./Selecciona
 
 var _CrearCriterioDeterioro = _interopRequireDefault(require("./CrearCriterioDeterioro.js"));
 
+var _EditarCriterioDeterioro = _interopRequireDefault(require("./EditarCriterioDeterioro.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -33,7 +35,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-//import EditarCriterioDeterioro from './EditarCriterioDeterioro.js';
 var CriteriosDeterioro =
 /*#__PURE__*/
 function (_React$Component) {
@@ -49,23 +50,27 @@ function (_React$Component) {
       idCriterioDeterioro: -1,
       nombreCriterioDeterioroSeleccionado: "",
       mostrarComponente: "selCrit",
-      estimacionesDeterioro: []
+      tiposDeCredito: [],
+      estimacionesDeterioro: [],
+      criterioDeterioroSel: {}
     };
     _this.goCreateCriteria = _this.goCreateCriteria.bind(_assertThisInitialized(_this));
     _this.goSelectCriteria = _this.goSelectCriteria.bind(_assertThisInitialized(_this));
     _this.goEditCriteria = _this.goEditCriteria.bind(_assertThisInitialized(_this));
-    _this.loadCriterioDet = _this.loadCriterioDet.bind(_assertThisInitialized(_this));
+    _this.loadTypeCredit = _this.loadTypeCredit.bind(_assertThisInitialized(_this));
+    _this.createCreditTypeSonsArray = _this.createCreditTypeSonsArray.bind(_assertThisInitialized(_this));
+    _this.insertCriterioDet = _this.insertCriterioDet.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(CriteriosDeterioro, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      this.loadCriterioDet();
+      this.loadTypeCredit();
     }
   }, {
-    key: "loadCriterioDet",
-    value: function loadCriterioDet() {
+    key: "loadTypeCredit",
+    value: function loadTypeCredit() {
       var _this2 = this;
 
       var transaction = new _mssql["default"].Transaction(this.props.pool);
@@ -75,7 +80,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from CriterioDeterioro", function (err, result) {
+        request.query("select * from TipoCredito where tipoCreditoPadreID != -1", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -84,7 +89,54 @@ function (_React$Component) {
           } else {
             transaction.commit(function (err) {
               _this2.setState({
-                estimacionesDeterioro: result.recordset
+                tiposDeCredito: result.recordset
+              });
+
+              _this2.createCreditTypeSonsArray();
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "createCreditTypeSonsArray",
+    value: function createCreditTypeSonsArray() {
+      var arregloTemp = [];
+
+      for (var i = 0; i < this.state.tiposDeCredito.length; i++) {
+        this.insertCriterioDet(this.state.tiposDeCredito[i].ID, i, arregloTemp);
+      }
+
+      ;
+    }
+  }, {
+    key: "insertCriterioDet",
+    value: function insertCriterioDet(creditoID, index, array) {
+      var _this3 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select * from CriterioDeterioro where tipoDeCredito = " + creditoID, function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              if (array[index] == undefined) {
+                array[index] = [];
+              }
+
+              array[index] = $.merge(array[index], result.recordset);
+
+              _this3.setState({
+                estimacionesDeterioro: array
               });
             });
           }
@@ -101,20 +153,22 @@ function (_React$Component) {
   }, {
     key: "goSelectCriteria",
     value: function goSelectCriteria() {
-      this.loadCriterioDet();
+      this.loadTypeCredit();
       this.setState({
         idCriterioDeterioro: -1,
         nombreCriterioDeterioroSeleccionado: "",
-        mostrarComponente: "selCrit"
+        mostrarComponente: "selCrit",
+        criterioDeterioroSel: {}
       });
     }
   }, {
     key: "goEditCriteria",
-    value: function goEditCriteria(id, nombre) {
+    value: function goEditCriteria(id, nombre, objeto) {
       this.setState({
         idCriterioDeterioro: id,
         nombreCriterioDeterioroSeleccionado: nombre,
-        mostrarComponente: "editCrit"
+        mostrarComponente: "editCrit",
+        criterioDeterioroSel: objeto
       });
     }
   }, {
@@ -124,7 +178,8 @@ function (_React$Component) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_CrearCriterioDeterioro["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent,
-          returnSelCrit: this.goSelectCriteria
+          returnSelCrit: this.goSelectCriteria,
+          tiposDeCredito: this.state.tiposDeCredito
         }, " "));
       } else if (this.state.mostrarComponente.localeCompare("selCrit") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_SeleccionarCriterioDeterioro["default"], {
@@ -132,13 +187,16 @@ function (_React$Component) {
           showConfigurationComponent: this.props.showConfigurationComponent,
           seleccionarCriterio: this.goEditCriteria,
           goCrearCredito: this.goCreateCriteria,
+          tiposDeCredito: this.state.tiposDeCredito,
           estimacionesDeterioro: this.state.estimacionesDeterioro
         }, " "));
       } else if (this.state.mostrarComponente.localeCompare("editCrit") == 0) {
-        return _react["default"].createElement("div", null, _react["default"].createElement(_CrearCriterioDeterioro["default"], {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_EditarCriterioDeterioro["default"], {
+          criterioDeterioro: this.state.criterioDeterioroSel,
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent,
-          returnSelCrit: this.goSelectCriteria
+          returnSelCrit: this.goSelectCriteria,
+          tiposDeCredito: this.state.tiposDeCredito
         }, " "));
       }
     }

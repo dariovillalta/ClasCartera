@@ -90,6 +90,16 @@ function (_React$Component) {
           "float": "right",
           marginRight: "10px"
         }
+      }) : _react["default"].createElement("span", null), this.props.showEdit ? _react["default"].createElement("img", {
+        onClick: this.props.editVariable,
+        src: "../assets/edit.png",
+        style: {
+          height: "20px",
+          width: "20px",
+          display: "block",
+          "float": "right",
+          marginRight: "10px"
+        }
       }) : _react["default"].createElement("span", null)), isOpen && _react["default"].createElement("div", {
         className: "card-body",
         style: {

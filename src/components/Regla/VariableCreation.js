@@ -15,7 +15,9 @@ export default class VariableCreation extends React.Component {
                 esNumero: true,
                 esBoolean: false,
                 esFecha: false,
-                esTexto: false
+                esTexto: false,
+                esGranDeudor: false,
+                esPequenoDeudor: false
             },
             errorCreacionRegla: {campo: "", descripcion: "", mostrar: false},
             mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: ""},
@@ -30,6 +32,8 @@ export default class VariableCreation extends React.Component {
         this.dismissReglaNewError = this.dismissReglaNewError.bind(this);
         this.showSuccesMessage = this.showSuccesMessage.bind(this);
         this.dismissMessageModal = this.dismissMessageModal.bind(this);
+        this.esGranDeudor = this.esGranDeudor.bind(this);
+        this.esPequenoDeudor = this.esPequenoDeudor.bind(this);
     }
 
     componentDidMount() {
@@ -42,7 +46,9 @@ export default class VariableCreation extends React.Component {
                 esNumero: true,
                 esBoolean: false,
                 esFecha: false,
-                esTexto: false
+                esTexto: false,
+                esGranDeudor: false,
+                esPequenoDeudor: false
             }
         });
     }
@@ -53,7 +59,9 @@ export default class VariableCreation extends React.Component {
                 esNumero: false,
                 esBoolean: true,
                 esFecha: false,
-                esTexto: false
+                esTexto: false,
+                esGranDeudor: false,
+                esPequenoDeudor: false
             }
         });
     }
@@ -64,7 +72,9 @@ export default class VariableCreation extends React.Component {
                 esNumero: false,
                 esBoolean: false,
                 esFecha: true,
-                esTexto: false
+                esTexto: false,
+                esGranDeudor: false,
+                esPequenoDeudor: false
             }
         });
     }
@@ -75,7 +85,35 @@ export default class VariableCreation extends React.Component {
                 esNumero: false,
                 esBoolean: false,
                 esFecha: false,
-                esTexto: true
+                esTexto: true,
+                esGranDeudor: false,
+                esPequenoDeudor: false
+            }
+        });
+    }
+
+    esGranDeudor () {
+        this.setState({
+            tipoCampo: {
+                esNumero: false,
+                esBoolean: false,
+                esFecha: false,
+                esTexto: false,
+                esGranDeudor: true,
+                esPequenoDeudor: false
+            }
+        });
+    }
+
+    esPequenoDeudor () {
+        this.setState({
+            tipoCampo: {
+                esNumero: false,
+                esBoolean: false,
+                esFecha: false,
+                esTexto: false,
+                esGranDeudor: false,
+                esPequenoDeudor: true
             }
         });
     }
@@ -88,7 +126,7 @@ export default class VariableCreation extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from Campos", (err, result) => {
+            request.query("select * from Campos where tabla = 'Cliente' or tabla = 'Préstamo'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -98,8 +136,21 @@ export default class VariableCreation extends React.Component {
                     }
                 } else {
                     transaction.commit(err => {
+                        var temp = [];
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            var existe = false;
+                            for (var j = 0; j < temp.length; j++) {
+                                if(temp[j].nombre.localeCompare(result.recordset[i].nombre) == 0) {
+                                    existe = true;
+                                    break;
+                                }
+                            };
+                            if(existe == false) {
+                                temp.push(result.recordset[i]);
+                            }
+                        };
                         this.setState({
-                            campos: result.recordset
+                            campos: temp
                         });
                     });
                 }
@@ -122,7 +173,8 @@ export default class VariableCreation extends React.Component {
             let valorLista;   //ID Tabla
             let valorCampos;
             let esListaValor, esCampoValor;
-            if(seleccionCampoIDSelect.localeCompare("M0ra") != 0) {
+            let texto;
+            if(seleccionCampoIDSelect.localeCompare("M0ra") != 0 && seleccionCampoIDSelect.localeCompare("Gr4nDeud0r") != 0 && seleccionCampoIDSelect.localeCompare("P3quDeud0r") != 0) {
                 campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
                 campoID = this.state.campos[seleccionCampoIDSelect].ID;
                 campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
@@ -145,7 +197,22 @@ export default class VariableCreation extends React.Component {
                     esListaValor = true;
                     esCampoValor = false;
                 }
-            } else {
+                let operacionTexto;
+                if(operacion.localeCompare("==") == 0){
+                    operacionTexto = "es igual";
+                } else if(operacion.localeCompare("<") == 0){
+                    operacionTexto = "es menor";
+                } else if(operacion.localeCompare("<=") == 0){
+                    operacionTexto = "es menor o igual";
+                } else if(operacion.localeCompare(">=") == 0){
+                    operacionTexto = "es mayor o igual";
+                } else if(operacion.localeCompare(">") == 0){
+                    operacionTexto = "es mayor";
+                } else if(operacion.localeCompare("!=") == 0){
+                    operacionTexto = "no es igual";
+                }
+                texto = this.state.campos[seleccionCampoIDSelect].nombre + " " + operacionTexto + " ";
+            } else if(seleccionCampoIDSelect.localeCompare("M0ra") == 0) {
                 campoTablaID = -1;
                 campoID = -1;
                 campoTipo = "int";
@@ -168,6 +235,45 @@ export default class VariableCreation extends React.Component {
                     esListaValor = true;
                     esCampoValor = false;
                 }
+                let operacionTexto;
+                if(operacion.localeCompare("==") == 0){
+                    operacionTexto = "es igual";
+                } else if(operacion.localeCompare("<") == 0){
+                    operacionTexto = "es menor";
+                } else if(operacion.localeCompare("<=") == 0){
+                    operacionTexto = "es menor o igual";
+                } else if(operacion.localeCompare(">=") == 0){
+                    operacionTexto = "es mayor o igual";
+                } else if(operacion.localeCompare(">") == 0){
+                    operacionTexto = "es mayor";
+                } else if(operacion.localeCompare("!=") == 0){
+                    operacionTexto = "no es igual";
+                }
+                texto = "Mora " + operacionTexto + " ";
+            } else if(seleccionCampoIDSelect.localeCompare("Gr4nDeud0r") == 0) {
+                campoTablaID = -2;
+                campoID = -2;
+                campoTipo = "varchar";
+                operacion = $("input[name='operacionRadio']:checked").val();
+                operacionTipo;
+                if(operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0))
+                    operacionTipo = "relacional";
+                else if(operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0))
+                    operacionTipo = "algebraica";
+                else if(operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0))
+                    operacionTipo = "excel";
+                valorLista = "CAPITALMINIMO="+$("#capitalMinimo").val()+",TIEMPOMINIMO="+$("#tiempoMinimo").val()+",PORCENTAJEMINIMO="+$("#porcentajeMinimo").val();   //ID Tabla
+                valorCampos = $("#camposDeLista").val();
+                esListaValor, esCampoValor;
+                if(valorLista != undefined && valorLista.localeCompare("table") == 0) {
+                    esListaValor = false;
+                    esCampoValor = true;
+                    valorLista = this.props.tablaID;
+                } else if(valorLista != undefined && valorLista.length > 0) {
+                    esListaValor = true;
+                    esCampoValor = false;
+                }
+                texto = "Es Gran Deudor Comercial";
             }
             console.log("//////////////////////");
             console.log("//////////////////////");
@@ -194,6 +300,17 @@ export default class VariableCreation extends React.Component {
                                                 this.setState({
                                                     errorCreacionRegla: {campo: '', descripcion: '', mostrar: false}
                                                 });
+                                                var tablaNombreValor = 'VariablesdeLista';
+                                                if(esCampoValor)
+                                                    tablaNombreValor = 'Campos';
+                                                var textoABuscar = '';
+                                                for (var i = 0; i < valorCampos.length; i++) {
+                                                    if(textoABuscar.length == 0) {
+                                                        textoABuscar += ' where ID = '+valorCampos[i];
+                                                    } else {
+                                                        textoABuscar += ' or ID = '+valorCampos[i];
+                                                    }
+                                                };
                                                 const transaction = new sql.Transaction( this.props.pool );
                                                 transaction.begin(err => {
                                                     var rolledBack = false;
@@ -201,7 +318,7 @@ export default class VariableCreation extends React.Component {
                                                         rolledBack = true;
                                                     });
                                                     const request = new sql.Request(transaction);
-                                                    request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, nombreTablaRes, idTipoTabla) values ("+campoTablaID+", "+campoID+", '"+campoTipo+"', '"+operacion+"', '"+operacionTipo+"','"+valorCampos+"', '', '"+esListaValor+"', '"+esCampoValor+"', "+valorLista+", '"+this.props.tipoTablaRes+"', "+this.props.idTipoTabla+")", (err, result) => {
+                                                    request.query("select * from "+tablaNombreValor+textoABuscar, (err, result) => {
                                                         if (err) {
                                                             if (!rolledBack) {
                                                                 console.log(err);
@@ -210,7 +327,40 @@ export default class VariableCreation extends React.Component {
                                                             }
                                                         } else {
                                                             transaction.commit(err => {
-                                                                this.showSuccesMessage("Exito", "Regla creada con éxito.");
+                                                                for (var i = 0; i < result.recordset.length; i++) {
+                                                                    if(esCampoValor) {
+                                                                        if(i == 0)
+                                                                            texto+=result.recordset[i].nombre;
+                                                                        else
+                                                                            texto+=", "+result.recordset[i].nombre;
+                                                                    } else {
+                                                                        if(i == 0)
+                                                                            texto+=result.recordset[i].valor;
+                                                                        else
+                                                                            texto+=", "+result.recordset[i].valor;
+                                                                    }
+                                                                };
+                                                                const transaction1 = new sql.Transaction( this.props.pool );
+                                                                transaction1.begin(err => {
+                                                                    var rolledBack = false;
+                                                                    transaction1.on('rollback', aborted => {
+                                                                        rolledBack = true;
+                                                                    });
+                                                                    const request1 = new sql.Request(transaction1);
+                                                                    request1.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, texto, nombreTablaRes, idTipoTabla) values ("+campoTablaID+", "+campoID+", '"+campoTipo+"', '"+operacion+"', '"+operacionTipo+"','"+valorCampos+"', '', '"+esListaValor+"', '"+esCampoValor+"', "+valorLista+", '"+texto+"', '"+this.props.tipoTablaRes+"', "+this.props.idTipoTabla+")", (err, result) => {
+                                                                        if (err) {
+                                                                            if (!rolledBack) {
+                                                                                console.log(err);
+                                                                                transaction1.rollback(err => {
+                                                                                });
+                                                                            }
+                                                                        } else {
+                                                                            transaction1.commit(err => {
+                                                                                this.showSuccesMessage("Exito", "Regla creada con éxito.");
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                }); // fin transaction1
                                                             });
                                                         }
                                                     });
@@ -348,16 +498,22 @@ export default class VariableCreation extends React.Component {
                     esBoolean={this.esBoolean}
                     esFecha={this.esFecha}
                     esTexto={this.esTexto}
-                    campos={this.state.campos}> </Campo>
+                    campos={this.state.campos}
+                    esGranDeudor={this.esGranDeudor}
+                    esPequenoDeudor={this.esPequenoDeudor}> </Campo>
                 <Operacion esNumero={this.state.tipoCampo.esNumero}
                     esBoolean={this.state.tipoCampo.esBoolean}
                     esFecha={this.state.tipoCampo.esFecha}
-                    esTexto={this.state.tipoCampo.esTexto}> </Operacion>
+                    esTexto={this.state.tipoCampo.esTexto}
+                    esGranDeudor={this.state.tipoCampo.esGranDeudor}
+                    esPequenoDeudor={this.state.tipoCampo.esPequenoDeudor}> </Operacion>
                 <Valor esNumero={this.state.tipoCampo.esNumero}
                     esBoolean={this.state.tipoCampo.esBoolean}
                     esFecha={this.state.tipoCampo.esFecha}
                     esTexto={this.state.tipoCampo.esTexto}
                     campos={this.state.campos}
+                    esGranDeudor={this.state.tipoCampo.esGranDeudor}
+                    esPequenoDeudor={this.state.tipoCampo.esPequenoDeudor}
                     pool={this.props.pool}> </Valor>
                 { this.state.errorCreacionRegla.mostrar ? (
                     <ErrorMessage campo={this.state.errorCreacionRegla.campo} descripcion={this.state.errorCreacionRegla.descripcion} dismissTableError={this.dismissReglaNewError}> </ErrorMessage>

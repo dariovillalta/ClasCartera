@@ -2,6 +2,7 @@ import React from 'react';
 import sql from 'mssql';
 
 import SeleccionarTabla from '../SeleccionarTabla.js';
+import MessageModal from '../MessageModal.js';
 
 export default class ComportamientoPago extends React.Component {
     constructor(props) {
@@ -11,7 +12,8 @@ export default class ComportamientoPago extends React.Component {
             idTablaSeleccionadaPrestamo: -1,
             idTablaSeleccionadaPlanPago: -1,
             camposPrestamos: [],
-            camposPlanPago: []
+            camposPlanPago: [],
+            mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: -1, indiceX: -1}
         }
         this.updateTableCreditID = this.updateTableCreditID.bind(this);
         this.updateTablePayPlanID = this.updateTablePayPlanID.bind(this);
@@ -19,6 +21,8 @@ export default class ComportamientoPago extends React.Component {
         this.returnToTablePayPlanID = this.returnToTablePayPlanID.bind(this);
         this.loadFieldsFromTables = this.loadFieldsFromTables.bind(this);
         this.saveCriteriaClasification = this.saveCriteriaClasification.bind(this);
+        this.dismissMessageModal = this.dismissMessageModal.bind(this);
+        this.showSuccesMessage = this.showSuccesMessage.bind(this);
     }
 
     updateTableCreditID(id) {
@@ -102,6 +106,7 @@ export default class ComportamientoPago extends React.Component {
             });
         }); // fin transaction1 camposPrestamos
     }
+    
     saveCriteriaClasification() {
         let prestamoTablaID = this.state.idTablaSeleccionadaPrestamo, planPagoTablaID = this.state.idTablaSeleccionadaPlanPago, idClientePrestamoCampoID = $("#idClientePrest").val(), numeroPrestamoCampoID = $("#numPrestamoPrest").val(), pagoCapitalPrestamoCampoID = $("#pagoCapitalPrestamoCampoID").val(), pagoImpuestosPrestamoCampoID = $("#pagoImpuestosPrestamoCampoID").val(), fechaPrestamoCampoID = $("#fechaPrestamoCampoID").val(), idClientePlanPagoCampoID = $("#idClientePlan").val(), numeroPlanPagoCampoID = $("#numPrestamoPlan").val(), pagoCapitalPlanPagoCampoID = $("#pagoCapitalPlanPagoCampoID").val(), pagoImpuestosPlanPagoCampoID = $("#pagoImpuestosPlanPagoCampoID").val(), fechaPlanPagoCampoID = $("#fechaPlanPagoCampoID").val(), comparacionEsPlanPago = "";
         const transaction = new sql.Transaction( this.props.pool );
@@ -120,12 +125,39 @@ export default class ComportamientoPago extends React.Component {
                     }
                 } else {
                     transaction.commit(err => {
-                        console.log("exito");
+                        this.setState({
+                            mensajeModal: {mostrarMensaje: false, mensajeConfirmado: true, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: this.state.mensajeModal.idElementoSelec, indiceX: this.state.mensajeModal.indiceX}
+                        });
+                        this.showSuccesMessage("Exito", "Comportamiento de Pago creado con éxito.");
                     });
                 }
             });
         }); // fin transaction camposPrestamos
     }
+
+    /*======_______====== ======_______======   MENSAJES MODAL    ======_______====== ======_______======*/
+    /*======_______======                                                             ======_______======*/
+    /*======_______======                                                             ======_______======*/
+    /*======_______====== ======_______====== ==_____==  ==___==  ======_______====== ======_______======*/
+
+    dismissMessageModal() {
+        this.setState({
+            mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: -1, indiceX: -1}
+        });
+    }
+
+    showSuccesMessage(titulo, mensaje) {
+        this.setState({
+            mensajeModal: {mostrarMensaje: true, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: titulo, mensaje: mensaje, banderaMetodoInit: "", idElementoSelec: this.state.mensajeModal.idElementoSelec, indiceX: this.state.mensajeModal.indiceX}
+        });
+        let self = this;
+        setTimeout(function(){
+            self.setState({
+                mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: self.state.mensajeModal.idElementoSelec, indiceX: self.state.mensajeModal.indiceX}
+            });
+        }, 850);
+    }
+
     render() {
         if (this.state.mostrarComponente.localeCompare("selTablaPrestamo") == 0) {
             return (
@@ -139,6 +171,7 @@ export default class ComportamientoPago extends React.Component {
                                         <ol className={"breadcrumb"}>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showCriteriosClasificacion}><a href="#" className={"breadcrumb-link"}>Criterios de Clasificaci&oacute;n</a></li>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.returnChooseComportamientoPago}><a href="#" className={"breadcrumb-link"}>Seleccionar Comportamiento de Pago</a></li>
                                             <li className={"breadcrumb-item active"} aria-current="page">Seleccionar Tabla de Prestamos</li>
                                         </ol>
                                     </nav>
@@ -168,6 +201,7 @@ export default class ComportamientoPago extends React.Component {
                                         <ol className={"breadcrumb"}>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showCriteriosClasificacion}><a href="#" className={"breadcrumb-link"}>Criterios de Clasificaci&oacute;n</a></li>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.returnChooseComportamientoPago}><a href="#" className={"breadcrumb-link"}>Seleccionar Comportamiento de Pago</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnToTableCreditID}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla de Prestamos</a></li>
                                             <li className={"breadcrumb-item active"} aria-current="page">Seleccionar Tabla de Plan de Pagos</li>
                                         </ol>
@@ -198,6 +232,7 @@ export default class ComportamientoPago extends React.Component {
                                         <ol className={"breadcrumb"}>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showCriteriosClasificacion}><a href="#" className={"breadcrumb-link"}>Criterios de Clasificaci&oacute;n</a></li>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.returnChooseComportamientoPago}><a href="#" className={"breadcrumb-link"}>Seleccionar Comportamiento de Pago</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnToTableCreditID}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla de Prestamos</a></li>
                                             <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnToTablePayPlanID}><a href="#" className={"breadcrumb-link"}>Seleccionar Tabla de Plan de Pagos</a></li>
                                             <li className={"breadcrumb-item active"} aria-current="page">Relacionar Campos de Comportamiento Pago</li>
@@ -224,8 +259,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="idClientePrest" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPrestamos.map((campo, i) => {
+                                                            if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Cliente") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -238,8 +278,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="numPrestamoPrest" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPrestamos.map((campo, i) => {
+                                                            if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Préstamo") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -252,8 +297,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="pagoCapitalPrestamoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPrestamos.map((campo, i) => {
+                                                            if ( (campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("Pagos") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -266,8 +316,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="pagoImpuestosPrestamoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPrestamos.map((campo, i) => {
+                                                            if ( (campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("Pagos") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -280,8 +335,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="fechaPrestamoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPrestamos.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPrestamos.map((campo, i) => {
+                                                            if ( campo.tipo.indexOf("date") == 0 && campo.tabla.indexOf("Pagos") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -308,8 +368,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="idClientePlan" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPlanPago.map((campo, i) => {
+                                                            if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Cliente") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -322,8 +387,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="numPrestamoPlan" className={"form-control form-control-lg"}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPlanPago.map((campo, i) => {
+                                                            if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Préstamo") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -336,8 +406,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="pagoCapitalPlanPagoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPlanPago.map((campo, i) => {
+                                                            if ( (campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("PlanPagos") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -350,8 +425,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="pagoImpuestosPlanPagoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPlanPago.map((campo, i) => {
+                                                            if ( (campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("PlanPagos") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -364,8 +444,13 @@ export default class ComportamientoPago extends React.Component {
                                             <div className={"form-group"} style={{width: "100%"}}>
                                                 <select id="fechaPlanPagoCampoID" className={"form-control form-control-lg"} style={{margin: "0 auto", display: "block"}}>
                                                     <option value="">Seleccione un campo...</option>
-                                                    {this.state.camposPlanPago.map((campo, i) =>
-                                                        <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                    {this.state.camposPlanPago.map((campo, i) => {
+                                                            if ( campo.tipo.indexOf("date") == 0 && campo.tabla.indexOf("PlanPagos") == 0) {
+                                                                return <option value={campo.ID} key={i}>{campo.nombre}</option>
+                                                            } else {
+                                                                return null;
+                                                            }
+                                                        }
                                                     )}
                                                 </select>
                                             </div>
@@ -379,6 +464,11 @@ export default class ComportamientoPago extends React.Component {
                         <a className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}} onClick={this.saveCriteriaClasification}>Guardar</a>
                     </div>
                     <br/>
+                    { this.state.mensajeModal.mostrarMensaje ? (
+                        <MessageModal esError={this.state.mensajeModal.esError} esConfirmar={this.state.mensajeModal.esConfirmar} dismissMessage={this.dismissMessageModal} confirmFunction={this.confirmMessageModal} titulo={this.state.mensajeModal.titulo} mensaje={this.state.mensajeModal.mensaje}> </MessageModal>
+                    ) : (
+                        <span></span>
+                    )}
                 </div>
             );
         }

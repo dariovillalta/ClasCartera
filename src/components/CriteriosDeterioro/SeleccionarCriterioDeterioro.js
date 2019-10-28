@@ -1,6 +1,8 @@
 import React from 'react';
 import sql from 'mssql';
 
+import Accordion from '../Accordion/Accordion.js';
+
 export default class SeleccionarCriterioDeterioro extends React.Component {
     constructor(props) {
         super(props);
@@ -30,19 +32,27 @@ export default class SeleccionarCriterioDeterioro extends React.Component {
                 <br/>
                 <div className={"row"}>
                     <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
-                        <div className={"card influencer-profile-data"}>
-                            <div className={"card-body"}>
-                                <div className={"row border-top border-bottom addPaddingToConfig"}>
-                                    {this.props.estimacionesDeterioro.map((estimacionDeterioro, i) =>
-                                        <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionarCriterio(estimacionDeterioro.ID, estimacionDeterioro.categoria)} key={estimacionDeterioro.ID}>{estimacionDeterioro.categoria}</a>
-                                    )}
-                                    { this.props.estimacionesDeterioro.length == 0 ? (
-                                        <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>No existen criterios de deterioro creados</a>
-                                    ) : (
-                                        <span></span>
-                                    )}
-                                </div>
-                            </div>
+                        <div className={"row addPaddingToConfig"}>
+                            {this.props.tiposDeCredito.map((tipoCredito, i) => (
+                                <Accordion key={tipoCredito.ID} showTrash={false} showEdit={false} allowMultipleOpen color={"#ffffff"}>
+                                    <div label={tipoCredito.nombre} key={tipoCredito.ID}>
+                                        { this.props.estimacionesDeterioro[i] != undefined ? (
+                                            <div>
+                                                {this.props.estimacionesDeterioro[i].map((estimacionDeterioro, j) =>
+                                                    <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionarCriterio(estimacionDeterioro.ID, estimacionDeterioro.nombreClasPadre, estimacionDeterioro)} key={estimacionDeterioro.ID}>{estimacionDeterioro.categoria +" - "+ estimacionDeterioro.tipoGarantia}</a>
+                                                )}
+                                                { this.props.estimacionesDeterioro[i].length == 0 ? (
+                                                    <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>No existen criterios de deterioro creados</a>
+                                                ) : (
+                                                    <span></span>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <span></span>
+                                        )}
+                                    </div>
+                                </Accordion>
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,8 @@ exports["default"] = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
+var _mssql = _interopRequireDefault(require("mssql"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -19,9 +21,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -31,24 +33,145 @@ var c3 = require("c3");
 
 var d3 = require("d3");
 
+var resultados = [];
+
 var PieGraph =
 /*#__PURE__*/
 function (_React$Component) {
   _inherits(PieGraph, _React$Component);
 
   function PieGraph(props) {
+    var _this;
+
     _classCallCheck(this, PieGraph);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(PieGraph).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(PieGraph).call(this, props));
+    _this.getLabels = _this.getLabels.bind(_assertThisInitialized(_this));
+    _this.getSumValues = _this.getSumValues.bind(_assertThisInitialized(_this));
+    _this.insertIntoResults = _this.insertIntoResults.bind(_assertThisInitialized(_this));
+    _this.renderChart = _this.renderChart.bind(_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(PieGraph, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      resultados = [];
+      this.getLabels();
+    }
+  }, {
+    key: "getLabels",
+    value: function getLabels() {
+      var _this2 = this;
+
+      var nombreIdentificador = "valor, idObjeto";
+      if (this.props.tablaEtiqueta.localeCompare("ResultadosID") == 0) nombreIdentificador = "identificador";
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select " + nombreIdentificador + " from " + _this2.props.tablaEtiqueta + " where nombre = '" + _this2.props.nombreEtiqueta + "'", function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              for (var i = 0; i < result.recordset.length; i++) {
+                if (_this2.props.tablaEtiqueta.localeCompare("ResultadosID") == 0) _this2.getSumValues(result.recordset[i].identificador, result.recordset[i].identificador);else _this2.getSumValues(result.recordset[i].idObjeto, result.recordset[i].valor);
+              }
+
+              ;
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "getSumValues",
+    value: function getSumValues(idObjeto, nombreEtiqueta) {
+      var _this3 = this;
+
+      var transaction = new _mssql["default"].Transaction(this.props.pool);
+      transaction.begin(function (err) {
+        var rolledBack = false;
+        transaction.on('rollback', function (aborted) {
+          rolledBack = true;
+        });
+        var request = new _mssql["default"].Request(transaction);
+        request.query("select valor from " + _this3.props.tablaNumerico + " where nombre = '" + _this3.props.nombreNumerico + "' and idObjeto = '" + idObjeto + "'", function (err, result) {
+          if (err) {
+            if (!rolledBack) {
+              console.log(err);
+              transaction.rollback(function (err) {});
+            }
+          } else {
+            transaction.commit(function (err) {
+              console.log(result.recordset);
+
+              for (var i = 0; i < result.recordset.length; i++) {
+                _this3.insertIntoResults(result.recordset[i].valor, nombreEtiqueta);
+              }
+
+              ;
+            });
+          }
+        });
+      }); // fin transaction
+    }
+  }, {
+    key: "insertIntoResults",
+    value: function insertIntoResults(valor, nombreEtiqueta) {
+      var entro = false;
+
+      for (var i = 0; i < resultados.length; i++) {
+        if (this.props.tablaEtiqueta.localeCompare("ResultadosString") == 0) {
+          if (resultados[i][0].localeCompare(nombreEtiqueta) == 0) {
+            resultados[i][1] += valor;
+            entro = true;
+            break;
+          }
+        } else if (this.props.tablaEtiqueta.localeCompare("ResultadosBool") == 0) {
+          if (resultados[i][0] == nombreEtiqueta) {
+            resultados[i][1] += valor;
+            entro = true;
+            break;
+          }
+        } else if (this.props.tablaEtiqueta.localeCompare("ResultadosDate") == 0) {
+          if (resultados[i][0].getTime() == nombreEtiqueta.getTime()) {
+            resultados[i][1] += valor;
+            entro = true;
+            break;
+          }
+        } else if (this.props.tablaEtiqueta.localeCompare("ResultadosID") == 0) {
+          if (resultados[i][0] == nombreEtiqueta) {
+            resultados[i][1] += valor;
+            entro = true;
+            break;
+          }
+        }
+      }
+
+      ;
+
+      if (resultados.length == 0 || !entro) {
+        resultados.push([nombreEtiqueta, valor]);
+      }
+
+      console.log(resultados);
+      this.renderChart();
+    }
+  }, {
+    key: "renderChart",
+    value: function renderChart() {
       var chartClientes = c3.generate({
         bindto: "#resultado",
         data: {
-          columns: [['Créditos Buenos', 5620029.11], ['Créditos Especialmente Mencionados', 7981023], ['Créditos Bajo Norma', 13420089.78], ['Créditos de Dudosa Recuperación', 7419023.52], ['Créditos de Pérdida', 2570891.44]],
+          columns: resultados,
           type: 'pie',
           colors: {
             data1: '#5969ff',

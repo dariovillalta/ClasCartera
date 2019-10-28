@@ -17,7 +17,9 @@ export default class ResultadosReporteria extends React.Component {
         this.state = {
             mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: -1, indiceX: -1, indiceY: -1},
             resultadosClientes: [],
-            resultadosPrestamos: []
+            resultadosPrestamos: [],
+            camposClientes: [],
+            camposPrestamos: []
         }
         //this.loadTables = this.loadTables.bind(this);
         this.getFiltersString = this.getFiltersString.bind(this);
@@ -28,10 +30,22 @@ export default class ResultadosReporteria extends React.Component {
         this.binaryInsertCredit = this.binaryInsertCredit.bind(this);
         this.binaryInsertCreditField = this.binaryInsertCreditField.bind(this);
         this.verificarFinClientes = this.verificarFinClientes.bind(this);
+        this.insertIntoFieldArray = this.insertIntoFieldArray.bind(this);
+        this.getValidIDsInt = this.getValidIDsInt.bind(this);
+        this.getValidIDsDecimal = this.getValidIDsDecimal.bind(this);
+        this.getValidIDsDate = this.getValidIDsDate.bind(this);
+        this.getValidIDsBool = this.getValidIDsBool.bind(this);
+        this.getValidIDsString = this.getValidIDsString.bind(this);
+        this.initiateBringObjects = this.initiateBringObjects.bind(this);
     }
 
     componentDidMount() {
         this.getFiltersString();
+        this.props.showLoadingScreen();
+        var self = this;
+        setTimeout(function(){
+            self.props.hideLoadingScreen();
+        }, 60000);
     }
 
     getFiltersString () {
@@ -40,39 +54,241 @@ export default class ResultadosReporteria extends React.Component {
             resultadoQueryIDs += this.getFilterQuery(this.props.arregloDeFiltrosIDs[i]);
         };*/
         var resultadoQueryInt = '';
-        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
-            resultadoQueryInt += this.getFilterQuery(this.props.arregloDeFiltrosInt[i]);
-        };*/
+        for (var i = 0; i < this.props.filtrosInt.length; i++) {
+            //resultadoQueryInt += this.getFilterQuery(this.props.filtrosInt[i]);
+            if(resultadoQueryInt.length == 0)
+                resultadoQueryInt += " where " + this.props.filtrosInt[i].filtro;
+            else
+                resultadoQueryInt += " and " + this.props.filtrosInt[i].filtro;
+        };
         var resultadoQueryDecimal = '';
-        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
-            resultadoQueryDecimal += this.getFilterQuery(this.props.arregloDeFiltrosDecimal[i]);
-        };*/
+        for (var i = 0; i < this.props.filtrosDecimal.length; i++) {
+            //resultadoQueryDecimal += this.getFilterQuery(this.props.filtrosDecimal[i]);
+            if(resultadoQueryDecimal.length == 0)
+                resultadoQueryDecimal += " where " + this.props.filtrosDecimal[i].filtro;
+            else
+                resultadoQueryDecimal += " and " + this.props.filtrosDecimal[i].filtro;
+        };
         var resultadoQueryDate = '';
-        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
-            resultadoQueryDate += this.getFilterQuery(this.props.arregloDeFiltrosDate[i]);
-        };*/
+        for (var i = 0; i < this.props.filtrosDate.length; i++) {
+            //resultadoQueryDate += this.getFilterQuery(this.props.filtrosDate[i]);
+            if(resultadoQueryDate.length == 0)
+                resultadoQueryDate += " where " + this.props.filtrosDate[i].filtro;
+            else
+                resultadoQueryDate += " and " + this.props.filtrosDate[i].filtro;
+        };
         var resultadoQueryBool = '';
-        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
-            resultadoQueryBool += this.getFilterQuery(this.props.arregloDeFiltrosBool[i]);
-        };*/
+        for (var i = 0; i < this.props.filtrosBool.length; i++) {
+            //resultadoQueryBool += this.getFilterQuery(this.props.filtrosBool[i]);
+            if(resultadoQueryBool.length == 0)
+                resultadoQueryBool += " where " + this.props.filtrosBool[i].filtro;
+            else
+                resultadoQueryBool += " and " + this.props.filtrosBool[i].filtro;
+        };
         var resultadoQueryString = '';
-        /*for (var i = 0; i < this.props.arregloDeFiltros.length; i++) {
-            resultadoQueryString += this.getFilterQuery(this.props.arregloDeFiltrosString[i]);
-        };*/
-        this.getObjectsID(" where idPadre = '-1'"+resultadoQueryIDs, resultadoQueryInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, true);
-        //this.getObjectsID(" where idPadre != '-1'"+resultadoQueryIDs, resultadoQueryInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, false);
-        /*var self = this;
-        setTimeout(function(){
-            self.getObjectsID(" where idPadre != '-1'"+resultadoQueryIDs, resultadoQueryInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, false);
-        }, 2000);*/
+        for (var i = 0; i < this.props.filtrosString.length; i++) {
+            //resultadoQueryString += this.getFilterQuery(this.props.filtrosString[i]);
+            if(resultadoQueryString.length == 0)
+                resultadoQueryString += " where " + this.props.filtrosString[i].filtro;
+            else
+                resultadoQueryString += " and " + this.props.filtrosString[i].filtro;
+        };
+        if(resultadoQueryInt.length > 0) {
+            this.getValidIDsInt(resultadoQueryInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString);
+        } else if(resultadoQueryDecimal.length > 0) {
+            this.getValidIDsDecimal(resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, '');
+        } else if(resultadoQueryDate.length > 0) {
+            this.getValidIDsDate(resultadoQueryDate, resultadoQueryBool, resultadoQueryString, '');
+        } else if(resultadoQueryBool.length > 0) {
+            this.getValidIDsBool(resultadoQueryBool, resultadoQueryString, '');
+        } else if(resultadoQueryString.length > 0) {
+            this.getValidIDsString(resultadoQueryString, '');
+        } else {
+            console.log("YEEET")
+            this.initiateBringObjects('');
+        }
+    }
+
+    getValidIDsInt (queryStringInt, resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString) {
+        const transaction1 = new sql.Transaction( this.props.pool );
+        transaction1.begin(err => {
+            var rolledBack = false;
+            transaction1.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request1 = new sql.Request(transaction1);
+            request1.query("select DISTINCT idObjeto from ResultadosInt "+queryStringInt, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction1.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction1.commit(err => {
+                        var IDsNoTraer = '';
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            IDsNoTraer += " and identificador != '"+ result.recordset[i].idObjeto + "'";
+                        };
+                        if(resultadoQueryDecimal.length > 0) {
+                            this.getValidIDsDecimal(resultadoQueryDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, IDsNoTraer);
+                        } else if(resultadoQueryDate.length > 0) {
+                            this.getValidIDsDate(resultadoQueryDate, resultadoQueryBool, resultadoQueryString, IDsNoTraer);
+                        } else if(resultadoQueryBool.length > 0) {
+                            this.getValidIDsBool(resultadoQueryBool, resultadoQueryString, IDsNoTraer);
+                        } else if(resultadoQueryString.length > 0) {
+                            this.getValidIDsString(resultadoQueryString, IDsNoTraer);
+                        } else {
+                            this.initiateBringObjects(IDsNoTraer);
+                        }
+                    });
+                }
+            });
+        }); // fin transaction1
+    }
+
+    getValidIDsDecimal (queryStringDecimal, resultadoQueryDate, resultadoQueryBool, resultadoQueryString, IDsNoTraer) {
+        const transaction2 = new sql.Transaction( this.props.pool );
+        transaction2.begin(err => {
+            var rolledBack = false;
+            transaction2.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request2 = new sql.Request(transaction2);
+            request2.query("select DISTINCT idObjeto from ResultadosDecimal "+queryStringDecimal, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction2.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction2.commit(err => {
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            IDsNoTraer += " and identificador != '"+ result.recordset[i].idObjeto + "'";
+                        };
+                        if(resultadoQueryDate.length > 0) {
+                            this.getValidIDsDate(resultadoQueryDate, resultadoQueryBool, resultadoQueryString, IDsNoTraer);
+                        } else if(resultadoQueryBool.length > 0) {
+                            this.getValidIDsBool(resultadoQueryBool, resultadoQueryString, IDsNoTraer);
+                        } else if(resultadoQueryString.length > 0) {
+                            this.getValidIDsString(resultadoQueryString, IDsNoTraer);
+                        } else {
+                            this.initiateBringObjects(IDsNoTraer);
+                        }
+                    });
+                }
+            });
+        }); // fin transaction2
+    }
+
+    getValidIDsDate (queryStringDate, resultadoQueryBool, resultadoQueryString, IDsNoTraer) {
+        const transaction3 = new sql.Transaction( this.props.pool );
+        transaction3.begin(err => {
+            var rolledBack = false;
+            transaction3.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request3 = new sql.Request(transaction3);
+            request3.query("select DISTINCT idObjeto from ResultadosDate "+queryStringDate, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction3.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction3.commit(err => {
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            IDsNoTraer += " and identificador != '"+ result.recordset[i].idObjeto + "'";
+                        };
+                        if(resultadoQueryBool.length > 0) {
+                            this.getValidIDsBool(resultadoQueryBool, resultadoQueryString, IDsNoTraer);
+                        } else if(resultadoQueryString.length > 0) {
+                            this.getValidIDsString(resultadoQueryString, IDsNoTraer);
+                        } else {
+                            this.initiateBringObjects(IDsNoTraer);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    getValidIDsBool (queryStringBool, resultadoQueryString, IDsNoTraer) {
+        const transaction4 = new sql.Transaction( this.props.pool );
+        transaction4.begin(err => {
+            var rolledBack = false;
+            transaction4.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request4 = new sql.Request(transaction4);
+            request4.query("select DISTINCT idObjeto from ResultadosBool "+queryStringBool, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction4.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction4.commit(err => {
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            IDsNoTraer += " and identificador != '"+ result.recordset[i].idObjeto + "'";
+                        };
+                        if(resultadoQueryString.length > 0) {
+                            this.getValidIDsString(resultadoQueryString, IDsNoTraer);
+                        } else {
+                            this.initiateBringObjects(IDsNoTraer);
+                        }
+                    });
+                }
+            });
+        }); // fin transaction4
+    }
+
+    getValidIDsString (queryStringString, IDsNoTraer) {
+        const transaction5 = new sql.Transaction( this.props.pool );
+        transaction5.begin(err => {
+            var rolledBack = false;
+            transaction5.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request5 = new sql.Request(transaction5);
+            request5.query("select DISTINCT idObjeto from ResultadosString "+queryStringString, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        alert('no se pudo traer datos');
+                        transaction5.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction5.commit(err => {
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            IDsNoTraer += " and identificador != '"+ result.recordset[i].idObjeto + "'";
+                        };
+                        this.initiateBringObjects(IDsNoTraer);
+                    });
+                }
+            });
+        }); // fin transaction5
+    }
+
+    initiateBringObjects (IDsNoTraer) {
+        this.getObjectsID(" where objeto = 'Cliente' ", IDsNoTraer, true);
     }
 
     getFilterQuery(filtro) {
         //if (filtro.)
     }
 
-    getObjectsID(queryStringID, queryStringInt, queryStringDecimal, queryStringDate, queryStringBool, queryStringString, esCliente) {
-        //traer id de resultados de base de datos
+    getObjectsID(whereCondition, IDsNoTraer, esCliente) {
+        console.log('esCliente');
+        console.log(esCliente);
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -80,7 +296,7 @@ export default class ResultadosReporteria extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from ResultadosID "+queryStringID, (err, result) => {
+            request.query("select * from ResultadosID "+whereCondition+IDsNoTraer, (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -94,12 +310,13 @@ export default class ResultadosReporteria extends React.Component {
                         tamBanderaActual = 0, tamBanderaFinal = result.recordset.length;
                         for (var i = 0; i < result.recordset.length; i++) {
                             if(esCliente)
-                                this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "identificador", []);
+                                this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "identificador", "identificador",  []);
                             else
-                                this.binaryInsertCredit(result.recordset[i], this.state.resultadosPrestamos , "ID", "idPadre", "identificador");
-                            this.getObjectsField(result.recordset[i].identificador, queryStringInt, queryStringDecimal, queryStringDate, queryStringBool, queryStringString, esCliente);
+                                this.binaryInsertCredit(result.recordset[i], this.state.resultadosPrestamos , "identificador", "idPadre", "identificador");
+                            this.getObjectsField(result.recordset[i].identificador, IDsNoTraer, esCliente);
+                            this.insertIntoFieldArray(result.recordset[i], "int");
                             if(esCliente)
-                                this.verificarFinClientes();
+                                this.verificarFinClientes(IDsNoTraer, esCliente);
                         };
                         console.log("resultados");
                         console.log(this.state.resultadosClientes);
@@ -110,7 +327,7 @@ export default class ResultadosReporteria extends React.Component {
         }); // fin transaction
     }
 
-    getObjectsField(idObjeto, queryStringInt, queryStringDecimal, queryStringDate, queryStringBool, queryStringString, esCliente) {
+    getObjectsField(idObjeto, IDsNoTraer, esCliente) {
         tamBanderaActual++;
         //traer campos de resultados de base de datos
         const transaction1 = new sql.Transaction( this.props.pool );
@@ -120,7 +337,7 @@ export default class ResultadosReporteria extends React.Component {
                 rolledBack = true;
             });
             const request1 = new sql.Request(transaction1);
-            request1.query("select * from ResultadosInt where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+            request1.query("select * from ResultadosInt where idObjeto = '"+idObjeto+"'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -134,9 +351,10 @@ export default class ResultadosReporteria extends React.Component {
                         if(result.recordset.length > 0) {
                             for (var i = 0; i < result.recordset.length; i++) {
                                 if(esCliente)
-                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", "identificador", result.recordset);
                                 else
                                     this.binaryInsertCreditField(result.recordset[i]);
+                                this.insertIntoFieldArray(result.recordset[i], "int");
                             };
                         }
                     });
@@ -151,7 +369,7 @@ export default class ResultadosReporteria extends React.Component {
                 rolledBack = true;
             });
             const request2 = new sql.Request(transaction2);
-            request2.query("select * from ResultadosDecimal where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+            request2.query("select * from ResultadosDecimal where idObjeto = '"+idObjeto+"'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -165,9 +383,10 @@ export default class ResultadosReporteria extends React.Component {
                         if(result.recordset.length > 0) {
                             for (var i = 0; i < result.recordset.length; i++) {
                                 if(esCliente)
-                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", "identificador", result.recordset);
                                 else
                                     this.binaryInsertCreditField(result.recordset[i]);
+                                this.insertIntoFieldArray(result.recordset[i], "decimal");
                             };
                         }
                     });
@@ -182,7 +401,7 @@ export default class ResultadosReporteria extends React.Component {
                 rolledBack = true;
             });
             const request3 = new sql.Request(transaction3);
-            request3.query("select * from ResultadosDate where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+            request3.query("select * from ResultadosDate where idObjeto = '"+idObjeto+"'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -196,9 +415,10 @@ export default class ResultadosReporteria extends React.Component {
                         if(result.recordset.length > 0) {
                             for (var i = 0; i < result.recordset.length; i++) {
                                 if(esCliente)
-                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", "identificador", result.recordset);
                                 else
                                     this.binaryInsertCreditField(result.recordset[i]);
+                                this.insertIntoFieldArray(result.recordset[i], "date");
                             };
                         }
                     });
@@ -213,7 +433,7 @@ export default class ResultadosReporteria extends React.Component {
                 rolledBack = true;
             });
             const request4 = new sql.Request(transaction4);
-            request4.query("select * from ResultadosBool where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+            request4.query("select * from ResultadosBool where idObjeto = '"+idObjeto+"'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -227,9 +447,10 @@ export default class ResultadosReporteria extends React.Component {
                         if(result.recordset.length > 0) {
                             for (var i = 0; i < result.recordset.length; i++) {
                                 if(esCliente)
-                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", "identificador", result.recordset);
                                 else
                                     this.binaryInsertCreditField(result.recordset[i]);
+                                this.insertIntoFieldArray(result.recordset[i], "bool");
                             };
                         }
                     });
@@ -244,7 +465,7 @@ export default class ResultadosReporteria extends React.Component {
                 rolledBack = true;
             });
             const request5 = new sql.Request(transaction5);
-            request5.query("select * from ResultadosString where idObjeto = '"+idObjeto+"' "+queryStringInt, (err, result) => {
+            request5.query("select * from ResultadosString where idObjeto = '"+idObjeto+"'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -258,9 +479,10 @@ export default class ResultadosReporteria extends React.Component {
                         if(result.recordset.length > 0) {
                             for (var i = 0; i < result.recordset.length; i++) {
                                 if(esCliente)
-                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", result.recordset);
+                                    this.binaryInsertClient(result.recordset[i], this.state.resultadosClientes, "idObjeto", "identificador", result.recordset);
                                 else
                                     this.binaryInsertCreditField(result.recordset[i]);
+                                this.insertIntoFieldArray(result.recordset[i], "varchar");
                             };
                         }
                     });
@@ -269,13 +491,14 @@ export default class ResultadosReporteria extends React.Component {
         }); // fin transaction5
     }
 
-    binaryInsertClient(newValue, array, field, fieldsToSave, startVal, endVal){
+    binaryInsertClient(newValue, array, objectField, arrayField, fieldsToSave, startVal, endVal){
         var length = array.length;
         var start = typeof(startVal) != 'undefined' ? startVal : 0;
         var end = typeof(endVal) != 'undefined' ? endVal : length - 1;//!! endVal could be 0 don't use || syntax
         var m = start + Math.floor((end - start)/2);
         if(length == 0) {
-            var newObject = {ID: newValue[field]};
+            var newObject = {};
+            newObject[arrayField] = parseInt(newValue[objectField]);
             for (var i = 0; i < fieldsToSave.length; i++) {
                 newObject[fieldsToSave[i].nombre] = fieldsToSave[i].valor;
             };
@@ -290,14 +513,15 @@ export default class ResultadosReporteria extends React.Component {
             //array.push(newObject);
             return;
         }
-        if( newValue[field].localeCompare(array[m].ID) == 0 ) {
+        if( parseInt(newValue[objectField]) == parseInt(array[m][arrayField])) {
             for (var i = 0; i < fieldsToSave.length; i++) {
                 array[m][fieldsToSave[i].nombre] = fieldsToSave[i].valor;
             };
             return;
         }
-        if( newValue[field].localeCompare(array[end].ID) > 0 ) {
-            var newObject = {ID: newValue[field]};
+        if( parseInt(newValue[objectField]) > parseInt(array[end][arrayField])) {
+            var newObject = {};
+            newObject[arrayField] = parseInt(newValue[objectField]);
             for (var i = 0; i < fieldsToSave.length; i++) {
                 newObject[fieldsToSave[i].nombre] = fieldsToSave[i].valor;
             };
@@ -312,8 +536,9 @@ export default class ResultadosReporteria extends React.Component {
             //array.splice(end + 1, 0, newObject);
             return;
         }
-        if( newValue[field].localeCompare(array[start].ID) < 0 ) {//!!
-            var newObject = {ID: newValue[field]};
+        if( parseInt(newValue[objectField]) < parseInt(array[start][arrayField])) {//!!
+            var newObject = {};
+            newObject[arrayField] = parseInt(newValue[objectField]);
             for (var i = 0; i < fieldsToSave.length; i++) {
                 newObject[fieldsToSave[i].nombre] = fieldsToSave[i].valor;
             };
@@ -331,17 +556,17 @@ export default class ResultadosReporteria extends React.Component {
         if(start >= end){
             return;
         }
-        if( newValue[field].localeCompare(array[m].ID) < 0 ){
-            this.binaryInsertClient(newValue, array, field, fieldsToSave, start, m - 1);
+        if( parseInt(newValue[objectField]) < parseInt(array[m][arrayField])){
+            this.binaryInsertClient(newValue, array, objectField, arrayField, fieldsToSave, start, m - 1);
             return;
         }
-        if( newValue[field].localeCompare(array[m].ID) > 0 ){
-            this.binaryInsertClient(newValue, array, field, fieldsToSave, m + 1, end);
+        if( parseInt(newValue[objectField]) > parseInt(array[m][arrayField])){
+            this.binaryInsertClient(newValue, array, objectField, arrayField, fieldsToSave, m + 1, end);
             return;
         }
     }
 
-    binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCredit, startVal, endVal){
+    binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCreditID, startVal, endVal){
         var length = array.length;
         var start = typeof(startVal) != 'undefined' ? startVal : 0;
         var end = typeof(endVal) != 'undefined' ? endVal : length - 1;
@@ -350,31 +575,43 @@ export default class ResultadosReporteria extends React.Component {
             if(this.state.resultadosClientes.length > 0) {
                 if(this.state.resultadosPrestamos[0] == undefined)
                     this.state.resultadosPrestamos[0] = [];
-                var newObjectCredito = {ID: newValue[fieldCredit]};
+                var newObjectCredito = {};
+                newObjectCredito[fieldCreditID] = parseInt(newValue[fieldCreditID]);
                 this.state.resultadosPrestamos[0].push(newObjectCredito);
             }
             return;
         }
-        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[m][fieldClient]) == 0 ) {
-            var newObjectCredito = {ID: newValue[fieldCredit]};
-            // 1. Make a shallow copy of the items
-            let prestamos = [...this.state.resultadosPrestamos];
-            // 2. Make a shallow copy of the item you want to mutate
-            let prestamo = [...prestamos[m]];
-            // 3. Replace the property you're intested in
-            prestamo.push(newObjectCredito);
-            // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-            prestamos[m] = prestamo;
-            // 5. Set the state to our new copy
-            this.setState({
-                resultadosPrestamos: prestamos
-            });
-            //this.state.resultadosPrestamos[m].push(newObjectCredito);
+        if( parseInt(newValue[fieldCreditOwner]) == this.state.resultadosClientes[m][fieldClient]) {
+            var existeCredito = false;
+            for (var i = 0; i < this.state.resultadosPrestamos[m].length; i++) {
+                if(this.state.resultadosPrestamos[m][i][fieldCreditID] == newValue[fieldCreditID]) {
+                    existeCredito = true;
+                    break;
+                }
+            };
+            if(!existeCredito) {
+                var newObjectCredito = {};
+                newObjectCredito[fieldCreditID] = parseInt(newValue[fieldCreditID]);
+                // 1. Make a shallow copy of the items
+                let prestamos = [...this.state.resultadosPrestamos];
+                // 2. Make a shallow copy of the item you want to mutate
+                let prestamo = [...prestamos[m]];
+                // 3. Replace the property you're intested in
+                prestamo.push(newObjectCredito);
+                // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                prestamos[m] = prestamo;
+                // 5. Set the state to our new copy
+                this.setState({
+                    resultadosPrestamos: prestamos
+                });
+                //this.state.resultadosPrestamos[m].push(newObjectCredito);
+            }
             return;
         }
-        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[end][fieldClient]) > 0) {
-            var newObjectCredito = {ID: newValue[fieldCredit]};
-            var newArray = [newObjectCredito];
+        if( parseInt(newValue[fieldCreditOwner]) > this.state.resultadosClientes[end][fieldClient]) {
+            var newObjectCredito = {};
+            newObjectCredito[fieldCreditID] = parseInt(newValue[fieldCreditID]);
+            newArray = [newObjectCredito];
             // 1. Make a shallow copy of the items
             let prestamos = [...this.state.resultadosPrestamos];
             // 3. Replace the property you're intested in
@@ -386,8 +623,9 @@ export default class ResultadosReporteria extends React.Component {
             //this.state.resultadosPrestamos.splice(end + 1, 0, newArray);
             return;
         }
-        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[start][fieldClient]) < 0 ) {
-            var newObjectCredito = {ID: newValue[fieldCredit]};
+        if( parseInt(newValue[fieldCreditOwner]) < this.state.resultadosClientes[start][fieldClient]) {
+            var newObjectCredito = {};
+            newObjectCredito[fieldCreditID] = parseInt(newValue[fieldCreditID]);
             var newArray = [newObjectCredito];
             // 1. Make a shallow copy of the items
             let prestamos = [...this.state.resultadosPrestamos];
@@ -403,12 +641,12 @@ export default class ResultadosReporteria extends React.Component {
         if(start >= end){
             return;
         }
-        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[m][fieldClient]) < 0 ) {
-            this.binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCredit, start, m - 1);
+        if( parseInt(newValue[fieldCreditOwner]) < this.state.resultadosClientes[m][fieldClient]) {
+            this.binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCreditID, start, m - 1);
             return;
         }
-        if( newValue[fieldCreditOwner].localeCompare(this.state.resultadosClientes[m][fieldClient]) > 0 ) {
-            this.binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCredit, m + 1, end);
+        if( parseInt(newValue[fieldCreditOwner]) > this.state.resultadosClientes[m][fieldClient]) {
+            this.binaryInsertCredit(newValue, array, fieldClient, fieldCreditOwner, fieldCreditID, m + 1, end);
             return;
         }
     }
@@ -416,7 +654,7 @@ export default class ResultadosReporteria extends React.Component {
     binaryInsertCreditField(newValue){
         for (var i = 0; i < this.state.resultadosPrestamos.length; i++) {
             for (var j = 0; j < this.state.resultadosPrestamos[i].length; j++) {
-                if(this.state.resultadosPrestamos[i][j].ID.localeCompare(newValue.idObjeto) == 0) {
+                if(this.state.resultadosPrestamos[i][j].identificador == newValue.idObjeto) {
                     //this.state.resultadosPrestamos[i][j][newValue.nombre] = newValue.valor;
                     // 1. Make a shallow copy of the items
                     let prestamos = [...this.state.resultadosPrestamos];
@@ -436,11 +674,47 @@ export default class ResultadosReporteria extends React.Component {
         };
     }
 
-    verificarFinClientes() {
-        console.log("tamBanderaActual = "+tamBanderaActual);
-        console.log("tamBanderaFinal = "+tamBanderaFinal);
-        if(tamBanderaActual == tamBanderaFinal) {
-            console.log("ENTROOO");
+    verificarFinClientes(IDsNoTraer, esCliente) {
+        if(tamBanderaActual == tamBanderaFinal && esCliente) {
+            this.getObjectsID(" where objeto = 'Préstamo' ", IDsNoTraer, false);
+        }
+    }
+
+    insertIntoFieldArray(field, type) {
+        if(field.nombre.localeCompare("numPrestamo") != 0 && field.nombre.localeCompare("idCliente") != 0)  {
+            if(field.objeto.localeCompare("Cliente") == 0) {
+                var copiaTemp = [...this.state.camposClientes];
+                var entro = false;
+                for (var i = 0; i < copiaTemp.length; i++) {
+                    if(copiaTemp[i].nombre.localeCompare(field.nombre) == 0) {
+                        entro = true;
+                        break;
+                    }
+                };
+                if(copiaTemp.length == 0 || !entro) {
+                    field.tipo = type;
+                    copiaTemp.push(field);
+                }
+                this.setState({
+                    camposClientes: copiaTemp
+                });
+            } else if(field.objeto.localeCompare("Préstamo") == 0) {
+                var copiaTemp = [...this.state.camposPrestamos];
+                var entro = false;
+                for (var i = 0; i < copiaTemp.length; i++) {
+                    if(copiaTemp[i].nombre.localeCompare(field.nombre) == 0) {
+                        entro = true;
+                        break;
+                    }
+                };
+                if(copiaTemp.length == 0 || !entro) {
+                    field.tipo = type;
+                    copiaTemp.push(field);
+                }
+                this.setState({
+                    camposPrestamos: copiaTemp
+                });
+            }
         }
     }
 
@@ -501,28 +775,87 @@ export default class ResultadosReporteria extends React.Component {
                 <div className={"row"} style={{width: "100%"}}>
                     <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"} style={{width: "100%"}}>
                         {this.state.resultadosClientes.map((cliente, i) => (
-                            <div key={cliente.ID} style={{margin: "3% 0%"}}>
-                                <Accordion showTrash={false} allowMultipleOpen color={"#ffffff"}>
-                                    <div label={cliente.ID + " | " + cliente.nombreCliente}>
-
-
-                                        { this.state.resultadosPrestamos[i] != undefined ? (
-                                            <div>
-                                                {this.state.resultadosPrestamos[i].map((prestamo, j) => (
-                                                    <div key={prestamo.ID}>
-                                                        {
-                                                            Object.keys(this.state.resultadosPrestamos[i][j]).map((propiedad, k) => (
-                                                                <div key={k} style={{display: "inline-block", padding: "1% 3%"}} className={"border-top border-bottom border-left border-right"}>
-                                                                    <h4 className={"col-form-label text-center"}>{this.state.resultadosPrestamos[i][j][propiedad]}</h4>
-                                                                </div>
-                                                            ))
-                                                        }
+                            <div key={cliente.identificador} style={{margin: "3% 0%"}}>
+                                <Accordion showTrash={false} showEdit={false} allowMultipleOpen color={"#ffffff"}>
+                                    <div label={cliente.identificador + " | " + cliente.nombreCliente}>
+                                        <div className="card-body">
+                                            <div className="row">
+                                                <div className="offset-lg-1 col-lg-11 col-md-12 col-sm-12 col-12">
+                                                    <p className="lead">Cliente</p>
+                                                    <div style={{overflowX: "auto"}}>
+                                                        <table className="table" style={{border: "1px solid #e6e6f2"}}>
+                                                            <thead>
+                                                                <tr>
+                                                                    {this.state.camposClientes.map((campoCliente, j) => (
+                                                                        <th key={i+""+j+""+0} scope="col">{campoCliente.nombre}</th>
+                                                                    ))}
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    {this.state.camposClientes.map((campoCliente, j) => (
+                                                                        <th scope="col" key={i+""+j+""+1}>
+                                                                            { cliente[campoCliente.nombre] != undefined ? (
+                                                                                <span>{cliente[campoCliente.nombre]}</span>
+                                                                            ) : (
+                                                                                <span></span>
+                                                                            )}
+                                                                        </th>
+                                                                    ))}
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
-                                                ))}
+                                                </div>
                                             </div>
-                                        ) : (
-                                            <span></span>
-                                        )}
+                                            <br/>
+
+                                            { this.state.resultadosPrestamos[i] != undefined ? (
+                                                <div className="row">
+                                                    <div className="offset-lg-2 col-lg-10 col-md-12 col-sm-12 col-12">
+                                                        {this.state.resultadosPrestamos[i].map((prestamo, j) => (
+                                                            <div key={prestamo.identificador} style={{border: "1px solid #e6e6f2"}}>
+                                                                <Accordion showTrash={false} showEdit={false} allowMultipleOpen color={"#ffffff"}>
+                                                                    <div label={"Número de Préstamo: "+prestamo.identificador}>
+                                                                        <div className="card-body">
+                                                                            <p className="lead">Préstamo</p>
+                                                                            <div style={{overflowX: "auto"}}>
+                                                                                <table className="table" style={{border: "1px solid #e6e6f2"}}>
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            {this.state.camposPrestamos.map((campoPrestamo, k) => (
+                                                                                                <th key={i+""+j+""+k+""+0} scope="col">{campoPrestamo.nombre}</th>
+                                                                                            ))}
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            {this.state.camposPrestamos.map((campoPrestamo, k) => (
+                                                                                                <th scope="col" key={i+""+j+""+k+""+1}>
+                                                                                                    { prestamo[campoPrestamo.nombre] != undefined ? (
+                                                                                                        <span>{prestamo[campoPrestamo.nombre]}</span>
+                                                                                                    ) : (
+                                                                                                        <span></span>
+                                                                                                    )}
+                                                                                                </th>
+                                                                                            ))}
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                            <hr/>
+                                                                        </div>
+                                                                    </div>
+                                                                </Accordion>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <span></span>
+                                            )}
+
+                                        </div>
                                     </div>
                                 </Accordion>
                             </div>
@@ -537,185 +870,4 @@ export default class ResultadosReporteria extends React.Component {
             </div>
         );
     }
-
-    /*render() {
-        return (
-            <div>
-                <div className={"row"}>
-                    <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
-                        <div className={"page-header"}>
-                            <h2 className={"pageheader-title"}>Configuraci&oacute;n</h2>
-                            <div className={"page-breadcrumb"}>
-                                <nav aria-label="breadcrumb">
-                                    <ol className={"breadcrumb"}>
-                                        <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
-                                        <li className={"breadcrumb-item active"} aria-current="page">Tablas</li>
-                                    </ol>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className={"row"} style={{width: "100%"}}>
-                    <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"} style={{width: "100%"}}>
-                        {this.state.tablas.map((tabla, i) => (
-                            <Accordion key={tabla.ID} showTrash={true} deleteVariable={() => this.deleteTableConfirmation(tabla.ID, i)} allowMultipleOpen>
-                                <div label={tabla.nombre} className={"border-top"}>
-
-                                    { this.state.camposTablas[i] != undefined ? (
-                                        <div>
-                                            {this.state.camposTablas[i].map((campo, j) => (
-                                                <div key={campo.ID} className={"border-top alert alert-primary"} style={{padding: "1% 3%"}}>
-                                                    <div className={"row"}>
-                                                        <div className={"form-group col-xl-6 col-6"}>
-                                                            <h4 className={"col-form-label text-center"}>Tabla</h4>
-                                                            <select id={"campoTablaID"+i+j} className={"form-control"} defaultValue={campo.tablaID}>
-                                                                <option value="" key="0">Seleccione una tabla...</option>
-                                                                {this.state.tablas.map((tabla, k) =>
-                                                                    <option value={tabla.ID} key={tabla.ID}>{tabla.nombre}</option>
-                                                                )}
-                                                            </select>
-                                                        </div>
-                                                        <div className={"form-group col-xl-6 col-6"}>
-                                                            <h4 className={"col-form-label text-center"}>Nombre de Campo</h4>
-                                                            <InlineEdit id={"campoNombre"+i+j} texto={campo.nombre}> </InlineEdit>
-                                                        </div>
-                                                    </div>
-                                                    <div className={"row"}>
-                                                        <div className="form-group col-xl-6 col-6">
-                                                            <h4 className={"col-form-label text-center"}>Tipo</h4>
-                                                            <select id={"campoTipo"+i+j} className={"form-control"} defaultValue={campo.tipo}>
-                                                                <option value="" key="0">Seleccione un tipo de variable...</option>
-                                                                {campos.map((campoSelect, k) =>
-                                                                    <option value={campoSelect.nombre} key={k}>{campoSelect.nombre}</option>
-                                                                )}
-                                                            </select>
-                                                        </div>
-                                                        <div className={"form-group col-xl-6 col-6"}>
-                                                            <h4 className={"col-form-label text-center"}>Guardar Campo en Resultados</h4>
-                                                            <div className={"switch-button switch-button-yesno"} style={{margin:"0 auto", display:"block"}}>
-                                                                { campo.guardar ? (
-                                                                    <input type="checkbox" defaultChecked name={"campoGuardar"+i+j} id={"campoGuardar"+i+j}/>
-                                                                ) : (
-                                                                    <input type="checkbox" name={"campoGuardar"+i+j} id={"campoGuardar"+i+j}/>
-                                                                )}
-                                                                <span><label htmlFor={"campoGuardar"+i+j}></label></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    { this.state.errorModificarCampo.mostrar ? (
-                                                        <ErrorMessage campo={this.state.errorModificarCampo.campo} descripcion={this.state.errorModificarCampo.descripcion} dismissTableError={this.dismissFieldEditError}> </ErrorMessage>
-                                                    ) : (
-                                                        <span></span>
-                                                    )}
-                                                    <div className={"row"}>
-                                                        <button onClick={() => this.updateFieldsConfirmation(campo.ID, i, j)} className={"btn btn-light btn-block col-xl-5 col-5"} style={{margin: "0 auto", display: "block"}}>Guardar</button>
-                                                        <button onClick={() => this.deleteFieldsConfirmation(campo.ID, i, j)} className={"btn btn-light btn-block col-xl-1 col-1"} style={{margin: "0 auto", display: "block", display: "flex", alignItems: "center", justifyContent: "center"}}><img onClick={this.props.deleteVariable} src={"../assets/trash.png"} style={{height: "20px", width: "20px"}}></img></button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <span></span>
-                                    )}  
-
-                                    <div className={"border-top alert alert-primary"} style={{margin: "3% 0%"}}>
-                                        <div className={"row"}>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Tabla</h4>
-                                                <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d"}} className={"alert-heading"} >{tabla.nombre}</h4>
-                                            </div>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Nombre de Campo</h4>
-                                                <input id={"campoNombre"+i} type="text" className={"form-control"}/>
-                                            </div>
-                                        </div>
-                                        <div className={"row"}>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Tipo</h4>
-                                                <select id={"campoTipo"+i} className={"form-control"}>
-                                                    <option value="" key="0">Seleccione un tipo de variable...</option>
-                                                    {campos.map((campo, k) =>
-                                                        <option value={campo.nombre} key={k}>{campo.nombre}</option>
-                                                    )}
-                                                </select>
-                                            </div>
-                                            <div className={"form-group col-xl-6 col-6"}>
-                                                <h4 className={"col-form-label text-center"}>Guardar Campo en Resultados</h4>
-                                                <div className={"switch-button switch-button-yesno"} style={{margin:"0 auto", display:"block"}}>
-                                                    <input type="checkbox" defaultChecked name={"campoGuardar"+i} id={"campoGuardar"+i}/><span>
-                                                    <label htmlFor={"campoGuardar"+i}></label></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        { this.state.errorCreacionCampo.mostrar ? (
-                                            <ErrorMessage campo={this.state.errorCreacionCampo.campo} descripcion={this.state.errorCreacionCampo.descripcion} dismissTableError={this.dismissFieldNewError}> </ErrorMessage>
-                                        ) : (
-                                            <span></span>
-                                        )}
-                                        <div className={"row"}>
-                                            <button onClick={() => this.insertField(i)} className={"btn btn-light btn-block col-xl-10 col-10"} style={{margin: "0 auto", display: "block"}}>Crear</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Accordion>
-                        ))}
-                    </div>
-                </div>
-
-                <div className={"row"}>
-                    <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
-                        <div className={"card influencer-profile-data"}>
-                            <div className={"card-body"}>
-                                <h3>Crear Nueva Tabla</h3>
-                                <div className={"row border-top"}>
-                                    <div className="form-group col-xl-6 col-6">
-                                        <label className={"col-form-label"}>Nombre de la Conecci&oacute;n</label>
-                                        <input id="nombreTablaNuevo" type="text" className={"form-control"}/>
-                                    </div>
-                                    <div className="form-group col-xl-6 col-6">
-                                        <label className={"col-form-label"}>Usuario de la Tabla</label>
-                                        <input id="usuarioTablaNuevo" type="text" className={"form-control"}/>
-                                    </div>
-                                </div>
-                                <div className={"row"}>
-                                    <div className="form-group col-xl-6 col-6">
-                                        <label className={"col-form-label"}>Contrase&ntilde;a de la Tabla</label>
-                                        <input id="contrasenaTablaNuevo" type="text" className={"form-control"}/>
-                                    </div>
-                                    <div className="form-group col-xl-6 col-6">
-                                        <label className={"col-form-label"}>Servidor de la Tabla</label>
-                                        <input id="servidorTablaNuevo" type="text" className={"form-control"}/>
-                                    </div>
-                                </div>
-                                <div className={"row"}>
-                                    <div className="form-group col-xl-6 col-6">
-                                        <label className={"col-form-label"}>Base de Datos de la Tabla</label>
-                                        <input id="basedatosTablaNuevo" type="text" className={"form-control"}/>
-                                    </div>
-                                    <div className="form-group col-xl-6 col-6">
-                                        <label className={"col-form-label"}>Nombre de la Tabla</label>
-                                        <input id="tablaTablaNuevo" type="text" className={"form-control"}/>
-                                    </div>
-                                </div>
-                                { this.state.errorCreacionTabla.mostrar ? (
-                                    <ErrorMessage campo={this.state.errorCreacionTabla.campo} descripcion={this.state.errorCreacionTabla.descripcion} dismissTableError={this.dismissTableNewError}> </ErrorMessage>
-                                ) : (
-                                    <span></span>
-                                )}
-                                <div className={"row"}>
-                                    <button onClick={this.insertTable} className={"btn btn-success btn-block col-xl-10 col-10"} style={{margin: "0 auto", display: "block"}}>Crear</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                { this.state.mensajeModal.mostrarMensaje ? (
-                    <MessageModal esError={this.state.mensajeModal.esError} esConfirmar={this.state.mensajeModal.esConfirmar} dismissMessage={this.dismissMessageModal} confirmFunction={this.confirmMessageModal} titulo={this.state.mensajeModal.titulo} mensaje={this.state.mensajeModal.mensaje}> </MessageModal>
-                ) : (
-                    <span></span>
-                )}
-            </div>
-        );
-    }*/
 }

@@ -55,7 +55,9 @@ function (_React$Component) {
         esNumero: true,
         esBoolean: false,
         esFecha: false,
-        esTexto: false
+        esTexto: false,
+        esGranDeudor: false,
+        esPequenoDeudor: false
       },
       errorCreacionRegla: {
         campo: "",
@@ -81,6 +83,8 @@ function (_React$Component) {
     _this.dismissReglaNewError = _this.dismissReglaNewError.bind(_assertThisInitialized(_this));
     _this.showSuccesMessage = _this.showSuccesMessage.bind(_assertThisInitialized(_this));
     _this.dismissMessageModal = _this.dismissMessageModal.bind(_assertThisInitialized(_this));
+    _this.esGranDeudor = _this.esGranDeudor.bind(_assertThisInitialized(_this));
+    _this.esPequenoDeudor = _this.esPequenoDeudor.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -97,7 +101,9 @@ function (_React$Component) {
           esNumero: true,
           esBoolean: false,
           esFecha: false,
-          esTexto: false
+          esTexto: false,
+          esGranDeudor: false,
+          esPequenoDeudor: false
         }
       });
     }
@@ -109,7 +115,9 @@ function (_React$Component) {
           esNumero: false,
           esBoolean: true,
           esFecha: false,
-          esTexto: false
+          esTexto: false,
+          esGranDeudor: false,
+          esPequenoDeudor: false
         }
       });
     }
@@ -121,7 +129,9 @@ function (_React$Component) {
           esNumero: false,
           esBoolean: false,
           esFecha: true,
-          esTexto: false
+          esTexto: false,
+          esGranDeudor: false,
+          esPequenoDeudor: false
         }
       });
     }
@@ -133,7 +143,37 @@ function (_React$Component) {
           esNumero: false,
           esBoolean: false,
           esFecha: false,
-          esTexto: true
+          esTexto: true,
+          esGranDeudor: false,
+          esPequenoDeudor: false
+        }
+      });
+    }
+  }, {
+    key: "esGranDeudor",
+    value: function esGranDeudor() {
+      this.setState({
+        tipoCampo: {
+          esNumero: false,
+          esBoolean: false,
+          esFecha: false,
+          esTexto: false,
+          esGranDeudor: true,
+          esPequenoDeudor: false
+        }
+      });
+    }
+  }, {
+    key: "esPequenoDeudor",
+    value: function esPequenoDeudor() {
+      this.setState({
+        tipoCampo: {
+          esNumero: false,
+          esBoolean: false,
+          esFecha: false,
+          esTexto: false,
+          esGranDeudor: false,
+          esPequenoDeudor: true
         }
       });
     }
@@ -149,7 +189,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from Campos", function (err, result) {
+        request.query("select * from Campos where tabla = 'Cliente' or tabla = 'Préstamo'", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -158,8 +198,29 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
+              var temp = [];
+
+              for (var i = 0; i < result.recordset.length; i++) {
+                var existe = false;
+
+                for (var j = 0; j < temp.length; j++) {
+                  if (temp[j].nombre.localeCompare(result.recordset[i].nombre) == 0) {
+                    existe = true;
+                    break;
+                  }
+                }
+
+                ;
+
+                if (existe == false) {
+                  temp.push(result.recordset[i]);
+                }
+              }
+
+              ;
+
               _this2.setState({
-                campos: result.recordset
+                campos: temp
               });
             });
           }
@@ -187,8 +248,9 @@ function (_React$Component) {
 
         var valorCampos;
         var esListaValor, esCampoValor;
+        var texto;
 
-        if (seleccionCampoIDSelect.localeCompare("M0ra") != 0) {
+        if (seleccionCampoIDSelect.localeCompare("M0ra") != 0 && seleccionCampoIDSelect.localeCompare("Gr4nDeud0r") != 0 && seleccionCampoIDSelect.localeCompare("P3quDeud0r") != 0) {
           campoTablaID = this.state.campos[seleccionCampoIDSelect].tablaID;
           campoID = this.state.campos[seleccionCampoIDSelect].ID;
           campoTipo = this.state.campos[seleccionCampoIDSelect].tipo;
@@ -208,7 +270,25 @@ function (_React$Component) {
             esListaValor = true;
             esCampoValor = false;
           }
-        } else {
+
+          var operacionTexto;
+
+          if (operacion.localeCompare("==") == 0) {
+            operacionTexto = "es igual";
+          } else if (operacion.localeCompare("<") == 0) {
+            operacionTexto = "es menor";
+          } else if (operacion.localeCompare("<=") == 0) {
+            operacionTexto = "es menor o igual";
+          } else if (operacion.localeCompare(">=") == 0) {
+            operacionTexto = "es mayor o igual";
+          } else if (operacion.localeCompare(">") == 0) {
+            operacionTexto = "es mayor";
+          } else if (operacion.localeCompare("!=") == 0) {
+            operacionTexto = "no es igual";
+          }
+
+          texto = this.state.campos[seleccionCampoIDSelect].nombre + " " + operacionTexto + " ";
+        } else if (seleccionCampoIDSelect.localeCompare("M0ra") == 0) {
           campoTablaID = -1;
           campoID = -1;
           campoTipo = "int";
@@ -228,6 +308,46 @@ function (_React$Component) {
             esListaValor = true;
             esCampoValor = false;
           }
+
+          var _operacionTexto;
+
+          if (operacion.localeCompare("==") == 0) {
+            _operacionTexto = "es igual";
+          } else if (operacion.localeCompare("<") == 0) {
+            _operacionTexto = "es menor";
+          } else if (operacion.localeCompare("<=") == 0) {
+            _operacionTexto = "es menor o igual";
+          } else if (operacion.localeCompare(">=") == 0) {
+            _operacionTexto = "es mayor o igual";
+          } else if (operacion.localeCompare(">") == 0) {
+            _operacionTexto = "es mayor";
+          } else if (operacion.localeCompare("!=") == 0) {
+            _operacionTexto = "no es igual";
+          }
+
+          texto = "Mora " + _operacionTexto + " ";
+        } else if (seleccionCampoIDSelect.localeCompare("Gr4nDeud0r") == 0) {
+          campoTablaID = -2;
+          campoID = -2;
+          campoTipo = "varchar";
+          operacion = $("input[name='operacionRadio']:checked").val();
+          operacionTipo;
+          if (operacion != undefined && (operacion.localeCompare("<") == 0 || operacion.localeCompare("<=") == 0 || operacion.localeCompare(">") == 0 || operacion.localeCompare(">=") == 0 || operacion.localeCompare("==") == 0 || operacion.localeCompare("!=") == 0)) operacionTipo = "relacional";else if (operacion != undefined && (operacion.localeCompare("+") == 0 || operacion.localeCompare("-") == 0 || operacion.localeCompare("*") == 0 || operacion.localeCompare("/") == 0)) operacionTipo = "algebraica";else if (operacion != undefined && (operacion.localeCompare("sumIf") == 0 || operacion.localeCompare("sumIfNot") == 0)) operacionTipo = "excel";
+          valorLista = "CAPITALMINIMO=" + $("#capitalMinimo").val() + ",TIEMPOMINIMO=" + $("#tiempoMinimo").val() + ",PORCENTAJEMINIMO=" + $("#porcentajeMinimo").val(); //ID Tabla
+
+          valorCampos = $("#camposDeLista").val();
+          esListaValor, esCampoValor;
+
+          if (valorLista != undefined && valorLista.localeCompare("table") == 0) {
+            esListaValor = false;
+            esCampoValor = true;
+            valorLista = this.props.tablaID;
+          } else if (valorLista != undefined && valorLista.length > 0) {
+            esListaValor = true;
+            esCampoValor = false;
+          }
+
+          texto = "Es Gran Deudor Comercial";
         }
 
         console.log("//////////////////////");
@@ -262,6 +382,19 @@ function (_React$Component) {
                               mostrar: false
                             }
                           });
+                          var tablaNombreValor = 'VariablesdeLista';
+                          if (esCampoValor) tablaNombreValor = 'Campos';
+                          var textoABuscar = '';
+
+                          for (var i = 0; i < valorCampos.length; i++) {
+                            if (textoABuscar.length == 0) {
+                              textoABuscar += ' where ID = ' + valorCampos[i];
+                            } else {
+                              textoABuscar += ' or ID = ' + valorCampos[i];
+                            }
+                          }
+
+                          ;
                           var transaction = new _mssql["default"].Transaction(this.props.pool);
                           transaction.begin(function (err) {
                             var rolledBack = false;
@@ -269,7 +402,7 @@ function (_React$Component) {
                               rolledBack = true;
                             });
                             var request = new _mssql["default"].Request(transaction);
-                            request.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, nombreTablaRes, idTipoTabla) values (" + campoTablaID + ", " + campoID + ", '" + campoTipo + "', '" + operacion + "', '" + operacionTipo + "','" + valorCampos + "', '', '" + esListaValor + "', '" + esCampoValor + "', " + valorLista + ", '" + _this3.props.tipoTablaRes + "', " + _this3.props.idTipoTabla + ")", function (err, result) {
+                            request.query("select * from " + tablaNombreValor + textoABuscar, function (err, result) {
                               if (err) {
                                 if (!rolledBack) {
                                   console.log(err);
@@ -277,7 +410,35 @@ function (_React$Component) {
                                 }
                               } else {
                                 transaction.commit(function (err) {
-                                  _this3.showSuccesMessage("Exito", "Regla creada con éxito.");
+                                  for (var i = 0; i < result.recordset.length; i++) {
+                                    if (esCampoValor) {
+                                      if (i == 0) texto += result.recordset[i].nombre;else texto += ", " + result.recordset[i].nombre;
+                                    } else {
+                                      if (i == 0) texto += result.recordset[i].valor;else texto += ", " + result.recordset[i].valor;
+                                    }
+                                  }
+
+                                  ;
+                                  var transaction1 = new _mssql["default"].Transaction(_this3.props.pool);
+                                  transaction1.begin(function (err) {
+                                    var rolledBack = false;
+                                    transaction1.on('rollback', function (aborted) {
+                                      rolledBack = true;
+                                    });
+                                    var request1 = new _mssql["default"].Request(transaction1);
+                                    request1.query("insert into Reglas (campoTablaID, campoCampoID, campoTipo, operacion, tipoOperacion, valor, valorTipo, esListaValor, esCampoValor, valorTablaID, texto, nombreTablaRes, idTipoTabla) values (" + campoTablaID + ", " + campoID + ", '" + campoTipo + "', '" + operacion + "', '" + operacionTipo + "','" + valorCampos + "', '', '" + esListaValor + "', '" + esCampoValor + "', " + valorLista + ", '" + texto + "', '" + _this3.props.tipoTablaRes + "', " + _this3.props.idTipoTabla + ")", function (err, result) {
+                                      if (err) {
+                                        if (!rolledBack) {
+                                          console.log(err);
+                                          transaction1.rollback(function (err) {});
+                                        }
+                                      } else {
+                                        transaction1.commit(function (err) {
+                                          _this3.showSuccesMessage("Exito", "Regla creada con éxito.");
+                                        });
+                                      }
+                                    });
+                                  }); // fin transaction1
                                 });
                               }
                             });
@@ -475,18 +636,24 @@ function (_React$Component) {
         esBoolean: this.esBoolean,
         esFecha: this.esFecha,
         esTexto: this.esTexto,
-        campos: this.state.campos
+        campos: this.state.campos,
+        esGranDeudor: this.esGranDeudor,
+        esPequenoDeudor: this.esPequenoDeudor
       }, " "), _react["default"].createElement(_Operacion["default"], {
         esNumero: this.state.tipoCampo.esNumero,
         esBoolean: this.state.tipoCampo.esBoolean,
         esFecha: this.state.tipoCampo.esFecha,
-        esTexto: this.state.tipoCampo.esTexto
+        esTexto: this.state.tipoCampo.esTexto,
+        esGranDeudor: this.state.tipoCampo.esGranDeudor,
+        esPequenoDeudor: this.state.tipoCampo.esPequenoDeudor
       }, " "), _react["default"].createElement(_Valor["default"], {
         esNumero: this.state.tipoCampo.esNumero,
         esBoolean: this.state.tipoCampo.esBoolean,
         esFecha: this.state.tipoCampo.esFecha,
         esTexto: this.state.tipoCampo.esTexto,
         campos: this.state.campos,
+        esGranDeudor: this.state.tipoCampo.esGranDeudor,
+        esPequenoDeudor: this.state.tipoCampo.esPequenoDeudor,
         pool: this.props.pool
       }, " "), this.state.errorCreacionRegla.mostrar ? _react["default"].createElement(_ErrorMessage["default"], {
         campo: this.state.errorCreacionRegla.campo,

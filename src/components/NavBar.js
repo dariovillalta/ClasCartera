@@ -15,10 +15,14 @@ export default class NavBar extends React.Component {
                             <a className={"nav-link nav-user-img"} href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src="./assets/filter-icons/client.png" alt="" style={{height: "50px", width: "auto"}}/> </a>
                             <div className={"dropdown-menu dropdown-menu-right nav-user-dropdown"} aria-labelledby="navbarDropdownMenuLink2">
                                 <div className={"nav-user-info"}>
-                                    <h5 className={"mb-0 text-white nav-user-name"}>John Abraham</h5>
+                                    <h5 className={"mb-0 text-white nav-user-name"}>{this.props.userName}</h5>
                                 </div>
-                                <a className={"dropdown-item"} href="#" onClick={this.props.showConfigurationComponent}><i className={"fas fa-user mr-2"}></i>Configuración</a>
-                                <a className={"dropdown-item"} href="#"><i className={"fas fa-power-off mr-2"}></i>Salir</a>
+                                { this.props.permision.localeCompare("admin") == 0 ? (
+                                    <a className={"dropdown-item"} href="#" onClick={this.props.showConfigurationComponent}><i className={"fas fa-user mr-2"}></i>Configuración</a>
+                                ) : (
+                                    <span></span>
+                                )}
+                                <a className={"dropdown-item"} href="#" onClick={this.props.logOff}><i className={"fas fa-power-off mr-2"}></i>Salir</a>
                             </div>
                         </li>
                     </ul>

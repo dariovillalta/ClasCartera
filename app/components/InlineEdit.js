@@ -107,6 +107,7 @@ function (_React$Component) {
         return _react["default"].createElement("div", {
           onClick: this.showEditMode.bind(this)
         }, _react["default"].createElement("h4", {
+          id: this.props.id,
           style: {
             fontFamily: 'Circular Std Medium',
             color: "#71748d",

@@ -9,7 +9,7 @@ export default class Layout extends React.Component {
         super();
         this.state = {
             router: {
-                showConfiguration: true,                //lista de configuraciones
+                showConfiguration: false,                //lista de configuraciones
                 showConfTables: false,                  //configuracion de conexiones a tablas/campos
                 showTypeCredit: false,                  //configuracion de opciones de tipo de credito
                 showClasificationCriteria: false,       //configuracion de opciones clasificacion de criterio
@@ -19,9 +19,11 @@ export default class Layout extends React.Component {
                 showReportsView: false,  //reporteria ver datos
                 showReportsDownload: false,  //reporteria descargar datos
                 showGraphics: false,     //componente para mostrar diferentes tipos de graficos
-                showHome: false,     //pantalla de inicio
+                showHome: true,     //pantalla de inicio
                 showCatClass: false,     //configuracion de opciones de categorias de clasificacion
-                showDeteriorationCriteria: false    //configuracion de criterios de deterioro
+                showDeteriorationCriteria: false,    //configuracion de criterios de deterioro
+                showMantenimientoUsuarios: false,   //mantenimiento de usuarios
+                showBitacora: false                 //visualizacion de bitacora
             }
         }
         this.showConfigurationComponent = this.showConfigurationComponent.bind(this);
@@ -37,6 +39,8 @@ export default class Layout extends React.Component {
         this.showHome = this.showHome.bind(this);
         this.showCatClass = this.showCatClass.bind(this);
         this.showDeteriorationCriteria = this.showDeteriorationCriteria.bind(this);
+        this.showMantenimientoUsuarios = this.showMantenimientoUsuarios.bind(this);
+        this.showBitacora = this.showBitacora.bind(this);
     }
 
     showConfigurationComponent() {
@@ -54,7 +58,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -74,7 +80,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -94,7 +102,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -114,7 +124,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -134,7 +146,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -154,7 +168,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -174,7 +190,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -194,7 +212,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -214,7 +234,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -234,7 +256,9 @@ export default class Layout extends React.Component {
                 showGraphics: true,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -254,7 +278,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: true,
                 showCatClass: false,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -274,7 +300,9 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: true,
-                showDeteriorationCriteria: false
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
             }
         });
     }
@@ -294,7 +322,53 @@ export default class Layout extends React.Component {
                 showGraphics: false,
                 showHome: false,
                 showCatClass: false,
-                showDeteriorationCriteria: true
+                showDeteriorationCriteria: true,
+                showMantenimientoUsuarios: false,
+                showBitacora: false
+            }
+        });
+    }
+
+    showMantenimientoUsuarios() {
+        this.setState({
+            router: {
+                showConfiguration: false,
+                showConfTables: false,
+                showTypeCredit: false,
+                showClasificationCriteria: false,
+                showLists: false,
+                showCreditClassificationProcess: false,
+                showChooseReports: false,
+                showReportsView: false,
+                showReportsDownload: false,
+                showGraphics: false,
+                showHome: false,
+                showCatClass: false,
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: true,
+                showBitacora: false
+            }
+        });
+    }
+
+    showBitacora() {
+        this.setState({
+            router: {
+                showConfiguration: false,
+                showConfTables: false,
+                showTypeCredit: false,
+                showClasificationCriteria: false,
+                showLists: false,
+                showCreditClassificationProcess: false,
+                showChooseReports: false,
+                showReportsView: false,
+                showReportsDownload: false,
+                showGraphics: false,
+                showHome: false,
+                showCatClass: false,
+                showDeteriorationCriteria: false,
+                showMantenimientoUsuarios: false,
+                showBitacora: true
             }
         });
     }
@@ -302,8 +376,8 @@ export default class Layout extends React.Component {
     render() {
         return (
             <div className={"dashboard-main-wrapper"}>
-                <NavBar showConfigurationComponent={this.showConfigurationComponent}> </NavBar>
-                <LeftBar showCreditClasificationProcess={this.showCreditClasificationProcess}
+                <NavBar logOff={this.props.logOff} userName={this.props.userName} permision={this.props.permision} showConfigurationComponent={this.showConfigurationComponent}> </NavBar>
+                <LeftBar permision={this.props.permision} showCreditClasificationProcess={this.showCreditClasificationProcess}
                         showChooseReports={this.showChooseReports}
                         showGraphics={this.showGraphics}
                         showHome={this.showHome}> </LeftBar>
@@ -317,7 +391,9 @@ export default class Layout extends React.Component {
                             showReportsView={this.showReportsView}
                             showReportsDownload={this.showReportsDownload}
                             showCatClass={this.showCatClass}
-                            showDeteriorationCriteria={this.showDeteriorationCriteria}> </Body>
+                            showDeteriorationCriteria={this.showDeteriorationCriteria}
+                            showMantenimientoUsuarios={this.showMantenimientoUsuarios}
+                            showBitacora={this.showBitacora}> </Body>
                     </div>
                 </div>
             </div>

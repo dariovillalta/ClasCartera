@@ -1,49 +1,229 @@
 import React from 'react';
+import sql from 'mssql';
 
-/*import CampoFiltro from './CampoFiltro.js';
-import OperacionFiltro from './OperacionFiltro.js';
-import ValorFiltro from './ValorFiltro.js';*/
+import FilterVariableCreation from './FilterVariableCreation.js';
 
+var filtrosInt = [];
+var filtrosDecimal = [];
+var filtrosDate = [];
+var filtrosBool = [];
+var filtrosString = [];
 
 export default class CrearFiltro extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            tipoCampo: {
+                esNumero: true,
+                esBoolean: false,
+                esFecha: false,
+                esTexto: false
+            },
             tablaSeleccionada: "clientes",
-            colorDeTablaSeleccionada: "#8c9eff"
+            colorDeTablaSeleccionada: "#8c9eff",
+            bordeDeTablaSeleccionada: "2px solid #536dfe",
+            campos: []
         }
+        this.esNumero = this.esNumero.bind(this);
+        this.esBoolean = this.esBoolean.bind(this);
+        this.esFecha = this.esFecha.bind(this);
+        this.esTexto = this.esTexto.bind(this);
         this.cambioClientes = this.cambioClientes.bind(this);
         this.cambioPrestamos = this.cambioPrestamos.bind(this);
         this.cambioPagos = this.cambioPagos.bind(this);
         this.cambioPlanPagos = this.cambioPlanPagos.bind(this);
+        this.loadFields = this.loadFields.bind(this);
+        this.insertFilter = this.insertFilter.bind(this);
+        this.deleteFromFilter = this.deleteFromFilter.bind(this);
+        this.checkFieldType = this.checkFieldType.bind(this);
+    }
+
+    componentDidMount() {
+        this.loadFields("Cliente");
+        filtrosInt = [];
+        filtrosDecimal = [];
+        filtrosDate = [];
+        filtrosBool = [];
+        filtrosString = [];
+    }
+
+    loadFields(objeto) {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select DISTINCT nombre, tipo from Campos where tabla = '"+objeto+"'", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        this.setState({
+                            campos: result.recordset
+                        });
+                        this.checkFieldType();
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    esNumero() {
+        this.setState({
+            tipoCampo: {
+                esNumero: true,
+                esBoolean: false,
+                esFecha: false,
+                esTexto: false
+            }
+        });
+    }
+
+    esBoolean () {
+        this.setState({
+            tipoCampo: {
+                esNumero: false,
+                esBoolean: true,
+                esFecha: false,
+                esTexto: false
+            }
+        });
+    }
+
+    esFecha () {
+        this.setState({
+            tipoCampo: {
+                esNumero: false,
+                esBoolean: false,
+                esFecha: true,
+                esTexto: false
+            }
+        });
+    }
+
+    esTexto () {
+        this.setState({
+            tipoCampo: {
+                esNumero: false,
+                esBoolean: false,
+                esFecha: false,
+                esTexto: true
+            }
+        });
     }
 
     cambioClientes() {
         this.setState({
             tablaSeleccionada: "clientes",
-            colorDeTablaSeleccionada: "#8c9eff"
+            colorDeTablaSeleccionada: "#8c9eff",
+            bordeDeTablaSeleccionada: "2px solid #536dfe"
         });
+        this.loadFields("Cliente");
+        this.checkFieldType();
     }
 
     cambioPrestamos() {
         this.setState({
             tablaSeleccionada: "prestamos",
-            colorDeTablaSeleccionada: "#f8bbd0"
+            colorDeTablaSeleccionada: "#f8bbd0",
+            bordeDeTablaSeleccionada: "2px solid #f50057"
         });
+        this.loadFields("Préstamo");
+        this.checkFieldType();
     }
 
     cambioPagos() {
         this.setState({
             tablaSeleccionada: "pagos",
-            colorDeTablaSeleccionada: "#e0f7fa"
+            colorDeTablaSeleccionada: "#e0f7fa",
+            bordeDeTablaSeleccionada: "2px solid #4fc3f7"
         });
+        this.loadFields("Pagos");
+        this.checkFieldType();
     }
 
     cambioPlanPagos() {
         this.setState({
             tablaSeleccionada: "planpagos",
-            colorDeTablaSeleccionada: "#ffecb3"
+            colorDeTablaSeleccionada: "#ffecb3",
+            bordeDeTablaSeleccionada: "2px solid #ffd740"
         });
+        this.loadFields("PlanPagos");
+        this.checkFieldType();
+    }
+
+    
+    insertFilter (filtro) {
+        console.log(filtro);
+        if(filtro[0].tipo.localeCompare("int") == 0){
+            for (var i = 0; i < filtro.length; i++) {
+                filtrosInt.push(filtro[i]);
+            };
+            this.props.updatefilter(filtrosInt);
+        } else if(filtro[0].tipo.localeCompare("decimal") == 0){
+            for (var i = 0; i < filtro.length; i++) {
+                filtrosDecimal.push(filtro[i]);
+            };
+            this.props.updatefilter(filtrosDecimal);
+        } else if(filtro[0].tipo.localeCompare("date") == 0){
+            for (var i = 0; i < filtro.length; i++) {
+                filtrosDate.push(filtro[i]);
+            };
+            this.props.updatefilter(filtrosDate);
+        } else if(filtro[0].tipo.localeCompare("bool") == 0){
+            for (var i = 0; i < filtro.length; i++) {
+                filtrosBool.push(filtro[i]);
+            };
+            this.props.updatefilter(filtrosBool);
+        } else if(filtro[0].tipo.localeCompare("varchar") == 0){
+            for (var i = 0; i < filtro.length; i++) {
+                filtrosString.push(filtro[i]);
+            };
+            this.props.updatefilter(filtrosString);
+        }
+    }
+
+    deleteFromFilter(index, type) {
+        if(type.localeCompare("int") == 0) {
+            filtrosInt.splice(index, 1);
+            this.props.updatefilter(filtrosInt);
+        } else if(type.localeCompare("decimal") == 0) {
+            filtrosDecimal.splice(index, 1);
+            this.props.updatefilter(filtrosDecimal);
+        } else if(type.localeCompare("bool") == 0) {
+            filtrosBool.splice(index, 1);
+            this.props.updatefilter(filtrosBool);
+        } else if(type.localeCompare("date") == 0) {
+            filtrosDate.splice(index, 1);
+            this.props.updatefilter(filtrosDate);
+        } else if(type.localeCompare("varchar") == 0) {
+            filtrosString.splice(index, 1);
+            this.props.updatefilter(filtrosString);
+        }
+    }
+
+    checkFieldType() {
+        let valor = $('#campo').prop('selectedIndex');
+        console.log("valor = "+valor);
+        console.log(this.state.campos);
+        if(valor.toString().length > 0) {
+            let campoSeleccionado = this.state.campos[valor];
+            if(campoSeleccionado.tipo.indexOf("int") == 0) {
+                this.esNumero();
+            } else if(campoSeleccionado.tipo.indexOf("bit") == 0) {
+                this.esBoolean();
+            } else if(campoSeleccionado.tipo.indexOf("date") == 0) {
+                this.esFecha();
+            } else if(campoSeleccionado.tipo.indexOf("varchar") == 0) {
+                this.esTexto();
+            }
+        }
     }
 
     render() {
@@ -93,14 +273,72 @@ export default class CrearFiltro extends React.Component {
                         </div>
                     </div>
 
-                    <div className={"col-xl-8 col-8"} style={{height: "100%", backgroundColor: this.state.colorDeTablaSeleccionada}}>
-                        <br/>
-                        
+                    <div className={"col-xl-8 col-8"} style={{height: "100%", backgroundColor: this.state.colorDeTablaSeleccionada, display: "flex", alignItems: "center", justifyContent: "center"}}>
+                        <div>
+                            <FilterVariableCreation  esNumero={this.esNumero} esBoolean={this.esBoolean} esFecha={this.esFecha} esTexto={this.esTexto} tipoCampo={this.state.tipoCampo} insertFilter={this.insertFilter} campos={this.state.campos} bordeDeTablaSeleccionada={this.state.bordeDeTablaSeleccionada} pool={this.props.pool}> </FilterVariableCreation>
+                        </div>
+
+                    </div>
+                </div>
+                <br/>
+                <div className={"row"}>
+                    <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
+                        <div className={"card influencer-profile-data"}>
+                            <div className={"card-body"}>
+                                <table className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Filtro</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filtrosInt.map((filtro, i) =>
+                                            <tr key={i+filtro.texto}>
+                                                <th scope="row">{i}</th>
+                                                <td>{filtro.texto}</td>
+                                                <td><img onClick={() => this.deleteFromFilter(i, "int")} src={"../assets/trash.png"} style={{height: "20px", width: "20px"}}></img></td>
+                                            </tr>
+                                        )}
+                                        {filtrosDecimal.map((filtro, i) =>
+                                            <tr key={i+filtro.texto}>
+                                                <th scope="row">{i}</th>
+                                                <td>{filtro.texto}</td>
+                                                <td><img onClick={() => this.deleteFromFilter(i, "decimal")} src={"../assets/trash.png"} style={{height: "20px", width: "20px", cursor: 'pointer'}}></img></td>
+                                            </tr>
+                                        )}
+                                        {filtrosDate.map((filtro, i) =>
+                                            <tr key={i+filtro.texto}>
+                                                <th scope="row">{i}</th>
+                                                <td>{filtro.texto}</td>
+                                                <td><img onClick={() => this.deleteFromFilter(i, "date")} src={"../assets/trash.png"} style={{height: "20px", width: "20px", cursor: 'pointer'}}></img></td>
+                                            </tr>
+                                        )}
+                                        {filtrosBool.map((filtro, i) =>
+                                            <tr key={i+filtro.texto}>
+                                                <th scope="row">{i}</th>
+                                                <td>{filtro.texto}</td>
+                                                <td><img onClick={() => this.deleteFromFilter(i, "bool")} src={"../assets/trash.png"} style={{height: "20px", width: "20px", cursor: 'pointer'}}></img></td>
+                                            </tr>
+                                        )}
+                                        {filtrosString.map((filtro, i) =>
+                                            <tr key={i+filtro.texto}>
+                                                <th scope="row">{i}</th>
+                                                <td>{filtro.texto}</td>
+                                                <td><img onClick={() => this.deleteFromFilter(i, "varchar")} src={"../assets/trash.png"} style={{height: "20px", width: "20px", cursor: 'pointer'}}></img></td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div style={{width: "100%", height: "6%", padding: "1% 0%"}} className={"text-center"}>
-                    <a onClick={this.props.callbackComponent} className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}}>Filtrar</a>
+                    <a onClick={this.props.callbackComponent} className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}}>Avanzar</a>
                 </div>
+                <br/>
             </div>
         );
     }

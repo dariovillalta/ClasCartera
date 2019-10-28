@@ -6,6 +6,7 @@ import MessageModal from '../MessageModal.js';
 
 const campos = [ {nombre: "varchar"}, {nombre: "bit"}, {nombre: "date"}, {nombre: "int"} ];
 let funciones = [ {funcion: "idCliente", texto: "ID de Cliente"}, {funcion: "fecha", texto: "fecha"}, {nombre: "date"}, {nombre: "int"} ];
+const funcionesTablas = [{nombre: "Otro"}, {nombre: "Pagos de Préstamos"}, {nombre: "Plan de Pagos"}];
 
 export default class ConfiguracionTablas extends React.Component {
     constructor(props) {
@@ -74,37 +75,50 @@ export default class ConfiguracionTablas extends React.Component {
         let servidorTabla = $("#servidorTablaNuevo").val();
         let basedatosTabla = $("#basedatosTablaNuevo").val();
         let tablaTabla = $("#tablaTablaNuevo").val();
+        let funcionTabla = $("#funcionTabla").val();
         if(nombreTabla.length > 0 && nombreTabla.length < 71) {
             if(usuarioTabla.length > 0 && usuarioTabla.length < 51) {
                 if(contrasenaTabla.length > 0 && contrasenaTabla.length < 201) {
                     if(servidorTabla.length > 0 && servidorTabla.length < 51) {
                         if(basedatosTabla.length > 0 && basedatosTabla.length < 51) {
                             if(tablaTabla.length > 0 && tablaTabla.length < 71) {
-                                this.setState({
-                                    errorCreacionTabla: {campo: "", descripcion: "", mostrar: false}
-                                });
-                                const transaction = new sql.Transaction( this.props.pool );
-                                transaction.begin(err => {
-                                    var rolledBack = false;
-                                    transaction.on('rollback', aborted => {
-                                        rolledBack = true;
+                                if(tablaTabla.length > 0 && tablaTabla.length < 71) {
+                                    this.setState({
+                                        errorCreacionTabla: {campo: "", descripcion: "", mostrar: false}
                                     });
-                                    const request = new sql.Request(transaction);
-                                    request.query("insert into Tablas (Nombre, Usuario, Contrasena, Servidor, BaseDatos, Tabla) values ('"+nombreTabla+"','"+usuarioTabla+"','"+contrasenaTabla+"','"+servidorTabla+"','"+basedatosTabla+"','"+tablaTabla+"')", (err, result) => {
-                                        if (err) {
-                                            if (!rolledBack) {
-                                                console.log(err);
-                                                transaction.rollback(err => {
+                                    const transaction = new sql.Transaction( this.props.pool );
+                                    transaction.begin(err => {
+                                        var rolledBack = false;
+                                        transaction.on('rollback', aborted => {
+                                            rolledBack = true;
+                                        });
+                                        const request = new sql.Request(transaction);
+                                        request.query("insert into Tablas (Nombre, Usuario, Contrasena, Servidor, BaseDatos, Tabla, Funcion) values ('"+nombreTabla+"','"+usuarioTabla+"','"+contrasenaTabla+"','"+servidorTabla+"','"+basedatosTabla+"','"+tablaTabla+"','"+funcionTabla+"')", (err, result) => {
+                                            if (err) {
+                                                if (!rolledBack) {
+                                                    console.log(err);
+                                                    transaction.rollback(err => {
+                                                    });
+                                                }
+                                            } else {
+                                                transaction.commit(err => {
+                                                    this.showSuccesMessage("Exito", "Tabla creada con éxito.");
+                                                    this.loadTables();
                                                 });
                                             }
-                                        } else {
-                                            transaction.commit(err => {
-                                                this.showSuccesMessage("Exito", "Tabla creada con éxito.");
-                                                this.loadTables();
-                                            });
-                                        }
+                                        });
+                                    }); // fin transaction
+                                } else {
+                                    let campo = "Función de la Tabla";
+                                    let descripcion;
+                                    if(funcionTabla.length == 0)
+                                        descripcion = "El campo debe tener una longitud mayor a 0.";
+                                    else
+                                        descripcion = "El campo debe tener una longitud menor a 31.";
+                                    this.setState({
+                                        errorCreacionTabla: {campo: campo, descripcion: descripcion, mostrar: true}
                                     });
-                                }); // fin transaction
+                                }
                             } else {
                                 let campo = "Nombre de la Tabla";
                                 let descripcion;
@@ -332,6 +346,20 @@ export default class ConfiguracionTablas extends React.Component {
                                     <div className="form-group col-xl-6 col-6">
                                         <label className={"col-form-label"}>Nombre de la Tabla</label>
                                         <input id="tablaTablaNuevo" type="text" className={"form-control"}/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div style={{display: "flex", alignItems: "center", justifyContent: "center", width: "100%"}}>
+                                        <form style={{width: "90%"}}>
+                                            <label className={"col-form-label"}>Función de la Tabla</label>
+                                            <div className="form-group" style={{width: "100%"}}>
+                                                <select id="funcionTabla" className="form-control" style={{width: "100%"}}>
+                                                    {funcionesTablas.map((funcionTabla, i) =>
+                                                        <option key={i} value={funcionTabla.nombre}>{funcionTabla.nombre}</option>
+                                                    )}
+                                                </select>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                                 { this.state.errorCreacionTabla.mostrar ? (

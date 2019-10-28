@@ -42,7 +42,7 @@ export default class InlineEdit extends React.Component {
     } else {
       return (
         <div onClick={this.showEditMode.bind(this)}>
-          <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d", cursor: "pointer"}} className={"alert-heading"} >{this.state.texto}</h4>
+          <h4 id={this.props.id} style={{fontFamily: 'Circular Std Medium', color: "#71748d", cursor: "pointer"}} className={"alert-heading"} >{this.state.texto}</h4>
         </div>
       );
     }

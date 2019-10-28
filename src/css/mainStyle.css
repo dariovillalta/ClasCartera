@@ -7055,3 +7055,9 @@ Media Query
     background-color: #343a40;
     border-color: #343a40;
 }
+
+.c3-chart-arc > text {
+    fill: black !important;
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+}

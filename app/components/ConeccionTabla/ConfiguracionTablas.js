@@ -61,6 +61,13 @@ var funciones = [{
 }, {
   nombre: "int"
 }];
+var funcionesTablas = [{
+  nombre: "Otro"
+}, {
+  nombre: "Pagos de Préstamos"
+}, {
+  nombre: "Plan de Pagos"
+}];
 
 var ConfiguracionTablas =
 /*#__PURE__*/
@@ -161,6 +168,7 @@ function (_React$Component) {
       var servidorTabla = $("#servidorTablaNuevo").val();
       var basedatosTabla = $("#basedatosTablaNuevo").val();
       var tablaTabla = $("#tablaTablaNuevo").val();
+      var funcionTabla = $("#funcionTabla").val();
 
       if (nombreTabla.length > 0 && nombreTabla.length < 71) {
         if (usuarioTabla.length > 0 && usuarioTabla.length < 51) {
@@ -168,113 +176,128 @@ function (_React$Component) {
             if (servidorTabla.length > 0 && servidorTabla.length < 51) {
               if (basedatosTabla.length > 0 && basedatosTabla.length < 51) {
                 if (tablaTabla.length > 0 && tablaTabla.length < 71) {
-                  this.setState({
-                    errorCreacionTabla: {
-                      campo: "",
-                      descripcion: "",
-                      mostrar: false
-                    }
-                  });
-                  var transaction = new _mssql["default"].Transaction(this.props.pool);
-                  transaction.begin(function (err) {
-                    var rolledBack = false;
-                    transaction.on('rollback', function (aborted) {
-                      rolledBack = true;
-                    });
-                    var request = new _mssql["default"].Request(transaction);
-                    request.query("insert into Tablas (Nombre, Usuario, Contrasena, Servidor, BaseDatos, Tabla) values ('" + nombreTabla + "','" + usuarioTabla + "','" + contrasenaTabla + "','" + servidorTabla + "','" + basedatosTabla + "','" + tablaTabla + "')", function (err, result) {
-                      if (err) {
-                        if (!rolledBack) {
-                          console.log(err);
-                          transaction.rollback(function (err) {});
-                        }
-                      } else {
-                        transaction.commit(function (err) {
-                          _this3.showSuccesMessage("Exito", "Tabla creada con éxito.");
-
-                          _this3.loadTables();
-                        });
+                  if (tablaTabla.length > 0 && tablaTabla.length < 71) {
+                    this.setState({
+                      errorCreacionTabla: {
+                        campo: "",
+                        descripcion: "",
+                        mostrar: false
                       }
                     });
-                  }); // fin transaction
+                    var transaction = new _mssql["default"].Transaction(this.props.pool);
+                    transaction.begin(function (err) {
+                      var rolledBack = false;
+                      transaction.on('rollback', function (aborted) {
+                        rolledBack = true;
+                      });
+                      var request = new _mssql["default"].Request(transaction);
+                      request.query("insert into Tablas (Nombre, Usuario, Contrasena, Servidor, BaseDatos, Tabla, Funcion) values ('" + nombreTabla + "','" + usuarioTabla + "','" + contrasenaTabla + "','" + servidorTabla + "','" + basedatosTabla + "','" + tablaTabla + "','" + funcionTabla + "')", function (err, result) {
+                        if (err) {
+                          if (!rolledBack) {
+                            console.log(err);
+                            transaction.rollback(function (err) {});
+                          }
+                        } else {
+                          transaction.commit(function (err) {
+                            _this3.showSuccesMessage("Exito", "Tabla creada con éxito.");
+
+                            _this3.loadTables();
+                          });
+                        }
+                      });
+                    }); // fin transaction
+                  } else {
+                    var campo = "Función de la Tabla";
+                    var descripcion;
+                    if (funcionTabla.length == 0) descripcion = "El campo debe tener una longitud mayor a 0.";else descripcion = "El campo debe tener una longitud menor a 31.";
+                    this.setState({
+                      errorCreacionTabla: {
+                        campo: campo,
+                        descripcion: descripcion,
+                        mostrar: true
+                      }
+                    });
+                  }
                 } else {
-                  var campo = "Nombre de la Tabla";
-                  var descripcion;
-                  if (tablaTabla.length == 0) descripcion = "El campo debe tener una longitud mayor a 0.";else descripcion = "El campo debe tener una longitud menor a 71.";
+                  var _campo = "Nombre de la Tabla";
+
+                  var _descripcion;
+
+                  if (tablaTabla.length == 0) _descripcion = "El campo debe tener una longitud mayor a 0.";else _descripcion = "El campo debe tener una longitud menor a 71.";
                   this.setState({
                     errorCreacionTabla: {
-                      campo: campo,
-                      descripcion: descripcion,
+                      campo: _campo,
+                      descripcion: _descripcion,
                       mostrar: true
                     }
                   });
                 }
               } else {
-                var _campo = "Base de Datos de la Tabla";
+                var _campo2 = "Base de Datos de la Tabla";
 
-                var _descripcion;
+                var _descripcion2;
 
-                if (basedatosTabla.length == 0) _descripcion = "El campo debe tener una longitud mayor a 0.";else _descripcion = "El campo debe tener una longitud menor a 51.";
+                if (basedatosTabla.length == 0) _descripcion2 = "El campo debe tener una longitud mayor a 0.";else _descripcion2 = "El campo debe tener una longitud menor a 51.";
                 this.setState({
                   errorCreacionTabla: {
-                    campo: _campo,
-                    descripcion: _descripcion,
+                    campo: _campo2,
+                    descripcion: _descripcion2,
                     mostrar: true
                   }
                 });
               }
             } else {
-              var _campo2 = "Servidor de la Tabla";
+              var _campo3 = "Servidor de la Tabla";
 
-              var _descripcion2;
+              var _descripcion3;
 
-              if (servidorTabla.length == 0) _descripcion2 = "El campo debe tener una longitud mayor a 0.";else _descripcion2 = "El campo debe tener una longitud menor a 51.";
+              if (servidorTabla.length == 0) _descripcion3 = "El campo debe tener una longitud mayor a 0.";else _descripcion3 = "El campo debe tener una longitud menor a 51.";
               this.setState({
                 errorCreacionTabla: {
-                  campo: _campo2,
-                  descripcion: _descripcion2,
+                  campo: _campo3,
+                  descripcion: _descripcion3,
                   mostrar: true
                 }
               });
             }
           } else {
-            var _campo3 = "Contraseña de la Tabla";
+            var _campo4 = "Contraseña de la Tabla";
 
-            var _descripcion3;
+            var _descripcion4;
 
-            if (contrasenaTabla.length == 0) _descripcion3 = "El campo debe tener una longitud mayor a 0.";else _descripcion3 = "El campo debe tener una longitud menor a 201.";
+            if (contrasenaTabla.length == 0) _descripcion4 = "El campo debe tener una longitud mayor a 0.";else _descripcion4 = "El campo debe tener una longitud menor a 201.";
             this.setState({
               errorCreacionTabla: {
-                campo: _campo3,
-                descripcion: _descripcion3,
+                campo: _campo4,
+                descripcion: _descripcion4,
                 mostrar: true
               }
             });
           }
         } else {
-          var _campo4 = "Usuario de la Tabla";
+          var _campo5 = "Usuario de la Tabla";
 
-          var _descripcion4;
+          var _descripcion5;
 
-          if (usuarioTabla.length == 0) _descripcion4 = "El campo debe tener una longitud mayor a 0.";else _descripcion4 = "El campo debe tener una longitud menor a 51.";
+          if (usuarioTabla.length == 0) _descripcion5 = "El campo debe tener una longitud mayor a 0.";else _descripcion5 = "El campo debe tener una longitud menor a 51.";
           this.setState({
             errorCreacionTabla: {
-              campo: _campo4,
-              descripcion: _descripcion4,
+              campo: _campo5,
+              descripcion: _descripcion5,
               mostrar: true
             }
           });
         }
       } else {
-        var _campo5 = "Nombre de la Conección";
+        var _campo6 = "Nombre de la Conección";
 
-        var _descripcion5;
+        var _descripcion6;
 
-        if (nombreTabla.length == 0) _descripcion5 = "El campo debe tener una longitud mayor a 0.";else _descripcion5 = "El campo debe tener una longitud menor a 71.";
+        if (nombreTabla.length == 0) _descripcion6 = "El campo debe tener una longitud mayor a 0.";else _descripcion6 = "El campo debe tener una longitud menor a 71.";
         this.setState({
           errorCreacionTabla: {
-            campo: _campo5,
-            descripcion: _descripcion5,
+            campo: _campo6,
+            descripcion: _descripcion6,
             mostrar: true
           }
         });
@@ -550,7 +573,38 @@ function (_React$Component) {
         id: "tablaTablaNuevo",
         type: "text",
         className: "form-control"
-      }))), this.state.errorCreacionTabla.mostrar ? _react["default"].createElement(_ErrorMessage["default"], {
+      }))), _react["default"].createElement("div", {
+        className: "row"
+      }, _react["default"].createElement("div", {
+        style: {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%"
+        }
+      }, _react["default"].createElement("form", {
+        style: {
+          width: "90%"
+        }
+      }, _react["default"].createElement("label", {
+        className: "col-form-label"
+      }, "Funci\xF3n de la Tabla"), _react["default"].createElement("div", {
+        className: "form-group",
+        style: {
+          width: "100%"
+        }
+      }, _react["default"].createElement("select", {
+        id: "funcionTabla",
+        className: "form-control",
+        style: {
+          width: "100%"
+        }
+      }, funcionesTablas.map(function (funcionTabla, i) {
+        return _react["default"].createElement("option", {
+          key: i,
+          value: funcionTabla.nombre
+        }, funcionTabla.nombre);
+      })))))), this.state.errorCreacionTabla.mostrar ? _react["default"].createElement(_ErrorMessage["default"], {
         campo: this.state.errorCreacionTabla.campo,
         descripcion: this.state.errorCreacionTabla.descripcion,
         dismissTableError: this.dismissTableNewError

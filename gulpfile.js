@@ -50,7 +50,7 @@ gulp.task('start', gulp.series('copy', 'build', () => {
 }));
 
 
-gulp.task('release', gulp.series('copy', 'build', () => {
+gulp.task('release', gulp.series('copy', 'build', async () => {
     spawn(cmd('electron-builder'), args(), { stdio: 'inherit', cwd: '.', shell: true }).on('close', exit);
 }));
 

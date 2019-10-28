@@ -119,7 +119,7 @@ export default class CrearTipoCredito extends React.Component {
                                     <ol className={"breadcrumb"}>
                                         <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
                                         <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.retornoSelCreditos}><a href="#" className={"breadcrumb-link"}>Seleccionar Tipo de Cr&eacute;dito</a></li>
-                                        <li className={"breadcrumb-item active"} aria-current="page">Crear Cr&eacute;dito</li>
+                                        <li className={"breadcrumb-item active"} aria-current="page">Crear Tipo de Cr&eacute;dito</li>
                                     </ol>
                                 </nav>
                             </div>
@@ -172,6 +172,7 @@ export default class CrearTipoCredito extends React.Component {
                 <div className={"text-center"}>
                     <a onClick={this.guardarTipoCredito} className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}}>Crear</a>
                 </div>
+                <br/>
                 { this.state.mensajeModal.mostrarMensaje ? (
                     <MessageModal esError={this.state.mensajeModal.esError} esConfirmar={this.state.mensajeModal.esConfirmar} dismissMessage={this.dismissMessageModal} confirmFunction={this.confirmMessageModal} titulo={this.state.mensajeModal.titulo} mensaje={this.state.mensajeModal.mensaje}> </MessageModal>
                 ) : (

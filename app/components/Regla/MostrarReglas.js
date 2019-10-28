@@ -13,6 +13,8 @@ var _VariableCreation = _interopRequireDefault(require("./VariableCreation.js"))
 
 var _ReglaTexto = _interopRequireDefault(require("./ReglaTexto.js"));
 
+var _VariableEdit = _interopRequireDefault(require("./VariableEdit.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -46,11 +48,13 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MostrarReglas).call(this, props));
     _this.state = {
       reglas: [],
-      mostrarCreacionRegla: false
+      mostrar: "seleccionRegla",
+      reglaSeleccionada: {}
     };
     _this.loadRules = _this.loadRules.bind(_assertThisInitialized(_this));
     _this.goCreateRule = _this.goCreateRule.bind(_assertThisInitialized(_this));
     _this.returnChooseRule = _this.returnChooseRule.bind(_assertThisInitialized(_this));
+    _this.goEditRule = _this.goEditRule.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -91,14 +95,22 @@ function (_React$Component) {
     key: "goCreateRule",
     value: function goCreateRule() {
       this.setState({
-        mostrarCreacionRegla: true
+        mostrar: "crearRegla"
+      });
+    }
+  }, {
+    key: "goEditRule",
+    value: function goEditRule(regla) {
+      this.setState({
+        mostrar: "editarRegla",
+        reglaSeleccionada: regla
       });
     }
   }, {
     key: "returnChooseRule",
     value: function returnChooseRule() {
       this.setState({
-        mostrarCreacionRegla: false
+        mostrar: "seleccionRegla"
       });
       this.loadRules();
     }
@@ -107,7 +119,7 @@ function (_React$Component) {
     value: function render() {
       var _this3 = this;
 
-      if (this.state.mostrarCreacionRegla) {
+      if (this.state.mostrar.localeCompare("crearRegla") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {
@@ -151,7 +163,52 @@ function (_React$Component) {
           tipoTablaRes: this.props.tipoTablaRes,
           idTipoTabla: this.props.idTipoTabla
         }, " "));
-      } else {
+      } else if (this.state.mostrar.localeCompare("editarRegla") == 0) {
+        return _react["default"].createElement("div", null, _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
+        }, _react["default"].createElement("div", {
+          className: "page-header"
+        }, _react["default"].createElement("h2", {
+          className: "pageheader-title"
+        }, "Configuraci\xF3n"), _react["default"].createElement("div", {
+          className: "page-breadcrumb"
+        }, _react["default"].createElement("nav", {
+          "aria-label": "breadcrumb"
+        }, _react["default"].createElement("ol", {
+          className: "breadcrumb"
+        }, _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.showConfigurationComponent
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Configuraci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.returnPrevComponent
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, this.props.returnPrevComponentName)), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.returnChooseRule
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Mostrar Variables")), _react["default"].createElement("li", {
+          className: "breadcrumb-item active",
+          "aria-current": "page"
+        }, "Creaci\xF3n de Variables"))))))), _react["default"].createElement(_VariableEdit["default"], {
+          reglaSeleccionada: this.state.reglaSeleccionada,
+          pool: this.props.pool,
+          tipoTablaRes: this.props.tipoTablaRes,
+          idTipoTabla: this.props.idTipoTabla
+        }, " "));
+      } else if (this.state.mostrar.localeCompare("seleccionRegla") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {
@@ -209,27 +266,13 @@ function (_React$Component) {
           return _react["default"].createElement("a", {
             className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
             onClick: function onClick() {
-              return _this3.props.seleccionar(regla.ID, _this3.ReglaTexto1.state.texto, regla.operacion, _this3.ReglaTexto2.state.texto);
+              return _this3.goEditRule(regla);
             },
             key: regla.ID,
             style: {
               whiteSpace: "nowrap"
             }
-          }, _react["default"].createElement(_ReglaTexto["default"], {
-            onRef: function onRef(ref) {
-              return _this3.ReglaTexto1 = ref;
-            },
-            regla: regla,
-            esCampo: true,
-            pool: _this3.props.pool
-          }), " ", regla.operacion, " ", _react["default"].createElement(_ReglaTexto["default"], {
-            onRef: function onRef(ref) {
-              return _this3.ReglaTexto2 = ref;
-            },
-            regla: regla,
-            esCampo: false,
-            pool: _this3.props.pool
-          }));
+          }, regla.texto);
         }), this.state.reglas.length == 0 ? _react["default"].createElement("a", {
           className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
         }, "No existen variables creadas") : _react["default"].createElement("span", null)))))));

@@ -3,8 +3,10 @@ import sql from 'mssql';
 
 import SeleccionarTablaClasificarCarteraProceso from './SeleccionarTablaClasificarCarteraProceso.js';
 import ConfiguracionTablasClasificar from './ConfiguracionTablasClasificar.js';
+import OpcionTablasClasificar from './OpcionTablasClasificar.js';
+import MessageModal from '../MessageModal.js';
 
-import {constructor, retornarClientes, retornarPrestamos} from "../ClasificarCreditoD.js";
+import {constructor, retornarClientes, retornarPrestamos, retornarCapitalMinimo, retornarBitacora} from "../ClasificarCreditoD.js";
 
 const myWorker = new Worker("./components/ClasificarCredito.js");
 
@@ -12,10 +14,12 @@ const myWorker = new Worker("./components/ClasificarCredito.js");
 
 var tamanoFinalBandera = 0, tamanoActualBandera = 0, camposGuardar, arregloCamposTablasSeleccionadas = [];
 var procesosACalcular = {capacidadDeudor: false, diasMora: false, disponibilidadGarantias: false, entornoEconomico: false, tiposCredito: false, categoriasClasificacion: false, criteriosDeterioro: false};
-var banderaGuardarResultadosTamActual, banderaGuardarResultadosTamFinal;
-var tamanoFinalBanderaTIPOCREDITOS = 0, tamanoActualBanderaTIPOCREDITOS = 0, banderaGuardarResultadosTamActualTIPOCREDITOS = 0, banderaGuardarResultadosTamFinalTIPOCREDITOS = 0, tamanoActualBanderaCamposReglasTipoCreditoCampos = 0, tamanoFinalBanderaCamposReglasTipoCreditoCampos = 0, tamanoActualBanderaValoresReglasTipoCreditoCampos = 0, tamanoFinalBanderaValoresReglasTipoCreditoCampos = 0;
-var tamanoFinalBanderaCATEGORIACLASIFICACION = 0, tamanoActualBanderaCATEGORIACLASIFICACION = 0, banderaGuardarResultadosTamActualCATEGORIACLASIFICACION = 0, banderaGuardarResultadosTamFinalCATEGORIACLASIFICACION = 0, tamanoActualBanderaCamposReglasCategoriaClasificacionCampos = 0, tamanoFinalBanderaCamposReglasCategoriaClasificacionCampos = 0, tamanoActualBanderaValoresReglasCategoriaClasificacionCampos = 0, tamanoFinalBanderaValoresReglasCategoriaClasificacionCampos = 0;
 var guardarTipoCredito = false, guardarCategoriaClasificacion = false, guardarMora = false, guardarCriterioDeterioro = false;
+var comportamientoPagoSeleccionados = [], tiposCreditosSeleccionados = [], categoriasClasificacionSeleccionados = [];
+var comportamientoPagoBanderas = [], tiposCreditosBanderas = [], categoriasClasificacionBanderas = [];
+var guardarUnicaVez = false;
+
+var fechaGlobal;
 
 export default class ClasificarCarteraProceso extends React.Component {
     constructor(props) {
@@ -24,7 +28,12 @@ export default class ClasificarCarteraProceso extends React.Component {
             widthActual: "33%",
             tablasOrginales: [],
             tablasSeleccionadas: [],
-            opcionesTablasSeleccionadas: []
+            opcionesTablasSeleccionadas: [],
+            comportamientoPagoOriginales: [],
+            tiposCreditosOriginales: [],
+            categoriasClasificacionOriginales: [],
+            criteriosDeterioroOriginales: [],
+            mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: -1, indiceX: -1}
         }
         this.loadTables = this.loadTables.bind(this);
         this.selectTable = this.selectTable.bind(this);
@@ -44,8 +53,8 @@ export default class ClasificarCarteraProceso extends React.Component {
         this.initWebWorkerComportamientoPago = this.initWebWorkerComportamientoPago.bind(this);
         this.propiedadDeObjetoExisteEnTablaCampos = this.propiedadDeObjetoExisteEnTablaCampos.bind(this);
         this.verificarProcesosAClasificar = this.verificarProcesosAClasificar.bind(this);
+        this.obtenerTipoCreditoReglas = this.obtenerTipoCreditoReglas.bind(this);
         this.obtenerTipoCredito = this.obtenerTipoCredito.bind(this);
-        this.obtenerTipoCreditoCampos = this.obtenerTipoCreditoCampos.bind(this);
         this.fetchDataTipoCredito = this.fetchDataTipoCredito.bind(this);
         this.fetchDataReglasTipoCreditoCampos = this.fetchDataReglasTipoCreditoCampos.bind(this);
         this.fetchDataCamposReglasTipoCreditoCampos = this.fetchDataCamposReglasTipoCreditoCampos.bind(this);
@@ -71,15 +80,26 @@ export default class ClasificarCarteraProceso extends React.Component {
         this.saveObjectStringField = this.saveObjectStringField.bind(this);
         this.getCriterioDeterioro = this.getCriterioDeterioro.bind(this);
         this.formatDateCreation = this.formatDateCreation.bind(this);
+        this.obtenerCategoriaClasificacionReglas = this.obtenerCategoriaClasificacionReglas.bind(this);
+        this.obtenerCategoriaClasificacion = this.obtenerCategoriaClasificacion.bind(this);
+        this.actualizarSeleccionarComportamientoPago = this.actualizarSeleccionarComportamientoPago.bind(this);
+        this.actualizarSeleccionarTiposCredito = this.actualizarSeleccionarTiposCredito.bind(this);
+        this.actualizarSeleccionarCategoriasClasificacion = this.actualizarSeleccionarCategoriasClasificacion.bind(this);
+        this.obtenerCriterioDeterioro = this.obtenerCriterioDeterioro.bind(this);
+        this.clean = this.clean.bind(this);
+        this.dismissMessageModal = this.dismissMessageModal.bind(this);
+        this.showSuccesMessage = this.showSuccesMessage.bind(this);
+        this.saveBitacora = this.saveBitacora.bind(this);
     }
 
     componentDidMount() {
         this.loadTables();
+        this.obtenerCriterioDeterioro();
         //myWorker.postMessage(["comportamientoPago", sql]);
-        myWorker.onmessage = function (event) {
+        /*myWorker.onmessage = function (event) {
             console.log('EN MAIN JS');
             console.log(event.data);
-        };
+        };*/
     }
 
     loadTables() {
@@ -100,11 +120,15 @@ export default class ClasificarCarteraProceso extends React.Component {
                 } else {
                     transaction.commit(err => {
                         for (var i = 0; i < result.recordset.length; i++) {
-                            result.recordset[i].active = false;
+                            result.recordset[i].active = true;
                         };
-                        this.setState({
-                            tablasOrginales: result.recordset
-                        });
+                        this.setState(
+                            {
+                                tablasOrginales: result.recordset,
+                                tablasSeleccionadas: result.recordset
+                            },
+                            this.verificarProcesosAClasificar
+                        );
                     });
                 }
             });
@@ -117,7 +141,8 @@ export default class ClasificarCarteraProceso extends React.Component {
         this.setState({
             tablasOrginales: this.state.tablasOrginales
         });
-        for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
+        var i = 0;
+        for (i = 0; i < this.state.tablasSeleccionadas.length; i++) {
             if(this.state.tablasOrginales[index].ID == this.state.tablasSeleccionadas[i].ID) {
                 existeTablaEnConf = true;
                 break;
@@ -126,10 +151,13 @@ export default class ClasificarCarteraProceso extends React.Component {
         if(!existeTablaEnConf) {
             let tablasSelCopiaTemp = [...this.state.tablasSeleccionadas];
             tablasSelCopiaTemp.push(this.state.tablasOrginales[index]);
-            this.setState({
-                tablasSeleccionadas: tablasSelCopiaTemp
-            });
-            if(tablasSelCopiaTemp.length == 1) {
+            this.setState(
+                {
+                    tablasSeleccionadas: tablasSelCopiaTemp
+                },
+                this.verificarProcesosAClasificar
+            );
+            /*if(tablasSelCopiaTemp.length == 1) {
                 this.setState({
                     widthActual: "100%"
                 });
@@ -141,18 +169,65 @@ export default class ClasificarCarteraProceso extends React.Component {
                 this.setState({
                     widthActual: "33%"
                 });
-            }
-            this.verificarProcesosAClasificar(this.state.tablasOrginales[index].ID);
+            }*/
+            //this.verificarProcesosAClasificar();
+        } else {
+            let tablasSelCopiaTemp = [...this.state.tablasSeleccionadas];
+            tablasSelCopiaTemp.splice(i, 1);
+            this.setState(
+                {
+                    tablasSeleccionadas: tablasSelCopiaTemp
+                },
+                this.verificarProcesosAClasificar
+            );
+            //this.verificarProcesosAClasificar();
         }
     }
 
     //metodo para agregar tipo de credito, tipo de cliente, criterios de clasificacion por tabla
     verificarProcesosAClasificar(index) {
-        //opcionesTablasSeleccionadas
-        //this.obtenerTipoCredito(index);
+        comportamientoPagoSeleccionados = [];
+        tiposCreditosSeleccionados = [];
+        categoriasClasificacionSeleccionados = [];
+        for (var i = 0; i < this.state.tablasSeleccionadas.length; i++) {
+            this.fetchDataComportamientoPago(this.state.tablasSeleccionadas[i].ID, this.state.tablasSeleccionadas[i].nombre);
+            this.obtenerTipoCreditoReglas(this.state.tablasSeleccionadas[i].ID);
+            this.obtenerCategoriaClasificacionReglas(this.state.tablasSeleccionadas[i].ID);
+        };
+        /*console.log('this.state.tablasSeleccionadas');
+        console.log(this.state.tablasSeleccionadas);
+        console.log('this.state.comportamientoPagoOriginales');
+        console.log(this.state.comportamientoPagoOriginales);
+        console.log('comportamientoPagoSeleccionados');
+        console.log(comportamientoPagoSeleccionados);
+        console.log('this.state.tiposCreditosOriginales');
+        console.log(this.state.tiposCreditosOriginales);
+        console.log('tiposCreditosSeleccionados');
+        console.log(tiposCreditosSeleccionados);
+        console.log('this.state.categoriasClasificacionOriginales');
+        console.log(this.state.categoriasClasificacionOriginales);
+        console.log('categoriasClasificacionSeleccionados');
+        console.log(categoriasClasificacionSeleccionados);
+        console.log('//////////////////////////');
+        var self = this;
+        setTimeout(function(){
+            console.log('comportamientoPagoSeleccionados');
+            console.log(comportamientoPagoSeleccionados);
+            console.log('this.state.comportamientoPagoOriginales');
+            console.log(self.state.comportamientoPagoOriginales);
+            console.log('tiposCreditosSeleccionados');
+            console.log(tiposCreditosSeleccionados);
+            console.log('this.state.tiposCreditosOriginales');
+            console.log(self.state.tiposCreditosOriginales);
+            console.log('categoriasClasificacionSeleccionados');
+            console.log(categoriasClasificacionSeleccionados);
+            console.log('this.state.categoriasClasificacionOriginales');
+            console.log(self.state.categoriasClasificacionOriginales);
+            console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+        }, 3000);*/
     }
 
-    obtenerTipoCredito(index) {
+    fetchDataComportamientoPago (prestamoTablaID, nombreTabla) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -160,7 +235,41 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from TipoCredito where tablaID = "+index, (err, result) => {
+            request.query("select * from ComportamientoPago where prestamoTablaID = "+prestamoTablaID, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        banderaGuardarResultadosTamActual++;
+                        this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        for (var i = 0; i < result.recordset.length; i++) {
+                            result.recordset[i].nombreTabla = nombreTabla;
+                        };
+                        comportamientoPagoSeleccionados = [ ...comportamientoPagoSeleccionados, ...result.recordset];
+                        this.setState({
+                            comportamientoPagoOriginales: comportamientoPagoSeleccionados
+                        });
+                        //arreglo = arreglo.concat(result.recordset);
+                        //arreglo = [].concat(result.recordset, arreglo);
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    obtenerTipoCreditoReglas(tablaID) {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select DISTINCT idTipoTabla from Reglas where campoTablaID = "+tablaID+" and nombreTablaRes = 'TipoCredito'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -170,14 +279,13 @@ export default class ClasificarCarteraProceso extends React.Component {
                 } else {
                     transaction.commit(err => {
                         if(result.recordset.length > 0) {
-                            let tablasSelCopiaTemp = [...this.state.opcionesTablasSeleccionadas];
-                            if(tablasSelCopiaTemp[this.state.tablasSeleccionadas.length-1] == undefined)
-                                tablasSelCopiaTemp[this.state.tablasSeleccionadas.length-1] = {};
-                            tablasSelCopiaTemp[this.state.tablasSeleccionadas.length-1].tipoCreditoNombre = result.recordset[0].nombre;
+                            for (var i = 0; i < result.recordset.length; i++) {
+                                this.obtenerTipoCredito(result.recordset[i].idTipoTabla);
+                            };
+                        } else {
                             this.setState({
-                                opcionesTablasSeleccionadas: tablasSelCopiaTemp
+                                tiposCreditosOriginales: tiposCreditosSeleccionados
                             });
-                            this.obtenerTipoCreditoCampos(result.recordset[0].ID);
                         }
                     });
                 }
@@ -185,7 +293,7 @@ export default class ClasificarCarteraProceso extends React.Component {
         }); // fin transaction
     }
 
-    obtenerTipoCreditoCampos (ID) {
+    obtenerTipoCredito (ID) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -193,7 +301,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from TipoCreditoCampo where tipoCreditoID = "+ID, (err, result) => {
+            request.query("select * from TipoCredito where ID = "+ID, (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -202,22 +310,148 @@ export default class ClasificarCarteraProceso extends React.Component {
                     }
                 } else {
                     transaction.commit(err => {
-                        let tablasSelCopiaTemp = [...this.state.opcionesTablasSeleccionadas];
-                        if(tablasSelCopiaTemp[this.state.tablasSeleccionadas.length-1] == undefined)
-                            tablasSelCopiaTemp[this.state.tablasSeleccionadas.length-1] = {};
-                        tablasSelCopiaTemp[this.state.tablasSeleccionadas.length-1].tipoCredito = result.recordset;
+                        tiposCreditosSeleccionados = [ ...tiposCreditosSeleccionados, ...result.recordset];
                         this.setState({
-                            opcionesTablasSeleccionadas: tablasSelCopiaTemp
+                            tiposCreditosOriginales: tiposCreditosSeleccionados
                         });
+                        //arreglo = arreglo.concat(result.recordset);
+                        //arreglo = [].concat(result.recordset, arreglo);
                     });
                 }
             });
         }); // fin transaction
     }
 
+    obtenerCategoriaClasificacionReglas(tablaID) {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select DISTINCT idTipoTabla from Reglas where campoTablaID = "+tablaID+" and nombreTablaRes = 'CategoriaClasificacion'", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        if(result.recordset.length > 0) {
+                            for (var i = 0; i < result.recordset.length; i++) {
+                                this.obtenerCategoriaClasificacion(result.recordset[i].idTipoTabla);
+                            };
+                        } else {
+                            this.setState({
+                                categoriasClasificacionOriginales: categoriasClasificacionSeleccionados
+                            });
+                        }
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    obtenerCategoriaClasificacion (ID) {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select * from CategoriaClasificacion where ID = "+ID, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        categoriasClasificacionSeleccionados = [ ...categoriasClasificacionSeleccionados, ...result.recordset];
+                        this.setState({
+                            categoriasClasificacionOriginales: categoriasClasificacionSeleccionados
+                        });
+                        //arreglo = arreglo.concat(result.recordset);
+                        //arreglo = [].concat(result.recordset, arreglo);
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    obtenerCriterioDeterioro () {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select * from CriterioDeterioro ", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        this.setState({
+                            criteriosDeterioroOriginales: result.recordset
+                        });
+                        //arreglo = arreglo.concat(result.recordset);
+                        //arreglo = [].concat(result.recordset, arreglo);
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    actualizarSeleccionarComportamientoPago() {
+        comportamientoPagoSeleccionados = [];
+        for (var i = 0; i < this.state.comportamientoPagoOriginales.length; i++) {
+            if($("#comportamientoPago"+this.state.comportamientoPagoOriginales[i].ID).is(':checked')) {
+                comportamientoPagoSeleccionados.push(this.state.comportamientoPagoOriginales[i]);
+            }
+        };
+        
+        console.log('comportamientoPagoSeleccionados');
+        console.log(comportamientoPagoSeleccionados);
+    }
+
+    actualizarSeleccionarTiposCredito() {
+        tiposCreditosSeleccionados = [];
+        for (var i = 0; i < this.state.tiposCreditosOriginales.length; i++) {
+            if($("#tiposCredito"+this.state.tiposCreditosOriginales[i].ID).is(':checked')) {
+                tiposCreditosSeleccionados.push(this.state.tiposCreditosOriginales[i]);
+            }
+        };
+        
+        console.log('tiposCreditosSeleccionados');
+        console.log(tiposCreditosSeleccionados);
+    }
+
+    actualizarSeleccionarCategoriasClasificacion () {
+        categoriasClasificacionSeleccionados = [];
+        for (var i = 0; i < this.state.categoriasClasificacionOriginales.length; i++) {
+            if($("#categoriasClasificacion"+this.state.categoriasClasificacionOriginales[i].ID).is(':checked')) {
+                categoriasClasificacionSeleccionados.push(this.state.categoriasClasificacionOriginales[i]);
+            }
+        };
+        
+        console.log('categoriasClasificacionSeleccionados');
+        console.log(categoriasClasificacionSeleccionados);
+    }
+
     verificarSeleccionoTablas() {
         if(this.state.tablasSeleccionadas.length > 0) {
+            this.clean();
             this.creandoArreglos();
+            this.props.showLoadingScreen();
         } else {
             alert("Seleccione por lo menos una tabla");
         }
@@ -245,6 +479,164 @@ export default class ClasificarCarteraProceso extends React.Component {
             }
             this.fetchDataTipoCredito(this.state.tablasSeleccionadas[i].ID);
         };*/
+    }
+
+    clean() {
+        const transaction5 = new sql.Transaction( this.props.pool );
+        transaction5.begin(err => {
+            var rolledBack = false;
+            transaction5.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction5);
+            request.query("select MAX(fecha) AS 'fecha' from ResultadosString", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction5.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction5.commit(err => {
+                        fechaGlobal = new Date (result.recordset[0].fecha.getFullYear(), result.recordset[0].fecha.getMonth(), result.recordset[0].fecha.getDate());
+                        console.log('fechaGlobal antes');
+                        console.log(fechaGlobal.getDate());
+                        fechaGlobal.setDate(fechaGlobal.getDate() + 1);
+                        console.log('fechaGlobal despues');
+                        console.log(fechaGlobal.getDate());
+                        console.log('fechaGlobal');
+                        console.log(fechaGlobal);
+                        console.log('result.recordset');
+                        console.log(result.recordset);
+                    });
+                }
+            });
+        });
+        /*const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("delete from ResultadosID", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                    });
+                }
+            });
+        }); // fin transaction
+
+        const transaction1 = new sql.Transaction( this.props.pool );
+        transaction1.begin(err => {
+            var rolledBack = false;
+            transaction1.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction1);
+            request.query("delete from ResultadosInt", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction1.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction1.commit(err => {
+                    });
+                }
+            });
+        }); // fin transaction
+
+        const transaction2 = new sql.Transaction( this.props.pool );
+        transaction2.begin(err => {
+            var rolledBack = false;
+            transaction2.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction2);
+            request.query("delete from ResultadosDecimal", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction2.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction2.commit(err => {
+                    });
+                }
+            });
+        }); // fin transaction
+
+        const transaction3 = new sql.Transaction( this.props.pool );
+        transaction3.begin(err => {
+            var rolledBack = false;
+            transaction3.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction3);
+            request.query("delete from ResultadosDate", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction3.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction3.commit(err => {
+                    });
+                }
+            });
+        }); // fin transaction
+
+        const transaction4 = new sql.Transaction( this.props.pool );
+        transaction4.begin(err => {
+            var rolledBack = false;
+            transaction4.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction4);
+            request.query("delete from ResultadosBool", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction4.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction4.commit(err => {
+                    });
+                }
+            });
+        }); // fin transaction
+
+        const transaction5 = new sql.Transaction( this.props.pool );
+        transaction5.begin(err => {
+            var rolledBack = false;
+            transaction5.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction5);
+            request.query("delete from ResultadosString", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction5.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction5.commit(err => {
+                    });
+                }
+            });
+        });*/ // fin transaction
     }
 
 
@@ -300,8 +692,13 @@ export default class ClasificarCarteraProceso extends React.Component {
                             pool.request() // or: new sql.Request(pool1)
                             .query("select * from "+tabla, (err, result) => {
                                 if(result != undefined) {
-                                    this.verificarGuardarCampos(tablaID, result.recordset, posicionArregloTablasSel);
+                                    if(result.recordset.length > 0) {
+                                        this.verificarGuardarCampos(tablaID, result.recordset, posicionArregloTablasSel);
+                                    } else {
+                                        alert('Tabla ID: '+tablaID+' no tiene valores.')
+                                    }
                                 } else {
+                                    alert('Error en conección con Tabla ID: '+tablaID+'.')
                                     //agregar error fallo connecion tabla (no existe o malos campos)
                                 }
                             });
@@ -417,16 +814,24 @@ export default class ClasificarCarteraProceso extends React.Component {
     iniciarCalculoMora () {
         //como no tiene id prestamo o cliente, no se puede calcular comportamiento plan pago, agregar mensaje bitacora  // si verificarComportamientoPago == false
         if( tamanoActualBandera == tamanoFinalBandera ) {
+            guardarUnicaVez = false;
             guardarTipoCredito = false, guardarCategoriaClasificacion = false, guardarMora = false, guardarCriterioDeterioro = false;
-            banderaGuardarResultadosTamActual = 0;
-            banderaGuardarResultadosTamFinal = this.state.tablasOrginales.length;
-            for (var i = 0; i < this.state.tablasOrginales.length; i++) {
+            /*for (var i = 0; i < this.state.tablasOrginales.length; i++) {
                 this.fetchDataComportamientoPago(this.state.tablasOrginales[i].ID);
-            };
+            };*/
+            //comportamientoPagoBanderas = [], tiposCreditosBanderas = [], categoriasClasificacionBanderas
+            comportamientoPagoBanderas = [];
+            for (var i = 0; i < comportamientoPagoSeleccionados.length; i++) {
+                comportamientoPagoBanderas.push(false);
+                this.getPrestamoTablaComportamientoPago(comportamientoPagoSeleccionados[i], i);
+            }
+            if(comportamientoPagoSeleccionados.length == 0) {
+                this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false, null);
+            }
         }
     }
 
-    fetchDataComportamientoPago (prestamoTablaID) {
+    /*fetchDataComportamientoPago (prestamoTablaID) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -456,9 +861,9 @@ export default class ClasificarCarteraProceso extends React.Component {
                 }
             });
         }); // fin transaction
-    }
+    }*/
 
-    getPrestamoTablaComportamientoPago(ComportamientoPago) {
+    getPrestamoTablaComportamientoPago(ComportamientoPago, index) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -470,8 +875,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        banderaGuardarResultadosTamActual++;
-                        this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false);
+                        this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false, index);
                         transaction.rollback(err => {
                         });
                     }
@@ -480,7 +884,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                         if(result.recordset.length == 0) {
                             this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false);
                         } else {
-                            this.getPrestamoCamposDeTablaComportamientoPago(result.recordset[0], ComportamientoPago);
+                            this.getPrestamoCamposDeTablaComportamientoPago(result.recordset[0], ComportamientoPago, index);
                         }
                     });
                 }
@@ -488,14 +892,14 @@ export default class ClasificarCarteraProceso extends React.Component {
         }); // fin transaction
     }
 
-    getPrestamoCamposDeTablaComportamientoPago(tabla, ComportamientoPago) {
+    getPrestamoCamposDeTablaComportamientoPago(tabla, ComportamientoPago, index) {
         let self = this;
         this.getFieldsFromCamposTable(tabla, ComportamientoPago, "prestamos", function(camposDePrestamoTabla, valoresDeTablaPrestamo, ComportamientoPago) {
-            self.getPlanPagoTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, ComportamientoPago);
-        });
+            self.getPlanPagoTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, ComportamientoPago, index);
+        }, index);
     }
 
-    getPlanPagoTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, ComportamientoPago) {
+    getPlanPagoTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, ComportamientoPago, index) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -507,17 +911,16 @@ export default class ClasificarCarteraProceso extends React.Component {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        banderaGuardarResultadosTamActual++;
-                        this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false);
+                        this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false, index);
                         transaction.rollback(err => {
                         });
                     }
                 } else {
                     transaction.commit(err => {
                         if(result.recordset.length == 0) {
-                            this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false);
+                            this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false, index);
                         } else {
-                            this.getPlanPagosCamposDeTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, result.recordset[0], ComportamientoPago);
+                            this.getPlanPagosCamposDeTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, result.recordset[0], ComportamientoPago, index);
                         }
                     });
                 }
@@ -525,12 +928,12 @@ export default class ClasificarCarteraProceso extends React.Component {
         }); // fin transaction
     }
 
-    getPlanPagosCamposDeTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, tabla, ComportamientoPago) {
+    getPlanPagosCamposDeTablaComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, tabla, ComportamientoPago, index) {
         guardarMora = true;
         let self = this;
         this.getFieldsFromCamposTable(tabla, ComportamientoPago, "planpagos", function(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago) {
-            self.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago, true);
-        }, camposDePrestamoTabla, valoresDeTablaPrestamo);
+            self.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago, true, index);
+        }, camposDePrestamoTabla, valoresDeTablaPrestamo, index);
     }
 
     getPlanPagoCamposDeTablaComportamientoPago(prestamoTabla, camposDePrestamoTabla, tabla, ComportamientoPago) {
@@ -546,7 +949,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                     if (!rolledBack) {
                         console.log(err);
                         banderaGuardarResultadosTamActual++;
-                        this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false);
+                        this.initWebWorkerComportamientoPago(null, null, null, null, null, null, false, index);
                         transaction.rollback(err => {
                         });
                     }
@@ -595,9 +998,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        banderaGuardarResultadosTamActual++;
-                        console.log("4");
-                        this.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, result.recordset, ComportamientoPago, false);
+                        this.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, result.recordset, ComportamientoPago, false, index);
                         transaction.rollback(err => {
                         });
                     }
@@ -611,20 +1012,30 @@ export default class ClasificarCarteraProceso extends React.Component {
         }); // fin transaction
     }
 
-    initWebWorkerComportamientoPago (camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago, iniciarProceso) {
+    initWebWorkerComportamientoPago (camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago, iniciarProceso, index) {
         //myWorker.postMessage(["comportamientoPago", camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago]);
-        banderaGuardarResultadosTamActual++;
-        console.log('banderaGuardarResultadosTamFinal = '+banderaGuardarResultadosTamFinal);
-        console.log('banderaGuardarResultadosTamActual = '+banderaGuardarResultadosTamActual);
+        console.log('comportamientoPagoBanderas');
+        console.log(comportamientoPagoBanderas);
+        if(index != null && !comportamientoPagoBanderas[index])
+            comportamientoPagoBanderas[index] = true;
+        console.log('comportamientoPagoBanderas');
+        console.log(comportamientoPagoBanderas);
         if(iniciarProceso)
             constructor(["comportamientoPago", camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, ComportamientoPago]);
         //this.checkFinishMethods();
-        if(banderaGuardarResultadosTamFinal == banderaGuardarResultadosTamActual) {
+        var finTodasLlamadas = true;
+        for (var i = 0; i < comportamientoPagoBanderas.length; i++) {
+            if(!comportamientoPagoBanderas[i]) {
+                finTodasLlamadas = false;
+                break;
+            }
+        };
+        if(finTodasLlamadas) {
             this.iniciarTipoDeCreditos();
         }
     }
 
-    getFieldsFromCamposTable (tabla, ComportamientoPago, banderaMetodoLlamado, callbackParam, camposDePrestamoTabla, valoresDeTablaPrestamo) {
+    getFieldsFromCamposTable (tabla, ComportamientoPago, banderaMetodoLlamado, callbackParam, camposDePrestamoTabla, valoresDeTablaPrestamo, index) {
         let self = this;
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
@@ -638,7 +1049,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                     if (!rolledBack) {
                         console.log(err);
                         //banderaGuardarResultadosTamActual++;
-                        this.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, result.recordset, ComportamientoPago, false);
+                        this.initWebWorkerComportamientoPago(camposDePrestamoTabla, valoresDeTablaPrestamo, camposDePlanPagoTabla, valoresDeTablaPlanPago, result.recordset, ComportamientoPago, false, index);
                         transaction.rollback(err => {
                         });
                     }
@@ -688,7 +1099,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                                         };
                                     }
                                 };*/
-                                for (var i = 0; i < result.recordset.length; i++) {
+                                /*for (var i = 0; i < result.recordset.length; i++) {
                                     Object.keys(result.recordset[i]).forEach(function(key,index) {
                                         // key: the name of the object key
                                         // index: the ordinal position of the key within the object
@@ -696,14 +1107,14 @@ export default class ClasificarCarteraProceso extends React.Component {
                                             delete result.recordset[i][key];
                                         }
                                     });
-                                }
+                                }*/
                                 console.log("result.recordset");
                                 console.log(result.recordset);
                                 //result.recordset = nuevoArregloTrans;
                                 if(banderaMetodoLlamado == 'prestamos')
-                                    callbackParam(camposTabla, result.recordset, ComportamientoPago);
+                                    callbackParam(camposTabla, result.recordset, ComportamientoPago, index);
                                 else
-                                    callbackParam(camposDePrestamoTabla, valoresDeTablaPrestamo, camposTabla, result.recordset, ComportamientoPago);
+                                    callbackParam(camposDePrestamoTabla, valoresDeTablaPrestamo, camposTabla, result.recordset, ComportamientoPago, index);
                                 //callbackParam(result.recordset, ComportamientoPago);
                                 //eval("this."+callbackParam+"("+result.recordset+", "+camposTabla+", "+ComportamientoPago+");");
                             });
@@ -792,14 +1203,20 @@ export default class ClasificarCarteraProceso extends React.Component {
     */
 
     iniciarTipoDeCreditos () {
-        banderaGuardarResultadosTamActualTIPOCREDITOS = 0;
-        banderaGuardarResultadosTamFinalTIPOCREDITOS = 0;
         //for (var i = 0; i < this.state.tablasOrginales.length; i++) {
-            this.fetchDataTipoCredito();
+            //this.fetchDataTipoCredito();
         //};
+        tiposCreditosBanderas = [];
+        for (var i = 0; i < tiposCreditosSeleccionados.length; i++) {
+            tiposCreditosBanderas.push(false);
+            this.fetchDataTipoCredito(tiposCreditosSeleccionados[i].ID, i);
+        }
+        if(tiposCreditosSeleccionados.length == 0) {
+            this.verifyTypeCreditFinal(null, null, false, null);
+        }
     }
 
-    fetchDataTipoCredito () {
+    fetchDataTipoCredito (ID, index) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -807,12 +1224,11 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from TipoCredito", (err, result) => {
+            request.query("select * from TipoCredito where ID = "+ID, (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        banderaGuardarResultadosTamActualTIPOCREDITOS++;
-                        this.verifyTypeCreditFinal(null, null, false);
+                        this.verifyTypeCreditFinal(null, null, false, index);
                         transaction.rollback(err => {
                         });
                     }
@@ -820,12 +1236,11 @@ export default class ClasificarCarteraProceso extends React.Component {
                     transaction.commit(err => {
                         //arregloCamposTipoCreditos: Cada posicion del arreglo corresponde a la del tipo de credito
                         var arregloReglasTipoCreditos = [];
-                        tamanoFinalBanderaTIPOCREDITOS = result.recordset.length, tamanoActualBanderaTIPOCREDITOS = 0;
                         for (var i = 0; i < result.recordset.length; i++) {
-                            this.fetchDataReglasTipoCreditoCampos(result.recordset[i], arregloReglasTipoCreditos, i, result.recordset);
+                            this.fetchDataReglasTipoCreditoCampos(result.recordset[i], arregloReglasTipoCreditos, i, result.recordset, index);
                         }
                         if(result.recordset.length == 0) {
-                            this.verifyTypeCreditFinal(null, null, false);
+                            this.verifyTypeCreditFinal(null, null, false, index);
                         }
                     });
                 }
@@ -833,7 +1248,7 @@ export default class ClasificarCarteraProceso extends React.Component {
         }); // fin transaction
     }
 
-    fetchDataReglasTipoCreditoCampos (tipoCredito, arregloReglasTipoCreditos, i, arregloTipoCreditos) {
+    fetchDataReglasTipoCreditoCampos (tipoCredito, arregloReglasTipoCreditos, i, arregloTipoCreditos, index) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -845,47 +1260,38 @@ export default class ClasificarCarteraProceso extends React.Component {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        banderaGuardarResultadosTamActualTIPOCREDITOS++;
-                        this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false);
+                        this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                         transaction.rollback(err => {
                         });
                     }
                 } else {
                     transaction.commit(err => {
-                        tamanoActualBanderaTIPOCREDITOS++;
-                        //banderaGuardarResultadosTamActualTIPOCREDITOS++;
                         arregloReglasTipoCreditos[i] = result.recordset;
                         //verificando si este credito tiene reglas asociadas, si no no sumar a banderaGuardarResultadosTamFinalTIPOCREDITOS
-                        this.verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
+                        this.verificarCamposReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
                     });
                 }
             });
         }); // fin transaction
     }
 
-    verificarCamposReglasTipoCreditoCampos (arregloTipoCreditos, arregloReglasTipoCreditos) {
-        if(tamanoActualBanderaTIPOCREDITOS == tamanoFinalBanderaTIPOCREDITOS) {
-            tamanoActualBanderaCamposReglasTipoCreditoCampos = 0, tamanoFinalBanderaCamposReglasTipoCreditoCampos = 0;
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                if(arregloReglasTipoCreditos[i] != undefined) {
-                    for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                        tamanoFinalBanderaCamposReglasTipoCreditoCampos++;
-                    };
+    verificarCamposReglasTipoCreditoCampos (arregloTipoCreditos, arregloReglasTipoCreditos, index) {
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+            if(arregloReglasTipoCreditos[i] != undefined) {
+                for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+                    this.fetchDataCamposReglasTipoCreditoCampos(arregloReglasTipoCreditos[i][j], arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index);
+                };
+                if(arregloReglasTipoCreditos[i].length == 0) {
+                    this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                 }
-            };
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                if(arregloReglasTipoCreditos[i] != undefined) {
-                    for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                        this.fetchDataCamposReglasTipoCreditoCampos(arregloReglasTipoCreditos[i][j], arregloReglasTipoCreditos, i, j, arregloTipoCreditos);
-                    };
-                }
-            };
-        }
+            } else {
+                this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
+            }
+        };
     }
 
-    fetchDataCamposReglasTipoCreditoCampos (regla, arregloReglasTipoCreditos, i, j, arregloTipoCreditos) {
-        if(regla.campoCampoID != -1) {
-            console.log('1111111y');
+    fetchDataCamposReglasTipoCreditoCampos (regla, arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index) {
+        if(regla.campoCampoID != -1 && regla.campoCampoID != -2 && regla.campoCampoID != -3) {
             const transaction = new sql.Transaction( this.props.pool );
             transaction.begin(err => {
                 var rolledBack = false;
@@ -897,52 +1303,42 @@ export default class ClasificarCarteraProceso extends React.Component {
                     if (err) {
                         if (!rolledBack) {
                             console.log(err);
-                            banderaGuardarResultadosTamActualTIPOCREDITOS++;
-                            this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false);
+                            this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                             transaction.rollback(err => {
                             });
                         }
                     } else {
                         transaction.commit(err => {
-                            tamanoActualBanderaCamposReglasTipoCreditoCampos++;
                             arregloReglasTipoCreditos[i][j].campoValor = result.recordset[0];
-                            this.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
+                            this.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
                         });
                     }
                 });
             }); // fin transaction
         } else if(regla.campoCampoID == -1) {
-            console.log('222222222y');
-            tamanoActualBanderaCamposReglasTipoCreditoCampos++;
             arregloReglasTipoCreditos[i][j].campoValor = {nombre: "diasMora", tabla: "Préstamo"};
-            this.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
+            this.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
+        } else if(regla.campoCampoID == -2) {
+            arregloReglasTipoCreditos[i][j].campoValor = {nombre: "granDeudor", tabla: "Cliente"};
+            this.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
+        } else if(regla.campoCampoID == -3) {
+            arregloReglasTipoCreditos[i][j].campoValor = {nombre: "pequenoDeudor", tabla: "Cliente"};
+            this.verificarValoresReglasTipoCreditoCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
         }
     }
 
-    verificarValoresReglasTipoCreditoCampos (arregloTipoCreditos, arregloReglasTipoCreditos) {
-        if(tamanoActualBanderaCamposReglasTipoCreditoCampos == tamanoFinalBanderaCamposReglasTipoCreditoCampos) {
-            tamanoActualBanderaValoresReglasTipoCreditoCampos = 0, tamanoFinalBanderaValoresReglasTipoCreditoCampos = 0;
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                    var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
-                    for (var k = 0; k < idsValores.length; k++) {
-                        tamanoFinalBanderaValoresReglasTipoCreditoCampos++;
-                    };
+    verificarValoresReglasTipoCreditoCampos (arregloTipoCreditos, arregloReglasTipoCreditos, index) {
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+            for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+                var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
+                for (var k = 0; k < idsValores.length; k++) {
+                    this.fetchDataValoresReglasTipoCreditoCampos(idsValores[k], arregloReglasTipoCreditos[i][j].esListaValor, arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index);
                 };
             };
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                    var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
-                    for (var k = 0; k < idsValores.length; k++) {
-                        banderaGuardarResultadosTamFinalTIPOCREDITOS++;
-                        this.fetchDataValoresReglasTipoCreditoCampos(idsValores[k], arregloReglasTipoCreditos[i][j].esListaValor, arregloReglasTipoCreditos, i, j, arregloTipoCreditos);
-                    };
-                };
-            };
-        }
+        };
     }
 
-    fetchDataValoresReglasTipoCreditoCampos (id, esLista, arregloReglasTipoCreditos, i, j, arregloTipoCreditos) {
+    fetchDataValoresReglasTipoCreditoCampos (id, esLista, arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index) {
         var tabla;
         if(esLista)
             tabla = 'VariablesdeLista';
@@ -959,45 +1355,69 @@ export default class ClasificarCarteraProceso extends React.Component {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        banderaGuardarResultadosTamActualTIPOCREDITOS++;
-                        this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false);
+                        this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                         transaction.rollback(err => {
                         });
                     }
                 } else {
                     transaction.commit(err => {
-                        tamanoActualBanderaValoresReglasTipoCreditoCampos++;
                         if(arregloReglasTipoCreditos[i][j].valorValores == undefined)
                             arregloReglasTipoCreditos[i][j].valorValores = [];
                         arregloReglasTipoCreditos[i][j].valorValores.push(result.recordset[0]);
                         guardarTipoCredito = true;
-                        this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, true);
+                        this.verifyTypeCreditFinal(arregloTipoCreditos, arregloReglasTipoCreditos, true, index);
                     });
                 }
             });
         }); // fin transaction
     }
 
-    verifyTypeCreditFinal (arregloTipoCreditos, arregloReglasTipoCreditos, iniciarProceso) {
-        banderaGuardarResultadosTamActualTIPOCREDITOS++;
-        if(banderaGuardarResultadosTamFinalTIPOCREDITOS == 0)
-            banderaGuardarResultadosTamFinalTIPOCREDITOS++;
-        if(tamanoActualBanderaValoresReglasTipoCreditoCampos == tamanoFinalBanderaValoresReglasTipoCreditoCampos) {
-            console.log(arregloTipoCreditos);
-            console.log(arregloReglasTipoCreditos);
-            //myWorker.postMessage(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);
-            if(iniciarProceso)
+    verifyTypeCreditFinal (arregloTipoCreditos, arregloReglasTipoCreditos, iniciarProceso, index) {
+        if(arregloReglasTipoCreditos != null) {
+            if(index != null && !tiposCreditosBanderas[index])
+                tiposCreditosBanderas[index] = true;
+            
+            var tieneTodosLosCampos = true, tieneTodosLosValores = true;
+            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+                if(arregloReglasTipoCreditos[i] != undefined) {
+                    for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+                        if(arregloReglasTipoCreditos[i][j].campoValor == undefined) {
+                            tieneTodosLosCampos = false;
+                            break;
+                        }
+                        if(arregloReglasTipoCreditos[i][j].valorValores == undefined) {
+                            tieneTodosLosValores = false;
+                            break;
+                        }
+                    };
+                }
+            };
+
+            if(iniciarProceso && tieneTodosLosCampos && tieneTodosLosValores) {
                 constructor(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);
-            //this.checkFinishMethods();
-            console.log("banderaGuardarResultadosTamFinalTIPOCREDITOS = "+banderaGuardarResultadosTamFinalTIPOCREDITOS);
-            console.log("banderaGuardarResultadosTamActualTIPOCREDITOS = "+banderaGuardarResultadosTamActualTIPOCREDITOS);
-            if(banderaGuardarResultadosTamActualTIPOCREDITOS == banderaGuardarResultadosTamFinalTIPOCREDITOS) {
-                this.iniciarCategoriasClasificacion();
             }
-            /*var self = this;
-            setTimeout(function(){
-                self.iniciarCategoriasClasificacion();
-            }, 3000);*/
+
+            var finTodasLlamadas = true;
+            for (var i = 0; i < tiposCreditosBanderas.length; i++) {
+                if(!tiposCreditosBanderas[i]) {
+                    finTodasLlamadas = false;
+                    break;
+                }
+            };
+
+            if(finTodasLlamadas) {
+                console.log(arregloTipoCreditos);
+                console.log(arregloReglasTipoCreditos);
+                //myWorker.postMessage(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);
+                /*if(iniciarProceso)
+                    constructor(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);*/
+
+                if(finTodasLlamadas) {
+                    this.iniciarCategoriasClasificacion();
+                }
+            }
+        } else {
+            this.iniciarCategoriasClasificacion();
         }
     }
 
@@ -1047,14 +1467,20 @@ export default class ClasificarCarteraProceso extends React.Component {
     */
 
     iniciarCategoriasClasificacion () {
-        banderaGuardarResultadosTamActualCATEGORIACLASIFICACION = 0;
-        banderaGuardarResultadosTamFinalCATEGORIACLASIFICACION = 0;
         //for (var i = 0; i < this.state.tablasOrginales.length; i++) {
-            this.fetchDataCategoriaClasificacion();
+            //this.fetchDataCategoriaClasificacion();
         //};
+        categoriasClasificacionBanderas = [];
+        for (var i = 0; i < categoriasClasificacionSeleccionados.length; i++) {
+            categoriasClasificacionBanderas.push(false);
+            this.fetchDataCategoriaClasificacion(categoriasClasificacionSeleccionados[i].ID, i);
+        }
+        if(categoriasClasificacionSeleccionados.length == 0) {
+            this.verifyClasificationCategoryFinal(null, null, false, null);
+        }
     }
 
-    fetchDataCategoriaClasificacion () {
+    fetchDataCategoriaClasificacion (ID, index) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -1062,12 +1488,11 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from CategoriaClasificacion", (err, result) => {
+            request.query("select * from CategoriaClasificacion where ID = "+ID, (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        //banderaGuardarResultadosTamActual++;
-                        this.verifyClasificationCategoryFinal(null, null, false);
+                        this.verifyClasificationCategoryFinal(null, null, false, index);
                         transaction.rollback(err => {
                         });
                     }
@@ -1075,12 +1500,11 @@ export default class ClasificarCarteraProceso extends React.Component {
                     transaction.commit(err => {
                         //arregloCamposTipoCreditos: Cada posicion del arreglo corresponde a la del tipo de credito
                         var arregloReglasTipoCreditos = [];
-                        tamanoFinalBanderaCATEGORIACLASIFICACION = result.recordset.length, tamanoActualBanderaCATEGORIACLASIFICACION = 0;
                         for (var i = 0; i < result.recordset.length; i++) {
-                            this.fetchDataReglasCategoriaClasificacionCampos(result.recordset[i], arregloReglasTipoCreditos, i, result.recordset);
+                            this.fetchDataReglasCategoriaClasificacionCampos(result.recordset[i], arregloReglasTipoCreditos, i, result.recordset, index);
                         }
                         if(result.recordset.length == 0) {
-                            this.verifyClasificationCategoryFinal(null, null, false);
+                            this.verifyClasificationCategoryFinal(null, null, false, index);
                         }
                     });
                 }
@@ -1088,7 +1512,7 @@ export default class ClasificarCarteraProceso extends React.Component {
         }); // fin transaction
     }
 
-    fetchDataReglasCategoriaClasificacionCampos (tipoCredito, arregloReglasTipoCreditos, i, arregloTipoCreditos) {
+    fetchDataReglasCategoriaClasificacionCampos (tipoCredito, arregloReglasTipoCreditos, i, arregloTipoCreditos, index) {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -1100,43 +1524,36 @@ export default class ClasificarCarteraProceso extends React.Component {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        //banderaGuardarResultadosTamActual++;
-                        this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false);
+                        this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                         transaction.rollback(err => {
                         });
                     }
                 } else {
                     transaction.commit(err => {
-                        tamanoActualBanderaCATEGORIACLASIFICACION++;
                         arregloReglasTipoCreditos[i] = result.recordset;
-                        this.verificarCamposReglasCategoriaClasificacionCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
+                        this.verificarCamposReglasCategoriaClasificacionCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
                     });
                 }
             });
         }); // fin transaction
     }
 
-    verificarCamposReglasCategoriaClasificacionCampos (arregloTipoCreditos, arregloReglasTipoCreditos) {
-        if(tamanoActualBanderaCATEGORIACLASIFICACION == tamanoFinalBanderaCATEGORIACLASIFICACION) {
-            tamanoActualBanderaCamposReglasCategoriaClasificacionCampos = 0, tamanoFinalBanderaCamposReglasCategoriaClasificacionCampos = 0;
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                if(arregloReglasTipoCreditos[i] != undefined) {
-                    for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                        tamanoFinalBanderaCamposReglasCategoriaClasificacionCampos++;
-                    };
+    verificarCamposReglasCategoriaClasificacionCampos (arregloTipoCreditos, arregloReglasTipoCreditos, index) {
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+            if(arregloReglasTipoCreditos[i] != undefined) {
+                for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+                    this.fetchDataCamposReglasCategoriaClasificacionCampos(arregloReglasTipoCreditos[i][j], arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index);
+                };
+                if(arregloReglasTipoCreditos[i].length == 0) {
+                    this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                 }
-            };
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                if(arregloReglasTipoCreditos[i] != undefined) {
-                    for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                        this.fetchDataCamposReglasCategoriaClasificacionCampos(arregloReglasTipoCreditos[i][j], arregloReglasTipoCreditos, i, j, arregloTipoCreditos);
-                    };
-                }
-            };
-        }
+            } else {
+                this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
+            }
+        };
     }
 
-    fetchDataCamposReglasCategoriaClasificacionCampos (regla, arregloReglasTipoCreditos, i, j, arregloTipoCreditos) {
+    fetchDataCamposReglasCategoriaClasificacionCampos (regla, arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index) {
         if(regla.campoCampoID != -1) {
             const transaction = new sql.Transaction( this.props.pool );
             transaction.begin(err => {
@@ -1149,51 +1566,36 @@ export default class ClasificarCarteraProceso extends React.Component {
                     if (err) {
                         if (!rolledBack) {
                             console.log(err);
-                            //banderaGuardarResultadosTamActual++;
-                            this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false);
+                            this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                             transaction.rollback(err => {
                             });
                         }
                     } else {
                         transaction.commit(err => {
-                            tamanoActualBanderaCamposReglasCategoriaClasificacionCampos++;
                             arregloReglasTipoCreditos[i][j].campoValor = result.recordset[0];
-                            this.verificarValoresReglasCategoriaClasificacionCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
+                            this.verificarValoresReglasCategoriaClasificacionCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
                         });
                     }
                 });
             }); // fin transaction
         } else if(regla.campoCampoID == -1) {
-            tamanoActualBanderaCamposReglasCategoriaClasificacionCampos++;
             arregloReglasTipoCreditos[i][j].campoValor = {nombre: "diasMora", tabla: "Préstamo"};
-            this.verificarValoresReglasCategoriaClasificacionCampos(arregloTipoCreditos, arregloReglasTipoCreditos);
+            this.verificarValoresReglasCategoriaClasificacionCampos(arregloTipoCreditos, arregloReglasTipoCreditos, index);
         }
     }
 
-    verificarValoresReglasCategoriaClasificacionCampos (arregloTipoCreditos, arregloReglasTipoCreditos) {
-        if(tamanoActualBanderaCamposReglasCategoriaClasificacionCampos == tamanoFinalBanderaCamposReglasCategoriaClasificacionCampos) {
-            tamanoActualBanderaValoresReglasCategoriaClasificacionCampos = 0, tamanoFinalBanderaValoresReglasCategoriaClasificacionCampos = 0;
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                    var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
-                    for (var k = 0; k < idsValores.length; k++) {
-                        tamanoFinalBanderaValoresReglasCategoriaClasificacionCampos++;
-                    };
+    verificarValoresReglasCategoriaClasificacionCampos (arregloTipoCreditos, arregloReglasTipoCreditos, index) {
+        for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+            for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+                var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
+                for (var k = 0; k < idsValores.length; k++) {
+                    this.fetchDataValoresReglasCategoriaClasificacionCampos(idsValores[k], arregloReglasTipoCreditos[i][j].esListaValor, arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index);
                 };
             };
-            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
-                for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
-                    var idsValores = arregloReglasTipoCreditos[i][j].valor.split(",");
-                    for (var k = 0; k < idsValores.length; k++) {
-                        banderaGuardarResultadosTamFinalCATEGORIACLASIFICACION++;
-                        this.fetchDataValoresReglasCategoriaClasificacionCampos(idsValores[k], arregloReglasTipoCreditos[i][j].esListaValor, arregloReglasTipoCreditos, i, j, arregloTipoCreditos);
-                    };
-                };
-            };
-        }
+        };
     }
 
-    fetchDataValoresReglasCategoriaClasificacionCampos (id, esLista, arregloReglasTipoCreditos, i, j, arregloTipoCreditos) {
+    fetchDataValoresReglasCategoriaClasificacionCampos (id, esLista, arregloReglasTipoCreditos, i, j, arregloTipoCreditos, index) {
         var tabla;
         if(esLista)
             tabla = 'VariablesdeLista';
@@ -1210,45 +1612,81 @@ export default class ClasificarCarteraProceso extends React.Component {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
-                        //banderaGuardarResultadosTamActual++;
-                        this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false);
+                        this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, false, index);
                         transaction.rollback(err => {
                         });
                     }
                 } else {
                     transaction.commit(err => {
-                        tamanoActualBanderaValoresReglasCategoriaClasificacionCampos++;
                         if(arregloReglasTipoCreditos[i][j].valorValores == undefined)
                             arregloReglasTipoCreditos[i][j].valorValores = [];
                         arregloReglasTipoCreditos[i][j].valorValores.push(result.recordset[0]);
                         guardarCategoriaClasificacion = true;
-                        this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, true);
+                        this.verifyClasificationCategoryFinal(arregloTipoCreditos, arregloReglasTipoCreditos, true, index);
                     });
                 }
             });
         }); // fin transaction
     }
 
-    verifyClasificationCategoryFinal (arregloTipoCreditos, arregloReglasTipoCreditos, iniciarProceso) {
-        banderaGuardarResultadosTamActualCATEGORIACLASIFICACION++;
-        if(banderaGuardarResultadosTamFinalCATEGORIACLASIFICACION == 0)
-            banderaGuardarResultadosTamFinalCATEGORIACLASIFICACION++;
-        if(tamanoActualBanderaValoresReglasCategoriaClasificacionCampos == tamanoFinalBanderaValoresReglasCategoriaClasificacionCampos) {
-            console.log(arregloTipoCreditos);
-            console.log(arregloReglasTipoCreditos);
-            //myWorker.postMessage(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);
-            if(iniciarProceso)
+    verifyClasificationCategoryFinal (arregloTipoCreditos, arregloReglasTipoCreditos, iniciarProceso, index) {
+        if(arregloReglasTipoCreditos != null) {
+            if(index != null && !categoriasClasificacionBanderas[index])
+                categoriasClasificacionBanderas[index] = true;
+
+            var tieneTodosLosCampos = true, tieneTodosLosValores = true;
+            for (var i = 0; i < arregloReglasTipoCreditos.length; i++) {
+                if(arregloReglasTipoCreditos[i] != undefined) {
+                    for (var j = 0; j < arregloReglasTipoCreditos[i].length; j++) {
+                        if(arregloReglasTipoCreditos[i][j].campoValor == undefined) {
+                            tieneTodosLosCampos = false;
+                            break;
+                        }
+                        if(arregloReglasTipoCreditos[i][j].valorValores == undefined) {
+                            tieneTodosLosValores = false;
+                            break;
+                        }
+                    };
+                }
+            };
+
+            console.log('iniciarProceso');
+            console.log(iniciarProceso);
+            console.log('tieneTodosLosCampos');
+            console.log(tieneTodosLosCampos);
+            console.log('tieneTodosLosValores');
+            console.log(tieneTodosLosValores);
+
+            if(iniciarProceso && tieneTodosLosCampos && tieneTodosLosValores) {
                 constructor(["categoriasClasificacion", arregloTipoCreditos, arregloReglasTipoCreditos]);
-            //this.checkFinishMethods();
-            if(banderaGuardarResultadosTamFinalCATEGORIACLASIFICACION == banderaGuardarResultadosTamActualCATEGORIACLASIFICACION) {
-                this.iniciarCriteriosDeterioro();
             }
-            /*var self = this;
-            setTimeout(function(){
-                self.iniciarCriteriosDeterioro();
-            }, 3000);*/
+
+            var finTodasLlamadas = true;
+            for (var i = 0; i < categoriasClasificacionBanderas.length; i++) {
+                if(!categoriasClasificacionBanderas[i]) {
+                    finTodasLlamadas = false;
+                    break;
+                }
+            };
+            console.log('categoriasClasificacionBanderas');
+            console.log(categoriasClasificacionBanderas);
+            console.log('categoriasClasificacionSeleccionados');
+            console.log(categoriasClasificacionSeleccionados);
+            if(finTodasLlamadas) {
+                console.log(arregloTipoCreditos);
+                console.log(arregloReglasTipoCreditos);
+                //myWorker.postMessage(["tiposCredito", arregloTipoCreditos, arregloReglasTipoCreditos]);
+                /*if(iniciarProceso)
+                    constructor(["categoriasClasificacion", arregloTipoCreditos, arregloReglasTipoCreditos]);*/
+                if(finTodasLlamadas) {
+                    this.iniciarCriteriosDeterioro();
+                }
+            }
+        } else {
+            this.iniciarCriteriosDeterioro();
         }
     }
+
 
 
     /*      
@@ -1331,8 +1769,8 @@ export default class ClasificarCarteraProceso extends React.Component {
     }*/
 
     iniciarCriteriosDeterioro () {
-        this.getCriterioDeterioro();
         guardarCriterioDeterioro = true;
+        this.getCriterioDeterioro();
     }
 
     getCriterioDeterioro() {
@@ -1425,8 +1863,20 @@ export default class ClasificarCarteraProceso extends React.Component {
                 console.log(arregloCamposTablasSeleccionadas[i]);
             };
         }*/
-        alert("Clasificacion realizada con exito");
-        this.getFieldsToSave();
+        if(!guardarUnicaVez) {
+            guardarUnicaVez = true;
+            var self = this;
+            setTimeout(function(){
+                //alert("Clasificación realizada con exito");
+                self.setState({
+                    mensajeModal: {mostrarMensaje: false, mensajeConfirmado: true, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: self.state.mensajeModal.idElementoSelec, indiceX: self.state.mensajeModal.indiceX}
+                });
+                self.showSuccesMessage("Exito", "Cálculo realizado con éxito.");
+                self.getFieldsToSave();
+            }, 4000);
+        }
+        //alert("Clasificacion realizada con exito");
+        //this.getFieldsToSave();
     }
 
     getFieldsToSave() {
@@ -1463,6 +1913,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                             });
         var clientes = retornarClientes();
         var prestamos = retornarPrestamos();
+        var bitacora = retornarBitacora();
         for (var i = 0; i < clientes.length; i++) {
             var identificadorCliente;
             for (var j = 0; j < camposDeCliente.length; j++) {
@@ -1577,7 +2028,13 @@ export default class ClasificarCarteraProceso extends React.Component {
                             this.saveObjectDecimalField(identificadorPrestamo, objeto, nombreImpuestosDeberiaPagado, fecha, nombreTablaOrigenTipo, valorImpuestosDeberiaPagado);
                         }
                         if(guardarCriterioDeterioro) {
-                            //
+                            var objeto = "Préstamo";
+                            var nombreMesPlan = "mesDelPlan";
+                            var fecha = new Date();
+                            var nombreTablaOrigenTipo = "Usuario";
+                            var nombreEstimacionDeterioro = "estimacionDeterioro";
+                            var valorEstimacionDeterioro = prestamos[i][k].estimacionDeterioro;
+                            this.saveObjectDecimalField(identificadorPrestamo, objeto, nombreEstimacionDeterioro, fecha, nombreTablaOrigenTipo, valorEstimacionDeterioro);
                         }
                     }
                 };
@@ -1604,6 +2061,19 @@ export default class ClasificarCarteraProceso extends React.Component {
                 }
             }
         };
+        if(guardarCriterioDeterioro) {
+            var objeto = "CAPITAL_MINIMO";
+            var nombreMesPlan = "mesDelPlan";
+            var fecha = new Date();
+            var nombreTablaOrigenTipo = "Usuario";
+            var nombreCapitalMinimo = "capitalMinimo";
+            var valorCapitalMinimo = retornarCapitalMinimo();
+            this.saveObjectDecimalField(identificadorPrestamo, objeto, nombreCapitalMinimo, fecha, nombreTablaOrigenTipo, valorCapitalMinimo);
+        }
+        for (var i = 0; i < bitacora.length; i++) {
+            this.saveBitacora(bitacora[i]);
+        };
+        this.props.hideLoadingScreen();
         console.log("FIIIIIIIN");
         console.log(clientes);
         console.log(prestamos);
@@ -1643,7 +2113,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("insert into ResultadosInt (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(new Date)+"','"+nombreTablaOrigenTipo+"',"+valor+")", (err, result) => {
+            request.query("insert into ResultadosInt (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(fechaGlobal)+"','"+nombreTablaOrigenTipo+"',"+valor+")", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -1666,7 +2136,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("insert into ResultadosDecimal (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(new Date)+"','"+nombreTablaOrigenTipo+"',"+valor+")", (err, result) => {
+            request.query("insert into ResultadosDecimal (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(fechaGlobal)+"','"+nombreTablaOrigenTipo+"',"+valor+")", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -1689,7 +2159,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("insert into ResultadosDate (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(new Date)+"','"+nombreTablaOrigenTipo+"','"+valor+"')", (err, result) => {
+            request.query("insert into ResultadosDate (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(fechaGlobal)+"','"+nombreTablaOrigenTipo+"','"+valor+"')", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -1712,7 +2182,7 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("insert into ResultadosBool (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(new Date)+"','"+nombreTablaOrigenTipo+"',"+valor+")", (err, result) => {
+            request.query("insert into ResultadosBool (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(fechaGlobal)+"','"+nombreTablaOrigenTipo+"',"+valor+")", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -1735,7 +2205,30 @@ export default class ClasificarCarteraProceso extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("insert into ResultadosString (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(new Date)+"','"+nombreTablaOrigenTipo+"','"+valor+"')", (err, result) => {
+            request.query("insert into ResultadosString (idObjeto, objeto, nombre, fecha, nombreTablaOrigenTipo, valor) values ('"+idObjeto+"','"+objeto+"','"+nombre+"','"+this.formatDateCreation(fechaGlobal)+"','"+nombreTablaOrigenTipo+"','"+valor+"')", (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    saveBitacora (bitacora) {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("insert into Bitacora (usuario, hora, operacion, mensaje) values ('dariovillalta','"+this.formatDateCreation(new Date())+"','"+bitacora.operacion+"','"+bitacora.mensaje+"')", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -1800,6 +2293,29 @@ export default class ClasificarCarteraProceso extends React.Component {
         return year + '-' + monthIndex + '-' + day;
     }
 
+    /*======_______====== ======_______======   MENSAJES MODAL    ======_______====== ======_______======*/
+    /*======_______======                                                             ======_______======*/
+    /*======_______======                                                             ======_______======*/
+    /*======_______====== ======_______====== ==_____==  ==___==  ======_______====== ======_______======*/
+
+    dismissMessageModal() {
+        this.setState({
+            mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: -1, indiceX: -1}
+        });
+    }
+
+    showSuccesMessage(titulo, mensaje) {
+        this.setState({
+            mensajeModal: {mostrarMensaje: true, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: titulo, mensaje: mensaje, banderaMetodoInit: "", idElementoSelec: this.state.mensajeModal.idElementoSelec, indiceX: this.state.mensajeModal.indiceX}
+        });
+        let self = this;
+        setTimeout(function(){
+            self.setState({
+                mensajeModal: {mostrarMensaje: false, mensajeConfirmado: false, esError: false, esConfirmar: false, titulo: "", mensaje: "", banderaMetodoInit: "", idElementoSelec: self.state.mensajeModal.idElementoSelec, indiceX: self.state.mensajeModal.indiceX}
+            });
+        }, 850);
+    }
+
     render() {
         return (
             <div style={{height: "85vh", width: "100%"}}>
@@ -1823,17 +2339,49 @@ export default class ClasificarCarteraProceso extends React.Component {
                                         <h5 style={{display: "table-cell", verticalAlign: "middle"}}>Comportamiento de Pago</h5>
                                     </div>
                                 </div>
-                                <div style={{width: "100%", height: "25%", overflowY: "scroll"}}>
+                                <div style={{width: "100%", height: "auto", overflowY: "scroll"}}>
+                                    {this.state.comportamientoPagoOriginales.map((comportamientoPago, i) =>
+                                        <div key={comportamientoPago.ID}>
+                                            <OpcionTablasClasificar id={"comportamientoPago"+comportamientoPago.ID} texto={"Tabla: "+comportamientoPago.nombreTabla} callMethod={this.actualizarSeleccionarComportamientoPago}> </OpcionTablasClasificar>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className={"text-center"} style={{borderBottom: "solid 4px #cfd8dc", borderTop: "solid 4px #cfd8dc"}}>
                                     <h3>Tipo de Cr&eacute;dito</h3>
                                 </div>
-                                <div style={{width: "100%", height: "25%", overflowY: "scroll"}}>
+                                <div style={{width: "100%", height: "auto", overflowY: "scroll"}}>
+                                    {this.state.tiposCreditosOriginales.map((tiposCredito, i) =>
+                                        <div key={tiposCredito.ID}>
+                                            <OpcionTablasClasificar id={"tiposCredito"+tiposCredito.ID} texto={"Nombre: "+tiposCredito.nombre} callMethod={this.actualizarSeleccionarTiposCredito}> </OpcionTablasClasificar>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className={"text-center"} style={{borderBottom: "solid 4px #cfd8dc", borderTop: "solid 4px #cfd8dc"}}>
                                     <h3>Categorias de Clasificaci&oacute;n</h3>
+                                </div>
+                                <div style={{width: "100%", height: "auto", overflowY: "scroll"}}>
+                                    {this.state.categoriasClasificacionOriginales.map((categoriasClasificacion, i) =>
+                                        <div key={categoriasClasificacion.ID}>
+                                            <OpcionTablasClasificar id={"categoriasClasificacion"+categoriasClasificacion.ID} texto={"Nombre: "+categoriasClasificacion.categoria+" "+categoriasClasificacion.tipoCredito} callMethod={this.actualizarSeleccionarCategoriasClasificacion}> </OpcionTablasClasificar>
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className={"text-center"} style={{borderBottom: "solid 4px #cfd8dc", borderTop: "solid 4px #cfd8dc"}}>
+                                    <h3>Criterios de Deterioro</h3>
+                                </div>
+                                <div style={{width: "100%", height: "auto", overflowY: "scroll"}}>
+                                    {this.state.criteriosDeterioroOriginales.map((criterioDeterioro, i) =>
+                                        <div key={criterioDeterioro.ID} style={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                            <div style={{width: "90%", border: "solid 2px #eceff1"}}>
+                                                <div style={{display: "inline-block", width: "100%", padding: "0%", borderLeft: "solid 2px #eceff1", position: "relative"}}>
+                                                    <h4 style={{fontFamily: 'Circular Std Medium', color: "#71748d", cursor: "pointer", top: "70%", position: "absolute", top: "50%", transform: "translate(0, -50%)"}} className={"alert-heading"}>{criterioDeterioro.nombreClasPadre}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                             </div>
@@ -1843,6 +2391,11 @@ export default class ClasificarCarteraProceso extends React.Component {
                 <div style={{width: "100%", height: "6%", padding: "1% 0%"}} className={"text-center"}>
                     <a onClick={this.verificarSeleccionoTablas} className={"btn btn-primary col-xs-6 col-6"} style={{color: "white", fontSize: "1.2em", fontWeight: "bold"}}>Iniciar </a>
                 </div>
+                { this.state.mensajeModal.mostrarMensaje ? (
+                    <MessageModal esError={this.state.mensajeModal.esError} esConfirmar={this.state.mensajeModal.esConfirmar} dismissMessage={this.dismissMessageModal} confirmFunction={this.confirmMessageModal} titulo={this.state.mensajeModal.titulo} mensaje={this.state.mensajeModal.mensaje}> </MessageModal>
+                ) : (
+                    <span></span>
+                )}
             </div>
         );
     }

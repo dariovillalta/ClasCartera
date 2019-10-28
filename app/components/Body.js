@@ -35,6 +35,10 @@ var _CategoriaClasificacion = _interopRequireDefault(require("./CategoriaClasifi
 
 var _CriteriosDeterioro = _interopRequireDefault(require("./CriteriosDeterioro/CriteriosDeterioro.js"));
 
+var _MantenimientoUsuarios = _interopRequireDefault(require("./MantenimientoUsuarios.js"));
+
+var _Bitacora = _interopRequireDefault(require("./Bitacora.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -107,10 +111,10 @@ function (_React$Component) {
           showClasificationCriteriaComponent: this.props.showClasificationCriteriaComponent,
           showListsComponent: this.props.showListsComponent,
           showCatClass: this.props.showCatClass,
-          showDeteriorationCriteria: this.props.showDeteriorationCriteria
-        }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
-          mensaje: this.state.mensajeLoadingScreen
-        }, " ") : _react["default"].createElement("div", null));
+          showDeteriorationCriteria: this.props.showDeteriorationCriteria,
+          showMantenimientoUsuarios: this.props.showMantenimientoUsuarios,
+          showBitacora: this.props.showBitacora
+        }, " "));
       } else if (this.props.router.showConfTables) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_ConeccionTablas["default"], {
           pool: this.props.pool,
@@ -133,9 +137,13 @@ function (_React$Component) {
         }, " "));
       } else if (this.props.router.showCreditClassificationProcess) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_ClasificarCarteraProceso["default"], {
+          showLoadingScreen: this.showLoadingScreen,
+          hideLoadingScreen: this.hideLoadingScreen,
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent
-        }, " "));
+        }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
+          mensaje: this.state.mensajeLoadingScreen
+        }, " ") : _react["default"].createElement("div", null));
       } else if (this.props.router.showChooseReports) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_ElegirReporteria["default"], {
           pool: this.props.pool,
@@ -144,16 +152,28 @@ function (_React$Component) {
         }, " "));
       } else if (this.props.router.showReportsView) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_VerReporteria["default"], {
+          showLoadingScreen: this.showLoadingScreen,
+          hideLoadingScreen: this.hideLoadingScreen,
           pool: this.props.pool
-        }, " "));
+        }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
+          mensaje: this.state.mensajeLoadingScreen
+        }, " ") : _react["default"].createElement("div", null));
       } else if (this.props.router.showReportsDownload) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_DescargarReporteria["default"], {
+          showLoadingScreen: this.showLoadingScreen,
+          hideLoadingScreen: this.hideLoadingScreen,
           pool: this.props.pool
-        }, " "));
+        }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
+          mensaje: this.state.mensajeLoadingScreen
+        }, " ") : _react["default"].createElement("div", null));
       } else if (this.props.router.showGraphics) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_Graficos["default"], {
+          showLoadingScreen: this.showLoadingScreen,
+          hideLoadingScreen: this.hideLoadingScreen,
           pool: this.props.pool
-        }, " "));
+        }, " "), this.state.showLoadingScreen ? _react["default"].createElement(_LoadingScreen["default"], {
+          mensaje: this.state.mensajeLoadingScreen
+        }, " ") : _react["default"].createElement("div", null));
       } else if (this.props.router.showHome) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_Home["default"], {
           pool: this.props.pool
@@ -165,6 +185,16 @@ function (_React$Component) {
         }, " "));
       } else if (this.props.router.showDeteriorationCriteria) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_CriteriosDeterioro["default"], {
+          pool: this.props.pool,
+          showConfigurationComponent: this.props.showConfigurationComponent
+        }, " "));
+      } else if (this.props.router.showMantenimientoUsuarios) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_MantenimientoUsuarios["default"], {
+          pool: this.props.pool,
+          showConfigurationComponent: this.props.showConfigurationComponent
+        }, " "));
+      } else if (this.props.router.showBitacora) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_Bitacora["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));

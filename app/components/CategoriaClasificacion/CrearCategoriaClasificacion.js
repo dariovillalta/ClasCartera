@@ -9,6 +9,8 @@ var _react = _interopRequireDefault(require("react"));
 
 var _mssql = _interopRequireDefault(require("mssql"));
 
+var _inputmask = _interopRequireDefault(require("inputmask"));
+
 var _ErrorMessage = _interopRequireDefault(require("../ErrorMessage.js"));
 
 var _MessageModal = _interopRequireDefault(require("../MessageModal.js"));
@@ -67,6 +69,13 @@ function (_React$Component) {
   }
 
   _createClass(CrearCategoriaClasificacion, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      (0, _inputmask["default"])({
+        "mask": "(I)|(II)|(III)|(IV)|(V)"
+      }).mask($("#categoriaCategoriaClasificacion"));
+    }
+  }, {
     key: "guardarTipoCredito",
     value: function guardarTipoCredito() {
       var _this2 = this;
@@ -327,7 +336,7 @@ function (_React$Component) {
           fontSize: "1.2em",
           fontWeight: "bold"
         }
-      }, "Crear")), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
+      }, "Crear")), _react["default"].createElement("br", null), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
         esError: this.state.mensajeModal.esError,
         esConfirmar: this.state.mensajeModal.esConfirmar,
         dismissMessage: this.dismissMessageModal,

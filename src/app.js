@@ -15,6 +15,9 @@ const config = {
         max: 40,
         min: 0,
         idleTimeoutMillis: 60000
+    },
+    options: {
+        useUTC: false
     }
 }
 
@@ -39,8 +42,9 @@ export default class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            isLoggedIn: true,
-            userName: null
+            isLoggedIn: false,
+            userName: null,
+            permision: ""
         }
         // or using a configuration object
         /*const connectionString = {
@@ -56,7 +60,24 @@ export default class App extends React.Component {
             });
         });*/
         // connection2 is now an open Connection
+        this.login = this.login.bind(this);
+        this.logOff = this.logOff.bind(this);
     }
+
+    login(userName, permision) {
+        this.setState({
+            isLoggedIn: true,
+            userName: null,
+            permision: permision
+        });
+    }
+
+    logOff () {
+        this.setState({
+            isLoggedIn: false
+        });
+    }
+
     select(){
         const config = {
             user: 'SA',
@@ -84,13 +105,12 @@ export default class App extends React.Component {
         });
     }
     render() {
-        let logged = this.state.isLoggedIn;
         return (
             <div>
-                { logged ? (
-                    <Layout pool={pool}> </Layout>
+                { this.state.isLoggedIn ? (
+                    <Layout userName={this.state.userName} permision={this.state.permision} logOff={this.logOff} pool={pool}> </Layout>
                 ) : (
-                    <LoginPage pool={pool}> </LoginPage>
+                    <LoginPage login={this.login} pool={pool}> </LoginPage>
                 )}
             </div>
         );

@@ -46,7 +46,7 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Layout).call(this));
     _this.state = {
       router: {
-        showConfiguration: true,
+        showConfiguration: false,
         //lista de configuraciones
         showConfTables: false,
         //configuracion de conexiones a tablas/campos
@@ -66,11 +66,15 @@ function (_React$Component) {
         //reporteria descargar datos
         showGraphics: false,
         //componente para mostrar diferentes tipos de graficos
-        showHome: false,
+        showHome: true,
         //pantalla de inicio
         showCatClass: false,
         //configuracion de opciones de categorias de clasificacion
-        showDeteriorationCriteria: false //configuracion de criterios de deterioro
+        showDeteriorationCriteria: false,
+        //configuracion de criterios de deterioro
+        showMantenimientoUsuarios: false,
+        //mantenimiento de usuarios
+        showBitacora: false //visualizacion de bitacora
 
       }
     };
@@ -87,6 +91,8 @@ function (_React$Component) {
     _this.showHome = _this.showHome.bind(_assertThisInitialized(_this));
     _this.showCatClass = _this.showCatClass.bind(_assertThisInitialized(_this));
     _this.showDeteriorationCriteria = _this.showDeteriorationCriteria.bind(_assertThisInitialized(_this));
+    _this.showMantenimientoUsuarios = _this.showMantenimientoUsuarios.bind(_assertThisInitialized(_this));
+    _this.showBitacora = _this.showBitacora.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -107,7 +113,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -128,7 +136,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -149,7 +159,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -170,7 +182,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -191,7 +205,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -212,7 +228,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -233,7 +251,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -254,7 +274,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -275,7 +297,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -296,7 +320,9 @@ function (_React$Component) {
           showGraphics: true,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -317,7 +343,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: true,
           showCatClass: false,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -338,7 +366,9 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: true,
-          showDeteriorationCriteria: false
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
         }
       });
     }
@@ -359,7 +389,55 @@ function (_React$Component) {
           showGraphics: false,
           showHome: false,
           showCatClass: false,
-          showDeteriorationCriteria: true
+          showDeteriorationCriteria: true,
+          showMantenimientoUsuarios: false,
+          showBitacora: false
+        }
+      });
+    }
+  }, {
+    key: "showMantenimientoUsuarios",
+    value: function showMantenimientoUsuarios() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false,
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false,
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: true,
+          showBitacora: false
+        }
+      });
+    }
+  }, {
+    key: "showBitacora",
+    value: function showBitacora() {
+      this.setState({
+        router: {
+          showConfiguration: false,
+          showConfTables: false,
+          showTypeCredit: false,
+          showClasificationCriteria: false,
+          showLists: false,
+          showCreditClassificationProcess: false,
+          showChooseReports: false,
+          showReportsView: false,
+          showReportsDownload: false,
+          showGraphics: false,
+          showHome: false,
+          showCatClass: false,
+          showDeteriorationCriteria: false,
+          showMantenimientoUsuarios: false,
+          showBitacora: true
         }
       });
     }
@@ -369,8 +447,12 @@ function (_React$Component) {
       return _react["default"].createElement("div", {
         className: "dashboard-main-wrapper"
       }, _react["default"].createElement(_NavBar["default"], {
+        logOff: this.props.logOff,
+        userName: this.props.userName,
+        permision: this.props.permision,
         showConfigurationComponent: this.showConfigurationComponent
       }, " "), _react["default"].createElement(_LeftBar["default"], {
+        permision: this.props.permision,
         showCreditClasificationProcess: this.showCreditClasificationProcess,
         showChooseReports: this.showChooseReports,
         showGraphics: this.showGraphics,
@@ -390,7 +472,9 @@ function (_React$Component) {
         showReportsView: this.showReportsView,
         showReportsDownload: this.showReportsDownload,
         showCatClass: this.showCatClass,
-        showDeteriorationCriteria: this.showDeteriorationCriteria
+        showDeteriorationCriteria: this.showDeteriorationCriteria,
+        showMantenimientoUsuarios: this.showMantenimientoUsuarios,
+        showBitacora: this.showBitacora
       }, " "))));
     }
   }]);

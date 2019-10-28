@@ -49,14 +49,32 @@ function (_React$Component) {
     value: function render() {
       if (this.props.tipoGraficoSeleccionado.localeCompare("pie") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_PieGraph["default"], {
+          fechaInicio: this.props.fechaInicio,
+          fechaFinal: this.props.fechaInicio,
+          nombreEtiqueta: this.props.nombreEtiqueta,
+          tablaEtiqueta: this.props.tablaEtiqueta,
+          nombreNumerico: this.props.nombreNumerico,
+          tablaNumerico: this.props.tablaNumerico,
           pool: this.props.pool
         }, " "));
       } else if (this.props.tipoGraficoSeleccionado.localeCompare("bar") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_BarGraph["default"], {
+          fechaInicio: this.props.fechaInicio,
+          fechaFinal: this.props.fechaInicio,
+          nombreEtiqueta: this.props.nombreEtiqueta,
+          tablaEtiqueta: this.props.tablaEtiqueta,
+          nombreNumerico: this.props.nombreNumerico,
+          tablaNumerico: this.props.tablaNumerico,
           pool: this.props.pool
         }, " "));
       } else if (this.props.tipoGraficoSeleccionado.localeCompare("line") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_LineGraph["default"], {
+          fechaInicio: this.props.fechaInicio,
+          fechaFinal: this.props.fechaInicio,
+          nombreEtiqueta: this.props.nombreEtiqueta,
+          tablaEtiqueta: this.props.tablaEtiqueta,
+          nombreNumerico: this.props.nombreNumerico,
+          tablaNumerico: this.props.tablaNumerico,
           pool: this.props.pool
         }, " "));
       }

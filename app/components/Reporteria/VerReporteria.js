@@ -44,10 +44,16 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(VerReporteria).call(this, props));
     _this.state = {
       seleccionoFiltro: false,
-      arregloReglasFiltros: []
+      arregloReglasFiltros: [],
+      filtrosInt: [],
+      filtrosDecimal: [],
+      filtrosDate: [],
+      filtrosBool: [],
+      filtrosString: []
     };
     _this.terminoSeleccionFiltro = _this.terminoSeleccionFiltro.bind(_assertThisInitialized(_this));
     _this.retornoSeleccionFiltro = _this.retornoSeleccionFiltro.bind(_assertThisInitialized(_this));
+    _this.updatefilter = _this.updatefilter.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -64,13 +70,48 @@ function (_React$Component) {
       this.setState({
         seleccionoFiltro: true
       });
+      console.log(this.state.filtrosInt);
+      console.log(this.state.filtrosDecimal);
+      console.log(this.state.filtrosBool);
+      console.log(this.state.filtrosDate);
+      console.log(this.state.filtrosString);
     }
   }, {
     key: "retornoSeleccionFiltro",
     value: function retornoSeleccionFiltro() {
       this.setState({
-        seleccionoFiltro: false
+        seleccionoFiltro: false,
+        filtrosInt: [],
+        filtrosDecimal: [],
+        filtrosBool: [],
+        filtrosDate: [],
+        filtrosString: []
       });
+    }
+  }, {
+    key: "updatefilter",
+    value: function updatefilter(filtro) {
+      if (filtro[0].tipo.localeCompare("int") == 0) {
+        this.setState({
+          filtrosInt: filtro
+        });
+      } else if (filtro[0].tipo.localeCompare("decimal") == 0) {
+        this.setState({
+          filtrosDecimal: filtro
+        });
+      } else if (filtro[0].tipo.localeCompare("bool") == 0) {
+        this.setState({
+          filtrosBool: filtro
+        });
+      } else if (filtro[0].tipo.localeCompare("date") == 0) {
+        this.setState({
+          filtrosDate: filtro
+        });
+      } else if (filtro[0].tipo.localeCompare("varchar") == 0) {
+        this.setState({
+          filtrosString: filtro
+        });
+      }
     }
   }, {
     key: "render",
@@ -94,12 +135,20 @@ function (_React$Component) {
           className: "breadcrumb-item active",
           "aria-current": "page"
         }, "Selecci\xF3n de Filtro"))))))), _react["default"].createElement(_CrearFiltro["default"], {
+          updatefilter: this.updatefilter,
           pool: this.props.pool,
           callbackComponent: this.terminoSeleccionFiltro,
           arregloReglasFiltros: this.state.arregloReglasFiltros
         }, " "));
       } else {
         return _react["default"].createElement("div", null, _react["default"].createElement(_ResultadoReporteria["default"], {
+          showLoadingScreen: this.props.showLoadingScreen,
+          hideLoadingScreen: this.props.hideLoadingScreen,
+          filtrosInt: this.state.filtrosInt,
+          filtrosDecimal: this.state.filtrosDecimal,
+          filtrosDate: this.state.filtrosDate,
+          filtrosBool: this.state.filtrosBool,
+          filtrosString: this.state.filtrosString,
           pool: this.props.pool,
           retornoSeleccionFiltro: this.retornoSeleccionFiltro
         }, " "));

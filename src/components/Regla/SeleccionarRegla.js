@@ -113,7 +113,7 @@ export default class SeleccionarRegla extends React.Component {
                                     <div className={"row border-top border-bottom addPaddingToConfig"}>
                                         {this.state.reglas.map((regla, i) =>
                                             <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionar(regla.ID, this.ReglaTexto1.state.texto, regla.operacion, this.ReglaTexto2.state.texto)} key={regla.ID} style={{whiteSpace: "nowrap"}}>
-                                                <ReglaTexto onRef={ref => (this.ReglaTexto1 = ref)} regla={regla} esCampo={true} pool={this.props.pool}></ReglaTexto> {regla.operacion} <ReglaTexto onRef={ref => (this.ReglaTexto2 = ref)} regla={regla} esCampo={false} pool={this.props.pool}></ReglaTexto>
+                                                {regla.texto}
                                             </a>
                                         )}
                                         { this.state.reglas.length == 0 ? (

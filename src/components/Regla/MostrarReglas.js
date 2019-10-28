@@ -3,17 +3,20 @@ import sql from 'mssql';
 
 import VariableCreation from './VariableCreation.js';
 import ReglaTexto from './ReglaTexto.js';
+import VariableEdit from './VariableEdit.js';
 
 export default class MostrarReglas extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             reglas: [],
-            mostrarCreacionRegla: false
+            mostrar: "seleccionRegla",
+            reglaSeleccionada: {}
         }
         this.loadRules = this.loadRules.bind(this);
         this.goCreateRule = this.goCreateRule.bind(this);
         this.returnChooseRule = this.returnChooseRule.bind(this);
+        this.goEditRule = this.goEditRule.bind(this);
     }
 
     componentDidMount() {
@@ -48,19 +51,26 @@ export default class MostrarReglas extends React.Component {
 
     goCreateRule() {
         this.setState({
-            mostrarCreacionRegla: true
+            mostrar: "crearRegla"
+        });
+    }
+
+    goEditRule(regla) {
+        this.setState({
+            mostrar: "editarRegla",
+            reglaSeleccionada: regla
         });
     }
 
     returnChooseRule() {
         this.setState({
-            mostrarCreacionRegla: false
+            mostrar: "seleccionRegla"
         });
         this.loadRules();
     }
 
     render() {
-        if(this.state.mostrarCreacionRegla) {
+        if(this.state.mostrar.localeCompare("crearRegla") == 0) {
             return (
                 <div>
                     <div className={"row"}>
@@ -83,7 +93,30 @@ export default class MostrarReglas extends React.Component {
                     <VariableCreation pool={this.props.pool}  tipoTablaRes={this.props.tipoTablaRes} idTipoTabla={this.props.idTipoTabla}> </VariableCreation>
                 </div>
             );
-        } else {
+        } else if(this.state.mostrar.localeCompare("editarRegla") == 0) {
+            return (
+                <div>
+                    <div className={"row"}>
+                        <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
+                            <div className={"page-header"}>
+                                <h2 className={"pageheader-title"}>Configuraci&oacute;n</h2>
+                                <div className={"page-breadcrumb"}>
+                                    <nav aria-label="breadcrumb">
+                                        <ol className={"breadcrumb"}>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.showConfigurationComponent}><a href="#" className={"breadcrumb-link"}>Configuraci&oacute;n</a></li>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.props.returnPrevComponent}><a href="#" className={"breadcrumb-link"}>{this.props.returnPrevComponentName}</a></li>
+                                            <li className={"breadcrumb-item"} aria-current="page" onClick={this.returnChooseRule}><a href="#" className={"breadcrumb-link"}>Mostrar Variables</a></li>
+                                            <li className={"breadcrumb-item active"} aria-current="page">Creaci&oacute;n de Variables</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <VariableEdit reglaSeleccionada={this.state.reglaSeleccionada} pool={this.props.pool}  tipoTablaRes={this.props.tipoTablaRes} idTipoTabla={this.props.idTipoTabla}> </VariableEdit>
+                </div>
+            );
+        } else if(this.state.mostrar.localeCompare("seleccionRegla") == 0) {
             return (
                 <div>
                     <div className={"row"}>
@@ -112,8 +145,8 @@ export default class MostrarReglas extends React.Component {
                                 <div className={"card-body"}>
                                     <div className={"row border-top border-bottom addPaddingToConfig"}>
                                         {this.state.reglas.map((regla, i) =>
-                                            <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionar(regla.ID, this.ReglaTexto1.state.texto, regla.operacion, this.ReglaTexto2.state.texto)} key={regla.ID} style={{whiteSpace: "nowrap"}}>
-                                                <ReglaTexto onRef={ref => (this.ReglaTexto1 = ref)} regla={regla} esCampo={true} pool={this.props.pool}></ReglaTexto> {regla.operacion} <ReglaTexto onRef={ref => (this.ReglaTexto2 = ref)} regla={regla} esCampo={false} pool={this.props.pool}></ReglaTexto>
+                                            <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.goEditRule(regla)} key={regla.ID} style={{whiteSpace: "nowrap"}}>
+                                                {regla.texto}
                                             </a>
                                         )}
                                         { this.state.reglas.length == 0 ? (

@@ -11,6 +11,8 @@ var _mssql = _interopRequireDefault(require("mssql"));
 
 var _inputmask = _interopRequireDefault(require("inputmask"));
 
+var _MessageModal = _interopRequireDefault(require("../MessageModal.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -98,13 +100,25 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CrearCriterioDeterioro).call(this, props));
     _this.state = {
       categoriasClasificacion: [],
-      tiposDeCredito: []
+      tiposDeCredito: [],
+      campos: [],
+      mensajeModal: {
+        mostrarMensaje: false,
+        mensajeConfirmado: false,
+        esError: false,
+        esConfirmar: false,
+        titulo: "",
+        mensaje: ""
+      }
     };
     _this.iniciarCriterioDeterioro = _this.iniciarCriterioDeterioro.bind(_assertThisInitialized(_this));
     _this.guardarCriterioDeterioro = _this.guardarCriterioDeterioro.bind(_assertThisInitialized(_this));
     _this.traerAggararCategoriasClasificacion = _this.traerAggararCategoriasClasificacion.bind(_assertThisInitialized(_this));
-    _this.traerAggararTiposCreditos = _this.traerAggararTiposCreditos.bind(_assertThisInitialized(_this));
     _this.getNombreCategoria = _this.getNombreCategoria.bind(_assertThisInitialized(_this));
+    _this.loadFields = _this.loadFields.bind(_assertThisInitialized(_this));
+    _this.verificarExistencia = _this.verificarExistencia.bind(_assertThisInitialized(_this));
+    _this.showSuccesMessage = _this.showSuccesMessage.bind(_assertThisInitialized(_this));
+    _this.dismissMessageModal = _this.dismissMessageModal.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -112,7 +126,7 @@ function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       this.traerAggararCategoriasClasificacion();
-      this.traerAggararTiposCreditos(); //$("#porcentajeEstimacionDeterioro").inputmask({"mask": "999 %"});
+      this.loadFields(); //$("#porcentajeEstimacionDeterioro").inputmask({"mask": "999 %"});
 
       (0, _inputmask["default"])({
         "mask": "9[9][9][.99] %"
@@ -131,6 +145,8 @@ function (_React$Component) {
 
       //trayendo los criterios de deterioro relacionados al tipo de credito para auto asignar subcategoria
       var idCategoria = this.state.categoriasClasificacion[$("#categoriaClasificacionID").val()].ID;
+      var idTipoCredito = this.props.tiposDeCredito[$("#tipoCreditoID").val()].ID;
+      var tipoGarantia = $("#nombreTipoGarantia").val();
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
         var rolledBack = false;
@@ -138,7 +154,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from CriterioDeterioro where categoriaClasPadre = " + idCategoria, function (err, result) {
+        request.query("select * from CriterioDeterioro where categoriaClasPadre = " + idCategoria + " and tipoDeCredito = " + idTipoCredito + " and tipoGarantia = '" + tipoGarantia + "'", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -155,46 +171,61 @@ function (_React$Component) {
   }, {
     key: "guardarCriterioDeterioro",
     value: function guardarCriterioDeterioro(criterioDeterioroMismaCategoria) {
+      var _this3 = this;
+
       var categoriaClasificacion = this.state.categoriasClasificacion[$("#categoriaClasificacionID").val()].ID;
       var nombreClasPadre = this.state.categoriasClasificacion[$("#categoriaClasificacionID").val()].categoria + " " + this.state.categoriasClasificacion[$("#categoriaClasificacionID").val()].tipoCredito;
       var categoria = this.state.categoriasClasificacion[$("#categoriaClasificacionID").val()].categoria + this.getNombreCategoria(criterioDeterioroMismaCategoria); //es categoriaClasificacion la hijesima (n) vez del arreglo subcategorias ^^^inicio del archivo
 
-      var tipoCredito = $("#tipoCreditoID").val().toString();
-      var tipoGarantia = $("#nombreTipoGarantia").val().toString();
+      var tipoCredito = this.props.tiposDeCredito[$("#tipoCreditoID").val()].ID;
+      var campoTipoGarantia = $("#campo").val();
+      var tipoGarantia = $("#nombreTipoGarantia").val();
       var inicioMora = $("#inicioMora").val();
       var finMora = $("#finMora").val();
-      var porcentajeEstimacionDeterioro = $("#porcentajeEstimacionDeterioro").val();
+      var porcentajeEstimacionDeterioro = $("#porcentajeEstimacionDeterioro").val().split(" ")[0];
 
       if (!isNaN(categoriaClasificacion)) {
-        if (categoria != undefined && categoria.length > 0) {
+        if (categoria != undefined && categoria.length > 0 && categoria.length < 91) {
           if (!isNaN(tipoCredito)) {
-            if (!isNaN(inicioMora)) {
-              if (!isNaN(finMora)) {
-                var transaction = new _mssql["default"].Transaction(this.props.pool);
-                transaction.begin(function (err) {
-                  var rolledBack = false;
-                  transaction.on('rollback', function (aborted) {
-                    rolledBack = true;
-                  });
-                  var request = new _mssql["default"].Request(transaction);
-                  request.query("insert into CriterioDeterioro (categoriaClasPadre, nombreClasPadre, categoria, tipoDeCredito, tipoGarantia, inicioMora, finMora, estimacionDeterioro) values (" + categoriaClasificacion + ",'" + nombreClasPadre + "','" + categoria + "'," + tipoCredito + ",'" + tipoGarantia + "'," + inicioMora + "," + finMora + "," + porcentajeEstimacionDeterioro + ")", function (err, result) {
-                    if (err) {
-                      if (!rolledBack) {
-                        console.log(err);
-                        transaction.rollback(function (err) {});
-                      }
+            if (!isNaN(campoTipoGarantia)) {
+              if (tipoGarantia != undefined && tipoGarantia.length > 0 && tipoGarantia.length < 101) {
+                if (!isNaN(inicioMora)) {
+                  if (!isNaN(finMora)) {
+                    if (!isNaN(porcentajeEstimacionDeterioro)) {
+                      var transaction = new _mssql["default"].Transaction(this.props.pool);
+                      transaction.begin(function (err) {
+                        var rolledBack = false;
+                        transaction.on('rollback', function (aborted) {
+                          rolledBack = true;
+                        });
+                        var request = new _mssql["default"].Request(transaction);
+                        request.query("insert into CriterioDeterioro (categoriaClasPadre, nombreClasPadre, categoria, tipoDeCredito, campoTipoGarantia, tipoGarantia, inicioMora, finMora, estimacionDeterioro) values (" + categoriaClasificacion + ",'" + nombreClasPadre + "','" + categoria + "'," + tipoCredito + "," + campoTipoGarantia + ",'" + tipoGarantia + "'," + inicioMora + "," + finMora + "," + porcentajeEstimacionDeterioro + ")", function (err, result) {
+                          if (err) {
+                            if (!rolledBack) {
+                              console.log(err);
+                              transaction.rollback(function (err) {});
+                            }
+                          } else {
+                            transaction.commit(function (err) {
+                              _this3.showSuccesMessage("Exito", "Criterio de Deterioro creado con éxito.");
+                            });
+                          }
+                        });
+                      }); // fin transaction
                     } else {
-                      transaction.commit(function (err) {
-                        alert("Exito");
-                      });
+                      alert("Error porcentajeEstimacionDeterioro");
                     }
-                  });
-                }); // fin transaction
+                  } else {
+                    alert("Error finMora");
+                  }
+                } else {
+                  alert("Error inicioMora");
+                }
               } else {
-                alert("Error finMora");
+                alert("Error tipoGarantia");
               }
             } else {
-              alert("Error inicioMora");
+              alert("Error campoTipoGarantia");
             }
           } else {
             alert("Error tipoCredito");
@@ -218,10 +249,9 @@ function (_React$Component) {
   }, {
     key: "traerAggararCategoriasClasificacion",
     value: function traerAggararCategoriasClasificacion() {
-      var _this3 = this;
+      var _this4 = this;
 
       //trayendo las categorias de clasificacion de creditos
-      var idCategoria = $("#categoriaClasificacionID").val();
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
         var rolledBack = false;
@@ -237,7 +267,7 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              _this3.setState({
+              _this4.setState({
                 categoriasClasificacion: result.recordset
               });
             });
@@ -246,11 +276,10 @@ function (_React$Component) {
       }); // fin transaction
     }
   }, {
-    key: "traerAggararTiposCreditos",
-    value: function traerAggararTiposCreditos() {
-      var _this4 = this;
+    key: "loadFields",
+    value: function loadFields() {
+      var _this5 = this;
 
-      //trayendo los tipos de creditos
       var transaction = new _mssql["default"].Transaction(this.props.pool);
       transaction.begin(function (err) {
         var rolledBack = false;
@@ -258,7 +287,7 @@ function (_React$Component) {
           rolledBack = true;
         });
         var request = new _mssql["default"].Request(transaction);
-        request.query("select * from TipoCredito", function (err, result) {
+        request.query("select * from Campos where tabla = 'Préstamo'", function (err, result) {
           if (err) {
             if (!rolledBack) {
               console.log(err);
@@ -266,13 +295,81 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              _this4.setState({
-                tiposDeCredito: result.recordset
+              var temp = [];
+
+              for (var i = result.recordset.length - 1; i >= 0; i--) {
+                var existe = _this5.verificarExistencia(result.recordset[i].nombre, i, result.recordset);
+
+                if (!existe) {
+                  temp.push(result.recordset[i]);
+                }
+              }
+
+              ;
+
+              _this5.setState({
+                campos: temp
               });
             });
           }
         });
       }); // fin transaction
+    }
+  }, {
+    key: "verificarExistencia",
+    value: function verificarExistencia(nombre, index, arreglo) {
+      if (index > 0) {
+        for (var i = index - 1; i >= 0; i--) {
+          if (arreglo[i].nombre.localeCompare(nombre) == 0) {
+            return true;
+          }
+        }
+
+        ;
+      }
+
+      return false;
+    }
+  }, {
+    key: "showSuccesMessage",
+    value: function showSuccesMessage(titulo, mensaje) {
+      this.setState({
+        mensajeModal: {
+          mostrarMensaje: true,
+          mensajeConfirmado: false,
+          esError: false,
+          esConfirmar: false,
+          titulo: titulo,
+          mensaje: mensaje
+        }
+      });
+      var self = this;
+      setTimeout(function () {
+        self.setState({
+          mensajeModal: {
+            mostrarMensaje: false,
+            mensajeConfirmado: false,
+            esError: false,
+            esConfirmar: false,
+            titulo: "",
+            mensaje: ""
+          }
+        });
+      }, 850);
+    }
+  }, {
+    key: "dismissMessageModal",
+    value: function dismissMessageModal() {
+      this.setState({
+        mensajeModal: {
+          mostrarMensaje: false,
+          mensajeConfirmado: false,
+          esError: false,
+          esConfirmar: false,
+          titulo: "",
+          mensaje: ""
+        }
+      });
     }
   }, {
     key: "render",
@@ -347,9 +444,9 @@ function (_React$Component) {
       }, "Tipo de Cr\xE9dito"), _react["default"].createElement("select", {
         id: "tipoCreditoID",
         className: "form-control form-control-lg"
-      }, this.state.tiposDeCredito.map(function (tipoDeCredito, i) {
+      }, this.props.tiposDeCredito.map(function (tipoDeCredito, i) {
         return _react["default"].createElement("option", {
-          value: tipoDeCredito.ID,
+          value: i,
           key: tipoDeCredito.ID
         }, tipoDeCredito.nombre);
       }))))))), _react["default"].createElement("div", {
@@ -367,14 +464,18 @@ function (_React$Component) {
         }
       }, _react["default"].createElement("h2", {
         className: "text-muted"
-      }, "Estimacion por Deterioro"), _react["default"].createElement("input", {
-        id: "porcentajeEstimacionDeterioro",
-        type: "text",
-        className: "form-control",
-        style: {
-          width: "100%"
-        }
-      }))))), _react["default"].createElement("div", {
+      }, "Campo de Tipo de Garant\xEDa"), _react["default"].createElement("select", {
+        id: "campo",
+        className: "form-control"
+      }, _react["default"].createElement("option", {
+        value: "",
+        key: "0"
+      }, "Seleccione un campo..."), this.state.campos.map(function (campoSelect, k) {
+        return _react["default"].createElement("option", {
+          value: campoSelect.ID,
+          key: k
+        }, campoSelect.nombre);
+      })))))), _react["default"].createElement("div", {
         className: "col-sm-6 col-6"
       }, _react["default"].createElement("div", {
         className: "card"
@@ -397,7 +498,27 @@ function (_React$Component) {
       })))))), _react["default"].createElement("div", {
         className: "row"
       }, _react["default"].createElement("div", {
-        className: "col-sm-6 col-6"
+        className: "col-sm-4 col-4"
+      }, _react["default"].createElement("div", {
+        className: "card"
+      }, _react["default"].createElement("div", {
+        className: "card-body"
+      }, _react["default"].createElement("div", {
+        className: "d-inline-block text-center",
+        style: {
+          width: "100%"
+        }
+      }, _react["default"].createElement("h2", {
+        className: "text-muted"
+      }, "Estimacion por Deterioro"), _react["default"].createElement("input", {
+        id: "porcentajeEstimacionDeterioro",
+        type: "text",
+        className: "form-control",
+        style: {
+          width: "100%"
+        }
+      }))))), _react["default"].createElement("div", {
+        className: "col-sm-4 col-4"
       }, _react["default"].createElement("div", {
         className: "card"
       }, _react["default"].createElement("div", {
@@ -417,7 +538,7 @@ function (_React$Component) {
           width: "100%"
         }
       }))))), _react["default"].createElement("div", {
-        className: "col-sm-6 col-6"
+        className: "col-sm-4 col-4"
       }, _react["default"].createElement("div", {
         className: "card"
       }, _react["default"].createElement("div", {
@@ -446,7 +567,14 @@ function (_React$Component) {
           fontSize: "1.2em",
           fontWeight: "bold"
         }
-      }, "Guardar")), _react["default"].createElement("br", null));
+      }, "Guardar")), _react["default"].createElement("br", null), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
+        esError: this.state.mensajeModal.esError,
+        esConfirmar: this.state.mensajeModal.esConfirmar,
+        dismissMessage: this.dismissMessageModal,
+        confirmFunction: this.confirmMessageModal,
+        titulo: this.state.mensajeModal.titulo,
+        mensaje: this.state.mensajeModal.mensaje
+      }, " ") : _react["default"].createElement("span", null));
     }
   }]);
 

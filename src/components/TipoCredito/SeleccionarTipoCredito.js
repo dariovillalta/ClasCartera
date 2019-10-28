@@ -2,6 +2,7 @@ import React from 'react';
 import sql from 'mssql';
 
 import CrearTipoCredito from './CrearTipoCredito.js';
+import EditarTipoCredito from './EditarTipoCredito.js';
 import Accordion from '../Accordion/Accordion.js';
 
 export default class SeleccionarTipoCredito extends React.Component {
@@ -10,13 +11,16 @@ export default class SeleccionarTipoCredito extends React.Component {
         this.state = {
             tipoCreditos: [],
             tipoCreditosHijos: [],
-            mostrarCreacionTipoCredito: false
+            creditoSel: {},
+            mostrarVista: "selTipoCredito"
         }
         this.loadTypeCredit = this.loadTypeCredit.bind(this);
         this.goCreateTypeCredit = this.goCreateTypeCredit.bind(this);
         this.returnChooseTypeCredit = this.returnChooseTypeCredit.bind(this);
         this.createCreditTypeSonsArray = this.createCreditTypeSonsArray.bind(this);
         this.insertCreditTypeSon = this.insertCreditTypeSon.bind(this);
+        this.entrarEdit = this.entrarEdit.bind(this);
+        this.returnEditCredit = this.returnEditCredit.bind(this);
     }
 
     componentDidMount() {
@@ -91,25 +95,44 @@ export default class SeleccionarTipoCredito extends React.Component {
 
     goCreateTypeCredit() {
         this.setState({
-            mostrarCreacionTipoCredito: true
+            mostrarVista: "crearTipoCredito"
         });
     }
 
     returnChooseTypeCredit() {
         this.setState({
-            mostrarCreacionTipoCredito: false
+            mostrarVista: "selTipoCredito"
         });
         this.loadTypeCredit();
     }
 
+    entrarEdit(tipoCreditoN) {
+        this.setState({
+            creditoSel: tipoCreditoN,
+            mostrarVista: "editTipoCredito"
+        });
+    }
+
+    returnEditCredit() {
+        this.setState({
+            mostrarVista: "editTipoCredito"
+        });
+    }
+
     render() {
-        if(this.state.mostrarCreacionTipoCredito) {
+        if(this.state.mostrarVista.localeCompare("crearTipoCredito") == 0) {
             return (
                 <div>
                     <CrearTipoCredito tablaID={this.props.tablaID} pool={this.props.pool} retornoSelCreditos={this.returnChooseTypeCredit} retornoTablas={this.props.retornoTablas} showConfigurationComponent={this.props.showConfigurationComponent} tipoCreditos={this.state.tipoCreditos} loadTypeCredit={this.loadTypeCredit}> </CrearTipoCredito>
                 </div>
             );
-        } else {
+        } else if(this.state.mostrarVista.localeCompare("editTipoCredito") == 0) {
+            return (
+                <div>
+                    <EditarTipoCredito tablaID={this.props.tablaID} seleccionarCredito={this.props.seleccionarCredito} pool={this.props.pool} tipoCredito={this.state.creditoSel} retornoSelCreditos={this.returnChooseTypeCredit} retornoTablas={this.props.retornoTablas} showConfigurationComponent={this.props.showConfigurationComponent} tipoCreditos={this.state.tipoCreditos} loadTypeCredit={this.loadTypeCredit}> </EditarTipoCredito>
+                </div>
+            );
+        } else if(this.state.mostrarVista.localeCompare("selTipoCredito") == 0) {
             return (
                 <div>
                     <div className={"row"}>
@@ -134,12 +157,12 @@ export default class SeleccionarTipoCredito extends React.Component {
                     <div className={"row"}>
                         <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
                             {this.state.tipoCreditos.map((tipoCredito, i) => (
-                                <Accordion key={tipoCredito.ID} showTrash={false} allowMultipleOpen color={"#ffffff"}>
+                                <Accordion key={tipoCredito.ID} showTrash={false} showEdit={true} editVariable={() => this.entrarEdit(tipoCredito)} allowMultipleOpen color={"#ffffff"}>
                                     <div label={tipoCredito.nombre} key={tipoCredito.ID}>
                                         { this.state.tipoCreditosHijos[i] != undefined ? (
                                             <div>
-                                                {this.state.tipoCreditosHijos[i].map((tipoCredito, j) =>
-                                                    <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionarCredito(tipoCredito.ID, tipoCredito.nombre)} key={tipoCredito.ID}>{tipoCredito.nombre}</a>
+                                                {this.state.tipoCreditosHijos[i].map((tipoCreditoH, j) =>
+                                                    <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.entrarEdit(tipoCreditoH)} key={tipoCreditoH.ID}>{tipoCreditoH.nombre}</a>
                                                 )}
                                                 { this.state.tipoCreditosHijos[i].length == 0 ? (
                                                     <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>No existen tipos de cr&eacute;ditos creados</a>

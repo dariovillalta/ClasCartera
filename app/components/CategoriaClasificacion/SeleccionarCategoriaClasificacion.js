@@ -11,6 +11,8 @@ var _mssql = _interopRequireDefault(require("mssql"));
 
 var _CrearCategoriaClasificacion = _interopRequireDefault(require("./CrearCategoriaClasificacion.js"));
 
+var _EditarCategoriaClasificacion = _interopRequireDefault(require("./EditarCategoriaClasificacion.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -44,11 +46,14 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(SeleccionarCategoriaClasificacion).call(this, props));
     _this.state = {
       categoriasClasificacion: [],
-      mostrarCategoriaClasificacion: false
+      categoriaSel: {},
+      mostrarVista: "selCategoriaClas"
     };
     _this.loadClassificationCategory = _this.loadClassificationCategory.bind(_assertThisInitialized(_this));
     _this.goCreateClassificationCategory = _this.goCreateClassificationCategory.bind(_assertThisInitialized(_this));
     _this.returnChooseClassificationCategory = _this.returnChooseClassificationCategory.bind(_assertThisInitialized(_this));
+    _this.entrarEdit = _this.entrarEdit.bind(_assertThisInitialized(_this));
+    _this.returnEditCat = _this.returnEditCat.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -89,29 +94,52 @@ function (_React$Component) {
     key: "goCreateClassificationCategory",
     value: function goCreateClassificationCategory() {
       this.setState({
-        mostrarCategoriaClasificacion: true
+        mostrarVista: "crearCategoriaClas"
       });
     }
   }, {
     key: "returnChooseClassificationCategory",
     value: function returnChooseClassificationCategory() {
       this.setState({
-        mostrarCategoriaClasificacion: false
+        mostrarVista: "selCategoriaClas"
       });
       this.loadClassificationCategory();
+    }
+  }, {
+    key: "entrarEdit",
+    value: function entrarEdit(catClasN) {
+      this.setState({
+        categoriaSel: catClasN,
+        mostrarVista: "editCategoriaClas"
+      });
+    }
+  }, {
+    key: "returnEditCat",
+    value: function returnEditCat() {
+      this.setState({
+        mostrarVista: "editCategoriaClas"
+      });
     }
   }, {
     key: "render",
     value: function render() {
       var _this3 = this;
 
-      if (this.state.mostrarCategoriaClasificacion) {
+      if (this.state.mostrarVista.localeCompare("crearCategoriaClas") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement(_CrearCategoriaClasificacion["default"], {
           pool: this.props.pool,
           retornoSelCategoriaClasificacion: this.returnChooseClassificationCategory,
           showConfigurationComponent: this.props.showConfigurationComponent
         }, " "));
-      } else {
+      } else if (this.state.mostrarVista.localeCompare("editCategoriaClas") == 0) {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_EditarCategoriaClasificacion["default"], {
+          categoriaClasificacion: this.state.categoriaSel,
+          seleccionarCategoriaClasificacion: this.props.seleccionarCategoriaClasificacion,
+          pool: this.props.pool,
+          retornoSelCategoriaClasificacion: this.returnChooseClassificationCategory,
+          showConfigurationComponent: this.props.showConfigurationComponent
+        }, " "));
+      } else if (this.state.mostrarVista.localeCompare("selCategoriaClas") == 0) {
         return _react["default"].createElement("div", null, _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {
@@ -162,7 +190,7 @@ function (_React$Component) {
           return _react["default"].createElement("a", {
             className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
             onClick: function onClick() {
-              return _this3.props.seleccionarCategoriaClasificacion(categoriaClasificacion.ID, categoriaClasificacion.nombre);
+              return _this3.entrarEdit(categoriaClasificacion);
             },
             key: categoriaClasificacion.ID
           }, categoriaClasificacion.categoria, " | ", categoriaClasificacion.tipoCredito);

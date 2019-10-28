@@ -86,11 +86,15 @@ function (_React$Component) {
         className: "btn btn-outline-success btn-block btnWhiteColorHover fontSize1EM",
         onClick: this.props.showDeteriorationCriteria
       }, "Criterios por Deterioro"), _react["default"].createElement("a", {
-        className: "btn btn-outline-brand btn-block btnWhiteColorHover fontSize1EM"
+        className: "btn btn-outline-brand btn-block btnWhiteColorHover fontSize1EM",
+        onClick: this.props.showMantenimientoUsuarios
       }, "Mantenimiento de Usuarios"), _react["default"].createElement("a", {
         className: "btn btn-outline-danger btn-block btnWhiteColorHover fontSize1EM",
         onClick: this.props.showListsComponent
-      }, "Listas")))))));
+      }, "Listas"), _react["default"].createElement("a", {
+        className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM",
+        onClick: this.props.showBitacora
+      }, "Bit\xE1cora")))))));
     }
   }]);
 

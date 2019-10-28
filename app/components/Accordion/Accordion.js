@@ -99,6 +99,8 @@ function (_React$Component) {
           return _react["default"].createElement(_AccordionTile["default"], {
             showTrash: _this2.props.showTrash,
             deleteVariable: _this2.props.deleteVariable,
+            showEdit: _this2.props.showEdit,
+            editVariable: _this2.props.editVariable,
             key: i,
             isOpen: !!openSections[child.props.label],
             label: child.props.label,
@@ -114,6 +116,8 @@ function (_React$Component) {
         }, _react["default"].createElement(_AccordionTile["default"], {
           showTrash: this.props.showTrash,
           deleteVariable: this.props.deleteVariable,
+          showEdit: this.props.showEdit,
+          editVariable: this.props.editVariable,
           isOpen: !!openSections[children.props.label],
           label: children.props.label,
           onClick: onClick,

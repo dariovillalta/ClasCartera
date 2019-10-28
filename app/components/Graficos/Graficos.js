@@ -48,7 +48,13 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Graficos).call(this, props));
     _this.state = {
       procesoAtual: "selGrafico",
-      tipoGraficoSeleccionado: ""
+      tipoGraficoSeleccionado: "",
+      nombreEtiqueta: "",
+      tablaEtiqueta: "",
+      nombreNumerico: "",
+      tablaNumerico: "",
+      fechaInicio: "",
+      fechaFinal: ""
     };
     _this.terminoSeleccionGrafico = _this.terminoSeleccionGrafico.bind(_assertThisInitialized(_this));
     _this.retornoSeleccionGrafico = _this.retornoSeleccionGrafico.bind(_assertThisInitialized(_this));
@@ -77,9 +83,15 @@ function (_React$Component) {
     }
   }, {
     key: "terminoConfigGrafico",
-    value: function terminoConfigGrafico() {
+    value: function terminoConfigGrafico(etiquetaNombre, etiquetaTabla, numericoNombre, numericoTabla, fechaInicio, fechaFinal) {
       this.setState({
-        procesoAtual: "crearFiltro"
+        procesoAtual: "crearFiltro",
+        nombreEtiqueta: etiquetaNombre,
+        tablaEtiqueta: etiquetaTabla,
+        nombreNumerico: numericoNombre,
+        tablaNumerico: numericoTabla,
+        fechaInicio: fechaInicio,
+        fechaFinal: fechaFinal
       });
     }
   }, {
@@ -233,7 +245,13 @@ function (_React$Component) {
           className: "breadcrumb-item active",
           "aria-current": "page"
         }, "Gr\xE1fico"))))))), _react["default"].createElement(_VerGrafico["default"], {
+          fechaInicio: this.props.fechaInicio,
+          fechaFinal: this.props.fechaInicio,
           pool: this.props.pool,
+          nombreEtiqueta: this.state.nombreEtiqueta,
+          tablaEtiqueta: this.state.tablaEtiqueta,
+          nombreNumerico: this.state.nombreNumerico,
+          tablaNumerico: this.state.tablaNumerico,
           tipoGraficoSeleccionado: this.state.tipoGraficoSeleccionado
         }, " "));
       }

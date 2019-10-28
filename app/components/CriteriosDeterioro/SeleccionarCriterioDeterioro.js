@@ -9,6 +9,8 @@ var _react = _interopRequireDefault(require("react"));
 
 var _mssql = _interopRequireDefault(require("mssql"));
 
+var _Accordion = _interopRequireDefault(require("../Accordion/Accordion.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -86,22 +88,29 @@ function (_React$Component) {
       }, _react["default"].createElement("div", {
         className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
       }, _react["default"].createElement("div", {
-        className: "card influencer-profile-data"
-      }, _react["default"].createElement("div", {
-        className: "card-body"
-      }, _react["default"].createElement("div", {
-        className: "row border-top border-bottom addPaddingToConfig"
-      }, this.props.estimacionesDeterioro.map(function (estimacionDeterioro, i) {
-        return _react["default"].createElement("a", {
-          className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
-          onClick: function onClick() {
-            return _this.props.seleccionarCriterio(estimacionDeterioro.ID, estimacionDeterioro.categoria);
-          },
-          key: estimacionDeterioro.ID
-        }, estimacionDeterioro.categoria);
-      }), this.props.estimacionesDeterioro.length == 0 ? _react["default"].createElement("a", {
-        className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
-      }, "No existen criterios de deterioro creados") : _react["default"].createElement("span", null)))))));
+        className: "row addPaddingToConfig"
+      }, this.props.tiposDeCredito.map(function (tipoCredito, i) {
+        return _react["default"].createElement(_Accordion["default"], {
+          key: tipoCredito.ID,
+          showTrash: false,
+          showEdit: false,
+          allowMultipleOpen: true,
+          color: "#ffffff"
+        }, _react["default"].createElement("div", {
+          label: tipoCredito.nombre,
+          key: tipoCredito.ID
+        }, _this.props.estimacionesDeterioro[i] != undefined ? _react["default"].createElement("div", null, _this.props.estimacionesDeterioro[i].map(function (estimacionDeterioro, j) {
+          return _react["default"].createElement("a", {
+            className: "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM",
+            onClick: function onClick() {
+              return _this.props.seleccionarCriterio(estimacionDeterioro.ID, estimacionDeterioro.nombreClasPadre, estimacionDeterioro);
+            },
+            key: estimacionDeterioro.ID
+          }, estimacionDeterioro.categoria + " - " + estimacionDeterioro.tipoGarantia);
+        }), _this.props.estimacionesDeterioro[i].length == 0 ? _react["default"].createElement("a", {
+          className: "btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"
+        }, "No existen criterios de deterioro creados") : _react["default"].createElement("span", null)) : _react["default"].createElement("span", null)));
+      })))));
     }
   }]);
 

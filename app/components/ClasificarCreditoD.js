@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.constructor = constructor;
 exports.retornarClientes = retornarClientes;
 exports.retornarPrestamos = retornarPrestamos;
+exports.retornarCapitalMinimo = retornarCapitalMinimo;
+exports.retornarBitacora = retornarBitacora;
 
 var _momentMin = _interopRequireDefault(require("../libs/moment/min/moment.min.js"));
 
@@ -16,18 +18,18 @@ function constructor(arreglo) {
   //e.data[1] = props
   //e.data[2] = arreglo
   if (arreglo[0].localeCompare("iniciarArregloClientes") == 0) {
+    bitacora = [];
     crearArregloClientes(arreglo[1], arreglo[2], arreglo[3], arreglo[4], arreglo[5]);
   } else if (arreglo[0].localeCompare("iniciarArregloPrestamos") == 0) {
     crearArregloCreditos(arreglo[1], arreglo[2], arreglo[3], arreglo[4], arreglo[5], arreglo[6], arreglo[7]);
   } else if (arreglo[0].localeCompare("comportamientoPago") == 0) {
     comportamientoPago(arreglo[1], arreglo[2], arreglo[3], arreglo[4], arreglo[5]);
   } else if (arreglo[0].localeCompare("tiposCredito") == 0) {
-    console.log("JIJIJIJIJIJIJIJIJIJI");
     tipoCredito(arreglo[1], arreglo[2], arreglo[3]);
   } else if (arreglo[0].localeCompare("categoriasClasificacion") == 0) {
-    console.log("JOJOJOJOJOJOJOJOJOJO");
     categoriasClasificacion(arreglo[1], arreglo[2], arreglo[3]);
   } else if (arreglo[0].localeCompare("estimacionDeterioro") == 0) {
+    capitalMinimoBanco = 0;
     estimacionDeterioro(arreglo[1]);
   }
 }
@@ -79,6 +81,10 @@ var arregloClientes = []; //Arreglo que contiene los clientes ordenados ascenden
 	[cliente2]
 	[cliente3]
 */
+
+var capitalMinimoBanco = 0; //capital minimo total sumado de los criterios de deterioro
+
+var bitacora = []; //bitacora
 
 /*		
 	DEF: Ordenar arreglo de pagos por fecha
@@ -249,6 +255,14 @@ function retornarClientes() {
 function retornarPrestamos() {
   return arregloCreditos;
 }
+
+function retornarCapitalMinimo() {
+  return capitalMinimoBanco;
+}
+
+function retornarBitacora() {
+  return bitacora;
+}
 /*			COMPORTAMIENTO DE PAGO			*/
 
 
@@ -293,7 +307,7 @@ function comportamientoPago(prestamoCampos, valoresPrestamos, planPagoCampos, va
   var fechaPlanPagoCampoID = planPagoCampos.filter(function (object) {
     return object.ID == comportamientoPago.fechaPlanPagoCampoID;
   });
-  console.log("idClientePrestamoCampoID");
+  /*console.log("idClientePrestamoCampoID");
   console.log(idClientePrestamoCampoID);
   console.log("idClientePlanPagoCampoID");
   console.log(idClientePlanPagoCampoID);
@@ -312,7 +326,8 @@ function comportamientoPago(prestamoCampos, valoresPrestamos, planPagoCampos, va
   console.log("fechaPrestamoCampoID");
   console.log(fechaPrestamoCampoID);
   console.log("fechaPlanPagoCampoID");
-  console.log(fechaPlanPagoCampoID); //insertarPagoPrestamoArreglos();
+  console.log(fechaPlanPagoCampoID);*/
+  //insertarPagoPrestamoArreglos();
 
   for (var i = 0; i < valoresPrestamos.length; i++) {
     /*insercionBinariaClientes(valoresPrestamos[i], idClientePrestamoCampoID[0].nombre, idClientePrestamoCampoID[0].tipo, idClientePrestamoCampoID);
@@ -351,12 +366,13 @@ function comportamientoPago(prestamoCampos, valoresPrestamos, planPagoCampos, va
   }
 
   ;
-  console.log(valoresPrestamos);
+  /*console.log(valoresPrestamos);
   console.log(valoresPlanPago);
   console.log(arregloClientes);
   console.log(arregloCreditos);
   console.log(arregloPagos);
-  console.log(arregloPlanPagos);
+  console.log(arregloPlanPagos);*/
+
   initEvalcomportamientoPago(pagoCapitalPrestamoCampoID[0].nombre, pagoCapitalPlanPagoCampoID[0].nombre, pagoImpuestosPrestamoCampoID[0].nombre, pagoImpuestosPlanPagoCampoID[0].nombre, fechaPrestamoCampoID[0].nombre, fechaPlanPagoCampoID[0].nombre);
 }
 
@@ -368,7 +384,6 @@ function initEvalcomportamientoPago(capitalPago, capitalPlanPago, impuestoPago, 
     var totalImpuestosPagado = 0;
     var totalCapitalPlanPagos = 0;
     var totalImpuestosPlanPagos = 0;
-    console.log("ENTRE CLIENTES = " + i);
 
     for (var j = 0; j < arregloCreditos[i].length; j++) {
       var mesViejo = new Date(2019, 0, 1);
@@ -376,7 +391,6 @@ function initEvalcomportamientoPago(capitalPago, capitalPlanPago, impuestoPago, 
       var totalImpuestosPagadoPrestamo = 0;
       var totalCapitalPlanPagoPrestamo = 0;
       var totalImpuestosPlanPagoPrestamo = 0;
-      console.log("ENTRE PRESTAMOS = " + j);
 
       if (arregloPlanPagos[i][j].length > 0) {
         var fechaPactadaPago = arregloPlanPagos[i][j][0][fechaPlanPago];
@@ -451,11 +465,7 @@ function initEvalcomportamientoPago(capitalPago, capitalPlanPago, impuestoPago, 
             posicionPlan = -1;
 
         for (var p = 0; p < arregloPlanPagosDeCredito.length; p++) {
-          console.log("SIIIISUAISUAHSJKAHSKJAHSKJHKJSH");
-          console.log(arregloPlanPagosDeCredito);
-
           if (totalCapitalPagadoPrestamo >= arregloPlanPagosDeCredito[p].montoCapitalTotal && totalImpuestosPlanPagoPrestamo >= arregloPlanPagosDeCredito[p].montoImpuestoTotal) {
-            console.log("NOOOOOOO");
             mesDelPlan = arregloPlanPagosDeCredito[p].mes;
             posicionPlan = p; //break;
           }
@@ -469,7 +479,7 @@ function initEvalcomportamientoPago(capitalPago, capitalPlanPago, impuestoPago, 
           var hoy = (0, _momentMin["default"])();
           var momentFechaPlan = (0, _momentMin["default"])(mesDelPlan);
           var diferenciaDias = hoy.diff(momentFechaPlan, 'days');
-          console.log("---------------------");
+          /*console.log("---------------------");
           console.log("MES DEL PLAN");
           console.log(mesDelPlan);
           console.log("HOY");
@@ -478,7 +488,8 @@ function initEvalcomportamientoPago(capitalPago, capitalPlanPago, impuestoPago, 
           console.log(diferenciaDias);
           console.log("CREDITO");
           console.log(arregloCreditos[i][j]);
-          console.log("///////////////////");
+          console.log("///////////////////");*/
+
           arregloCreditos[i][j]["mesDelPlan"] = mesDelPlan;
           arregloCreditos[i][j]["diasMora"] = diferenciaDias;
         }
@@ -552,7 +563,7 @@ ________________________________________________________________________________
 function tipoCredito(tiposCreditos, reglasTiposCreditos) {
   for (var i = 0; i < arregloCreditos.length; i++) {
     for (var j = 0; j < arregloCreditos[i].length; j++) {
-      arregloCreditos[i][j].tipoCredito = 'No Tiene';
+      if (arregloCreditos[i][j].tipoCredito == undefined) arregloCreditos[i][j].tipoCredito = 'No Tiene';
 
       for (var n = 0; n < tiposCreditos.length; n++) {
         var contadorCumpleParametros = 0;
@@ -560,8 +571,10 @@ function tipoCredito(tiposCreditos, reglasTiposCreditos) {
         for (var m = 0; m < reglasTiposCreditos[n].length; m++) {
           //reglasTiposCreditos[n][m]
           var objeto = '';
-          console.log('reglasTiposCreditos[n][m]');
+          /*console.log('reglasTiposCreditos[n][m]');
           console.log(reglasTiposCreditos[n][m]);
+          console.log(reglasTiposCreditos[n][m].valorValores);*/
+
           if (reglasTiposCreditos[n][m].campoValor.tabla.localeCompare("Cliente") == 0) objeto = "arregloClientes[i]";else objeto = "arregloCreditos[i][j]";
           /*console.log('n = '+n+'\tm = '+m);
           console.log('reglasTiposCreditos[n][m]');
@@ -571,7 +584,9 @@ function tipoCredito(tiposCreditos, reglasTiposCreditos) {
 
           var condicionRegla = getEvalCodeCondition(reglasTiposCreditos[n][m], objeto);
           /*console.log('condicionRegla');
-          console.log(condicionRegla);*/
+          console.log(condicionRegla);
+          console.log('eval(condicionRegla)');
+          console.log(eval(condicionRegla));*/
 
           if (eval(condicionRegla)) {
             contadorCumpleParametros++; //console.log('CUMPLIO');
@@ -588,6 +603,10 @@ function tipoCredito(tiposCreditos, reglasTiposCreditos) {
           if (reglasTiposCreditos[n].length - 1 == m && contadorCumpleParametros == reglasTiposCreditos[n].length) {
             arregloCreditos[i][j].tipoCredito = tiposCreditos[n].nombre;
             arregloCreditos[i][j].tipoCreditoID = tiposCreditos[n].ID;
+            bitacora.push({
+              operacion: "Clasificar tipo de crédito",
+              mensaje: "Préstamo: " + arregloCreditos[i][j].numPrestamo + " fue calificado como " + tiposCreditos[n].nombre + " porque cumplio con los " + contadorCumpleParametros + " parametros"
+            });
           }
         }
 
@@ -615,11 +634,9 @@ function tipoCredito(tiposCreditos, reglasTiposCreditos) {
 
 
 function categoriasClasificacion(tiposCreditos, reglasTiposCreditos) {
-  console.log("categoriasClasificacion  categoriasClasificacion  categoriasClasificacion");
-
   for (var i = 0; i < arregloCreditos.length; i++) {
     for (var j = 0; j < arregloCreditos[i].length; j++) {
-      arregloCreditos[i][j].categoriaClasificacion = 'No Tiene';
+      if (arregloCreditos[i][j].categoriaClasificacion == undefined) arregloCreditos[i][j].categoriaClasificacion = 'No Tiene';
 
       for (var n = 0; n < tiposCreditos.length; n++) {
         var contadorCumpleParametros = 0;
@@ -628,10 +645,18 @@ function categoriasClasificacion(tiposCreditos, reglasTiposCreditos) {
           //reglasTiposCreditos[n][m]
           var objeto = '';
           if (reglasTiposCreditos[n][m].campoValor.tabla.localeCompare("Cliente") == 0) objeto = "arregloClientes[i]";else objeto = "arregloCreditos[i][j]";
-          /*console.log('n = '+n+'\tm = '+m);
+          console.log('////////////////////');
+          console.log('n = ' + n + '\tm = ' + m);
           console.log('reglasTiposCreditos[n][m]');
           console.log(reglasTiposCreditos[n][m]);
-          console.log('reglasTiposCreditos[n][m].valorValores');
+          console.log('arregloClientes[i]');
+          console.log(arregloClientes[i]);
+          console.log('condicionRegla');
+          console.log(condicionRegla);
+          console.log('eval(condicionRegla)');
+          console.log(eval(condicionRegla));
+          console.log('====================');
+          /*console.log('reglasTiposCreditos[n][m].valorValores');
           console.log(reglasTiposCreditos[n][m].valorValores);*/
 
           var condicionRegla = getEvalCodeCondition(reglasTiposCreditos[n][m], objeto);
@@ -649,8 +674,14 @@ function categoriasClasificacion(tiposCreditos, reglasTiposCreditos) {
 
 
           if (reglasTiposCreditos[n].length - 1 == m && contadorCumpleParametros == reglasTiposCreditos[n].length) {
+            console.log('SIUUUUUUU');
             arregloCreditos[i][j].categoriaClasificacion = tiposCreditos[n].tipoCredito;
             arregloCreditos[i][j].categoriaClasificacionID = tiposCreditos[n].ID;
+            arregloClientes[i].categoriaClasificacion = tiposCreditos[n].tipoCredito;
+            bitacora.push({
+              operacion: "Clasificar tipo de crédito",
+              mensaje: "Préstamo: " + arregloCreditos[i][j].numPrestamo + " fue calificado como " + tiposCreditos[n].tipoCredito + " porque cumplio con los " + contadorCumpleParametros + " parametros"
+            });
           }
         }
 
@@ -678,18 +709,23 @@ function categoriasClasificacion(tiposCreditos, reglasTiposCreditos) {
 
 
 function estimacionDeterioro(estimacionesDeterioro) {
+  console.log("estimacionDeterioro estimacionDeterioro estimacionDeterioro estimacionDeterioro");
+
   for (var i = 0; i < arregloClientes.length; i++) {
     arregloClientes[i].estimacionDeterioro = 0;
 
     for (var j = 0; j < arregloCreditos[i].length; j++) {
-      arregloCreditos[i][j].estimacionDeterioro = 0;
-      arregloCreditos[i][j].categoriaEstimacionDeterioro = 'No Tiene';
+      if (arregloCreditos[i][j].categoriaEstimacionDeterioro == undefined) {
+        arregloCreditos[i][j].estimacionDeterioro = 0;
+        arregloCreditos[i][j].categoriaEstimacionDeterioro = 'No Tiene';
+      }
 
       for (var n = 0; n < estimacionesDeterioro.length; n++) {
         if (estimacionesDeterioro[n].categoriaClasPadre == arregloCreditos[i][j].categoriaClasificacionID && estimacionesDeterioro[n].tipoDeCredito == arregloCreditos[i][j].tipoCreditoID && estimacionesDeterioro[n].inicioMora <= arregloCreditos[i][j].diasMora && estimacionesDeterioro[n].finMora >= arregloCreditos[i][j].diasMora) {
           arregloCreditos[i][j].estimacionDeterioro = arregloCreditos[i][j].t0talC4pitalPagado * estimacionesDeterioro[n].estimacionDeterioro;
           arregloCreditos[i][j].categoriaEstimacionDeterioro = estimacionesDeterioro[n].categoria;
           arregloClientes[i].estimacionDeterioro += arregloCreditos[i][j].estimacionDeterioro;
+          capitalMinimoBanco += arregloCreditos[i][j].estimacionDeterioro;
         }
       }
 
@@ -727,35 +763,42 @@ function getEvalCodeCondition(regla, objeto) {
   var codigoCampo = objeto + "." + regla.campoValor.nombre;
   var valores = regla.valorValores;
 
-  for (var i = 0; i < valores.length; i++) {
-    if (regla.operacion.localeCompare("sumIf") == 0 && codigo.length > 0) codigo += " || ";else if (codigo.length > 0) codigo += " && ";
+  if (regla.campoValor.nombre.localeCompare("granDeudor") != 0 && regla.campoValor.nombre.localeCompare("pequenoDeudor") != 0) {
+    for (var i = 0; i < valores.length; i++) {
+      if (regla.campoTipo.localeCompare("varchar") == 0 && codigo.length > 0) codigo += " || ";else if (codigo.length > 0) codigo += " && ";
 
-    if (regla.campoTipo.localeCompare("int") == 0 || regla.campoTipo.localeCompare("decimal") == 0) {
-      codigo += " " + codigoCampo + " " + regla.operacion + " " + valores[i].valor;
-    } else if (regla.campoTipo.localeCompare("varchar") == 0) {
-      codigo += " " + codigoCampo + ".localeCompare('" + valores[i].valor + "') == 0 ";
-    } else if (regla.campoTipo.localeCompare("date") == 0) {
-      var operacion;
+      if (regla.campoTipo.localeCompare("int") == 0 || regla.campoTipo.localeCompare("decimal") == 0) {
+        codigo += " " + codigoCampo + " " + regla.operacion + " " + valores[i].valor;
+      } else if (regla.campoTipo.localeCompare("varchar") == 0) {
+        codigo += " " + codigoCampo + ".localeCompare('" + valores[i].valor + "') " + regla.operacion + " 0 ";
+      } else if (regla.campoTipo.localeCompare("date") == 0) {
+        var operacion;
 
-      if (regla.operacion.localeCompare("==") == 0) {
-        codigo += " moment(" + codigoCampo + ").isSame(" + valores[i].valor + ", 'day') ";
-      } else if (regla.operacion.localeCompare("!=") == 0) {
-        codigo += " !moment(" + codigoCampo + ").isSame(" + valores[i].valor + ", 'day') ";
-      } else if (regla.operacion.localeCompare("<") == 0) {
-        codigo += " !moment(" + codigoCampo + ").isBefore(" + valores[i].valor + ", 'day') ";
-      } else if (regla.operacion.localeCompare("<=") == 0) {
-        codigo += " !moment(" + codigoCampo + ").isSameOrBefore(" + valores[i].valor + ", 'day') ";
-      } else if (regla.operacion.localeCompare(">") == 0) {
-        codigo += " !moment(" + codigoCampo + ").isAfter(" + valores[i].valor + ", 'day') ";
-      } else if (regla.operacion.localeCompare(">=") == 0) {
-        codigo += " !moment(" + codigoCampo + ").isSameOrAfter(" + valores[i].valor + ", 'day') ";
+        if (regla.operacion.localeCompare("==") == 0) {
+          codigo += " moment(" + codigoCampo + ").isSame(" + valores[i].valor + ", 'day') ";
+        } else if (regla.operacion.localeCompare("!=") == 0) {
+          codigo += " !moment(" + codigoCampo + ").isSame(" + valores[i].valor + ", 'day') ";
+        } else if (regla.operacion.localeCompare("<") == 0) {
+          codigo += " !moment(" + codigoCampo + ").isBefore(" + valores[i].valor + ", 'day') ";
+        } else if (regla.operacion.localeCompare("<=") == 0) {
+          codigo += " !moment(" + codigoCampo + ").isSameOrBefore(" + valores[i].valor + ", 'day') ";
+        } else if (regla.operacion.localeCompare(">") == 0) {
+          codigo += " !moment(" + codigoCampo + ").isAfter(" + valores[i].valor + ", 'day') ";
+        } else if (regla.operacion.localeCompare(">=") == 0) {
+          codigo += " !moment(" + codigoCampo + ").isSameOrAfter(" + valores[i].valor + ", 'day') ";
+        }
+      } else if (regla.campoTipo.localeCompare("bool") == 0) {
+        codigo += " " + codigoCampo + " " + regla.operacion + " " + valores[i].valor;
       }
-    } else if (regla.campoTipo.localeCompare("bool") == 0) {
-      codigo += " " + codigoCampo + " " + regla.operacion + " " + valores[i].valor;
     }
+
+    ;
+  } else if (regla.campoValor.nombre.localeCompare("granDeudor") == 0) {
+    return codigo;
+  } else if (regla.campoValor.nombre.localeCompare("pequenoDeudor") == 0) {
+    return codigo;
   }
 
-  ;
   return codigo;
 } //Puede ser int o decimal
 //Puede ser date

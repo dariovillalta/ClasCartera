@@ -3,7 +3,7 @@ import sql from 'mssql';
 
 import SeleccionarCriterioDeterioro from './SeleccionarCriterioDeterioro.js';
 import CrearCriterioDeterioro from './CrearCriterioDeterioro.js';
-//import EditarCriterioDeterioro from './EditarCriterioDeterioro.js';
+import EditarCriterioDeterioro from './EditarCriterioDeterioro.js';
 
 export default class CriteriosDeterioro extends React.Component {
     constructor(props) {
@@ -12,19 +12,23 @@ export default class CriteriosDeterioro extends React.Component {
             idCriterioDeterioro: -1,
             nombreCriterioDeterioroSeleccionado: "",
             mostrarComponente: "selCrit",
-            estimacionesDeterioro: []
+            tiposDeCredito: [],
+            estimacionesDeterioro: [],
+            criterioDeterioroSel: {}
         }
         this.goCreateCriteria = this.goCreateCriteria.bind(this);
         this.goSelectCriteria = this.goSelectCriteria.bind(this);
         this.goEditCriteria = this.goEditCriteria.bind(this);
-        this.loadCriterioDet = this.loadCriterioDet.bind(this);
+        this.loadTypeCredit = this.loadTypeCredit.bind(this);
+        this.createCreditTypeSonsArray = this.createCreditTypeSonsArray.bind(this);
+        this.insertCriterioDet = this.insertCriterioDet.bind(this);
     }
 
     componentDidMount() {
-        this.loadCriterioDet();
+        this.loadTypeCredit();
     }
 
-    loadCriterioDet() {
+    loadTypeCredit() {
         const transaction = new sql.Transaction( this.props.pool );
         transaction.begin(err => {
             var rolledBack = false;
@@ -32,7 +36,7 @@ export default class CriteriosDeterioro extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from CriterioDeterioro", (err, result) => {
+            request.query("select * from TipoCredito where tipoCreditoPadreID != -1", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -42,7 +46,45 @@ export default class CriteriosDeterioro extends React.Component {
                 } else {
                     transaction.commit(err => {
                         this.setState({
-                            estimacionesDeterioro: result.recordset
+                            tiposDeCredito: result.recordset
+                        });
+                        this.createCreditTypeSonsArray();
+                    });
+                }
+            });
+        }); // fin transaction
+    }
+
+    createCreditTypeSonsArray() {
+        var arregloTemp = [];
+        for (var i = 0; i < this.state.tiposDeCredito.length; i++) {
+            this.insertCriterioDet(this.state.tiposDeCredito[i].ID, i, arregloTemp);
+        };
+    }
+
+    insertCriterioDet(creditoID, index, array) {
+        const transaction = new sql.Transaction( this.props.pool );
+        transaction.begin(err => {
+            var rolledBack = false;
+            transaction.on('rollback', aborted => {
+                rolledBack = true;
+            });
+            const request = new sql.Request(transaction);
+            request.query("select * from CriterioDeterioro where tipoDeCredito = "+creditoID, (err, result) => {
+                if (err) {
+                    if (!rolledBack) {
+                        console.log(err);
+                        transaction.rollback(err => {
+                        });
+                    }
+                } else {
+                    transaction.commit(err => {
+                        if(array[index] == undefined) {
+                            array[index] = [];
+                        }
+                        array[index] = $.merge(array[index], result.recordset);
+                        this.setState({
+                            estimacionesDeterioro: array
                         });
                     });
                 }
@@ -57,19 +99,21 @@ export default class CriteriosDeterioro extends React.Component {
     }
 
     goSelectCriteria () {
-        this.loadCriterioDet();
+        this.loadTypeCredit();
         this.setState({
             idCriterioDeterioro: -1,
             nombreCriterioDeterioroSeleccionado: "",
-            mostrarComponente: "selCrit"
+            mostrarComponente: "selCrit",
+            criterioDeterioroSel: {}
         });
     }
 
-    goEditCriteria (id, nombre) {
+    goEditCriteria (id, nombre, objeto) {
         this.setState({
             idCriterioDeterioro: id,
             nombreCriterioDeterioroSeleccionado: nombre,
-            mostrarComponente: "editCrit"
+            mostrarComponente: "editCrit",
+            criterioDeterioroSel: objeto
         });
     }
 
@@ -77,19 +121,19 @@ export default class CriteriosDeterioro extends React.Component {
         if(this.state.mostrarComponente.localeCompare("crearCrit") == 0) {
             return (
                 <div>
-                    <CrearCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} returnSelCrit={this.goSelectCriteria}> </CrearCriterioDeterioro>
+                    <CrearCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} returnSelCrit={this.goSelectCriteria} tiposDeCredito={this.state.tiposDeCredito}> </CrearCriterioDeterioro>
                 </div>
             );
         } else if(this.state.mostrarComponente.localeCompare("selCrit") == 0) {
             return (
                 <div>
-                    <SeleccionarCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} seleccionarCriterio={this.goEditCriteria} goCrearCredito={this.goCreateCriteria} estimacionesDeterioro={this.state.estimacionesDeterioro}> </SeleccionarCriterioDeterioro>
+                    <SeleccionarCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} seleccionarCriterio={this.goEditCriteria} goCrearCredito={this.goCreateCriteria} tiposDeCredito={this.state.tiposDeCredito} estimacionesDeterioro={this.state.estimacionesDeterioro}> </SeleccionarCriterioDeterioro>
                 </div>
             );
         } else if(this.state.mostrarComponente.localeCompare("editCrit") == 0) {
             return (
                 <div>
-                    <CrearCriterioDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} returnSelCrit={this.goSelectCriteria}> </CrearCriterioDeterioro>
+                    <EditarCriterioDeterioro criterioDeterioro={this.state.criterioDeterioroSel} pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent} returnSelCrit={this.goSelectCriteria} tiposDeCredito={this.state.tiposDeCredito}> </EditarCriterioDeterioro>
                 </div>
             );
         }

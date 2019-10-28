@@ -48,7 +48,8 @@
     "odbc": "github:markdirish/node-odbc",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0"
+    "react-router-dom": "^5.0.0",
+    "xlsx-style": "0.8.13"
   },
   "build": {
     "appId": "com.karmadust.electrate",

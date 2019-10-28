@@ -2,17 +2,21 @@ import React from 'react';
 import sql from 'mssql';
 
 import CrearCategoriaClasificacion from './CrearCategoriaClasificacion.js';
+import EditarCategoriaClasificacion from './EditarCategoriaClasificacion.js';
 
 export default class SeleccionarCategoriaClasificacion extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             categoriasClasificacion: [],
-            mostrarCategoriaClasificacion: false
+            categoriaSel: {},
+            mostrarVista: "selCategoriaClas"
         }
         this.loadClassificationCategory = this.loadClassificationCategory.bind(this);
         this.goCreateClassificationCategory = this.goCreateClassificationCategory.bind(this);
         this.returnChooseClassificationCategory = this.returnChooseClassificationCategory.bind(this);
+        this.entrarEdit = this.entrarEdit.bind(this);
+        this.returnEditCat = this.returnEditCat.bind(this);
     }
 
     componentDidMount() {
@@ -47,25 +51,44 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
 
     goCreateClassificationCategory() {
         this.setState({
-            mostrarCategoriaClasificacion: true
+            mostrarVista: "crearCategoriaClas"
         });
     }
 
     returnChooseClassificationCategory() {
         this.setState({
-            mostrarCategoriaClasificacion: false
+            mostrarVista: "selCategoriaClas"
         });
         this.loadClassificationCategory();
     }
 
+    entrarEdit(catClasN) {
+        this.setState({
+            categoriaSel: catClasN,
+            mostrarVista: "editCategoriaClas"
+        });
+    }
+
+    returnEditCat() {
+        this.setState({
+            mostrarVista: "editCategoriaClas"
+        });
+    }
+
     render() {
-        if(this.state.mostrarCategoriaClasificacion) {
+        if(this.state.mostrarVista.localeCompare("crearCategoriaClas") == 0) {
             return (
                 <div>
                     <CrearCategoriaClasificacion pool={this.props.pool} retornoSelCategoriaClasificacion={this.returnChooseClassificationCategory} showConfigurationComponent={this.props.showConfigurationComponent}> </CrearCategoriaClasificacion>
                 </div>
             );
-        } else {
+        } else if(this.state.mostrarVista.localeCompare("editCategoriaClas") == 0) {
+            return (
+                <div>
+                    <EditarCategoriaClasificacion categoriaClasificacion={this.state.categoriaSel} seleccionarCategoriaClasificacion={this.props.seleccionarCategoriaClasificacion} pool={this.props.pool} retornoSelCategoriaClasificacion={this.returnChooseClassificationCategory} showConfigurationComponent={this.props.showConfigurationComponent}> </EditarCategoriaClasificacion>
+                </div>
+            );
+        } else if(this.state.mostrarVista.localeCompare("selCategoriaClas") == 0) {
             return (
                 <div>
                     <div className={"row"}>
@@ -93,7 +116,7 @@ export default class SeleccionarCategoriaClasificacion extends React.Component {
                                 <div className={"card-body"}>
                                     <div className={"row border-top border-bottom addPaddingToConfig"}>
                                         {this.state.categoriasClasificacion.map((categoriaClasificacion, i) =>
-                                            <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionarCategoriaClasificacion(categoriaClasificacion.ID, categoriaClasificacion.nombre)} key={categoriaClasificacion.ID}>{categoriaClasificacion.categoria} | {categoriaClasificacion.tipoCredito}</a>
+                                            <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.entrarEdit(categoriaClasificacion)} key={categoriaClasificacion.ID}>{categoriaClasificacion.categoria} | {categoriaClasificacion.tipoCredito}</a>
                                         )}
                                         { this.state.categoriasClasificacion.length == 0 ? (
                                             <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>No existen categorias de clasificación creados</a>

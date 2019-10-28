@@ -204,7 +204,7 @@ function (_React$Component) {
             return null;
           }
         })))))));
-      } else if (this.props.esBoolean) {
+      } else if (this.props.esBoolean || this.props.esPequenoDeudor) {
         return _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {
@@ -301,6 +301,70 @@ function (_React$Component) {
             return null;
           }
         })))))));
+      } else if (this.props.esGranDeudor) {
+        return _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-sm-4 col-4"
+        }, _react["default"].createElement("div", {
+          className: "card"
+        }, _react["default"].createElement("div", {
+          className: "card-body"
+        }, _react["default"].createElement("div", {
+          className: "d-inline-block text-center",
+          style: {
+            width: "100%"
+          }
+        }, _react["default"].createElement("h2", {
+          className: "text-muted"
+        }, "Capital M\xEDnimo"), _react["default"].createElement("input", {
+          id: "capitalMinimo",
+          type: "text",
+          className: "form-control",
+          style: {
+            width: "100%"
+          }
+        }))))), _react["default"].createElement("div", {
+          className: "col-sm-4 col-4"
+        }, _react["default"].createElement("div", {
+          className: "card"
+        }, _react["default"].createElement("div", {
+          className: "card-body"
+        }, _react["default"].createElement("div", {
+          className: "d-inline-block text-center",
+          style: {
+            width: "100%"
+          }
+        }, _react["default"].createElement("h2", {
+          className: "text-muted"
+        }, "Tiempo M\xEDnimo"), _react["default"].createElement("input", {
+          id: "tiempoMinimo",
+          type: "text",
+          className: "form-control",
+          style: {
+            width: "100%"
+          }
+        }))))), _react["default"].createElement("div", {
+          className: "col-sm-4 col-4"
+        }, _react["default"].createElement("div", {
+          className: "card"
+        }, _react["default"].createElement("div", {
+          className: "card-body"
+        }, _react["default"].createElement("div", {
+          className: "d-inline-block text-center",
+          style: {
+            width: "100%"
+          }
+        }, _react["default"].createElement("h2", {
+          className: "text-muted"
+        }, "Porcentaje M\xEDnimo"), _react["default"].createElement("input", {
+          id: "porcentajeMinimo",
+          type: "text",
+          className: "form-control",
+          style: {
+            width: "100%"
+          }
+        }))))));
       } else {
         return _react["default"].createElement("div", null);
       }

@@ -54,11 +54,7 @@ function (_React$Component) {
           backgroundColor: "rgba(189,189,189,0.3)",
           zIndex: "10"
         }
-      }, _react["default"].createElement("div", {
-        style: {
-          backgroundColor: "white"
-        }
-      }, _react["default"].createElement("div", {
+      }, _react["default"].createElement("div", null, _react["default"].createElement("div", {
         className: "row",
         style: {
           display: "flex",

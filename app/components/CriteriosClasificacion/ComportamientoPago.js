@@ -11,6 +11,8 @@ var _mssql = _interopRequireDefault(require("mssql"));
 
 var _SeleccionarTabla = _interopRequireDefault(require("../SeleccionarTabla.js"));
 
+var _MessageModal = _interopRequireDefault(require("../MessageModal.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -47,7 +49,18 @@ function (_React$Component) {
       idTablaSeleccionadaPrestamo: -1,
       idTablaSeleccionadaPlanPago: -1,
       camposPrestamos: [],
-      camposPlanPago: []
+      camposPlanPago: [],
+      mensajeModal: {
+        mostrarMensaje: false,
+        mensajeConfirmado: false,
+        esError: false,
+        esConfirmar: false,
+        titulo: "",
+        mensaje: "",
+        banderaMetodoInit: "",
+        idElementoSelec: -1,
+        indiceX: -1
+      }
     };
     _this.updateTableCreditID = _this.updateTableCreditID.bind(_assertThisInitialized(_this));
     _this.updateTablePayPlanID = _this.updateTablePayPlanID.bind(_assertThisInitialized(_this));
@@ -55,6 +68,8 @@ function (_React$Component) {
     _this.returnToTablePayPlanID = _this.returnToTablePayPlanID.bind(_assertThisInitialized(_this));
     _this.loadFieldsFromTables = _this.loadFieldsFromTables.bind(_assertThisInitialized(_this));
     _this.saveCriteriaClasification = _this.saveCriteriaClasification.bind(_assertThisInitialized(_this));
+    _this.dismissMessageModal = _this.dismissMessageModal.bind(_assertThisInitialized(_this));
+    _this.showSuccesMessage = _this.showSuccesMessage.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -148,6 +163,8 @@ function (_React$Component) {
   }, {
     key: "saveCriteriaClasification",
     value: function saveCriteriaClasification() {
+      var _this3 = this;
+
       var prestamoTablaID = this.state.idTablaSeleccionadaPrestamo,
           planPagoTablaID = this.state.idTablaSeleccionadaPlanPago,
           idClientePrestamoCampoID = $("#idClientePrest").val(),
@@ -176,11 +193,83 @@ function (_React$Component) {
             }
           } else {
             transaction.commit(function (err) {
-              console.log("exito");
+              _this3.setState({
+                mensajeModal: {
+                  mostrarMensaje: false,
+                  mensajeConfirmado: true,
+                  esError: false,
+                  esConfirmar: false,
+                  titulo: "",
+                  mensaje: "",
+                  banderaMetodoInit: "",
+                  idElementoSelec: _this3.state.mensajeModal.idElementoSelec,
+                  indiceX: _this3.state.mensajeModal.indiceX
+                }
+              });
+
+              _this3.showSuccesMessage("Exito", "Comportamiento de Pago creado con éxito.");
             });
           }
         });
       }); // fin transaction camposPrestamos
+    }
+    /*======_______====== ======_______======   MENSAJES MODAL    ======_______====== ======_______======*/
+
+    /*======_______======                                                             ======_______======*/
+
+    /*======_______======                                                             ======_______======*/
+
+    /*======_______====== ======_______====== ==_____==  ==___==  ======_______====== ======_______======*/
+
+  }, {
+    key: "dismissMessageModal",
+    value: function dismissMessageModal() {
+      this.setState({
+        mensajeModal: {
+          mostrarMensaje: false,
+          mensajeConfirmado: false,
+          esError: false,
+          esConfirmar: false,
+          titulo: "",
+          mensaje: "",
+          banderaMetodoInit: "",
+          idElementoSelec: -1,
+          indiceX: -1
+        }
+      });
+    }
+  }, {
+    key: "showSuccesMessage",
+    value: function showSuccesMessage(titulo, mensaje) {
+      this.setState({
+        mensajeModal: {
+          mostrarMensaje: true,
+          mensajeConfirmado: false,
+          esError: false,
+          esConfirmar: false,
+          titulo: titulo,
+          mensaje: mensaje,
+          banderaMetodoInit: "",
+          idElementoSelec: this.state.mensajeModal.idElementoSelec,
+          indiceX: this.state.mensajeModal.indiceX
+        }
+      });
+      var self = this;
+      setTimeout(function () {
+        self.setState({
+          mensajeModal: {
+            mostrarMensaje: false,
+            mensajeConfirmado: false,
+            esError: false,
+            esConfirmar: false,
+            titulo: "",
+            mensaje: "",
+            banderaMetodoInit: "",
+            idElementoSelec: self.state.mensajeModal.idElementoSelec,
+            indiceX: self.state.mensajeModal.indiceX
+          }
+        });
+      }, 850);
     }
   }, {
     key: "render",
@@ -215,6 +304,13 @@ function (_React$Component) {
           href: "#",
           className: "breadcrumb-link"
         }, "Criterios de Clasificaci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.returnChooseComportamientoPago
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Seleccionar Comportamiento de Pago")), _react["default"].createElement("li", {
           className: "breadcrumb-item active",
           "aria-current": "page"
         }, "Seleccionar Tabla de Prestamos"))))))), _react["default"].createElement("div", {
@@ -259,6 +355,13 @@ function (_React$Component) {
           href: "#",
           className: "breadcrumb-link"
         }, "Criterios de Clasificaci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.returnChooseComportamientoPago
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Seleccionar Comportamiento de Pago")), _react["default"].createElement("li", {
           className: "breadcrumb-item",
           "aria-current": "page",
           onClick: this.returnToTableCreditID
@@ -310,6 +413,13 @@ function (_React$Component) {
           href: "#",
           className: "breadcrumb-link"
         }, "Criterios de Clasificaci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.returnChooseComportamientoPago
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Seleccionar Comportamiento de Pago")), _react["default"].createElement("li", {
           className: "breadcrumb-item",
           "aria-current": "page",
           onClick: this.returnToTableCreditID
@@ -370,10 +480,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Cliente") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -398,10 +512,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Préstamo") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -426,10 +544,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if ((campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("Pagos") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -454,10 +576,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if ((campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("Pagos") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -482,10 +608,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPrestamos.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if (campo.tipo.indexOf("date") == 0 && campo.tabla.indexOf("Pagos") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         })))))))), _react["default"].createElement("div", {
           className: "col-xl-5 col-xl-offset-2 col-5 offset-2"
         }, _react["default"].createElement("div", {
@@ -528,10 +658,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Cliente") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -552,10 +686,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if (campo.funcion.indexOf("Identificador") == 0 && campo.tabla.indexOf("Préstamo") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -580,10 +718,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if ((campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("PlanPagos") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -608,10 +750,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if ((campo.tipo.indexOf("decimal") == 0 || campo.tipo.indexOf("int") == 0) && campo.tabla.indexOf("PlanPagos") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))), _react["default"].createElement("div", {
           className: "row border-top border-bottom"
         }, _react["default"].createElement("div", {
@@ -636,10 +782,14 @@ function (_React$Component) {
         }, _react["default"].createElement("option", {
           value: ""
         }, "Seleccione un campo..."), this.state.camposPlanPago.map(function (campo, i) {
-          return _react["default"].createElement("option", {
-            value: campo.ID,
-            key: i
-          }, campo.nombre);
+          if (campo.tipo.indexOf("date") == 0 && campo.tabla.indexOf("PlanPagos") == 0) {
+            return _react["default"].createElement("option", {
+              value: campo.ID,
+              key: i
+            }, campo.nombre);
+          } else {
+            return null;
+          }
         }))))))))), _react["default"].createElement("div", {
           className: "text-center"
         }, _react["default"].createElement("a", {
@@ -650,7 +800,14 @@ function (_React$Component) {
             fontWeight: "bold"
           },
           onClick: this.saveCriteriaClasification
-        }, "Guardar")), _react["default"].createElement("br", null));
+        }, "Guardar")), _react["default"].createElement("br", null), this.state.mensajeModal.mostrarMensaje ? _react["default"].createElement(_MessageModal["default"], {
+          esError: this.state.mensajeModal.esError,
+          esConfirmar: this.state.mensajeModal.esConfirmar,
+          dismissMessage: this.dismissMessageModal,
+          confirmFunction: this.confirmMessageModal,
+          titulo: this.state.mensajeModal.titulo,
+          mensaje: this.state.mensajeModal.mensaje
+        }, " ") : _react["default"].createElement("span", null));
       }
     }
   }]);

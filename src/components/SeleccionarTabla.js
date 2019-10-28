@@ -13,6 +13,7 @@ export default class SeleccionarTabla extends React.Component {
     //componentDidMount() {componentDidUpdate
     componentDidMount() {
         this.loadTables();
+        console.log(this.state.tablas);
     }
 
     loadTables() {
@@ -23,7 +24,7 @@ export default class SeleccionarTabla extends React.Component {
                 rolledBack = true;
             });
             const request = new sql.Request(transaction);
-            request.query("select * from Tablas", (err, result) => {
+            request.query("select * from Tablas where funcion ='Pagos de Préstamos' or funcion ='Plan de Pagos'", (err, result) => {
                 if (err) {
                     if (!rolledBack) {
                         console.log(err);
@@ -41,7 +42,15 @@ export default class SeleccionarTabla extends React.Component {
         }); // fin transaction
     }
 
+    selTabla (tabla, index) {
+        this.state.tablas[index].selected = true;
+        console.log(this.state.tablas);
+        this.props.seleccionarTabla(tabla.ID, tabla.nombre);
+    }
+
     render() {
+        var claseNoSel = "btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM";
+        var claseSel = "btn btn-info btn-block btnWhiteColorHover fontSize1EM";
         return (
             <div>
                 <div className={"row"}>
@@ -50,7 +59,7 @@ export default class SeleccionarTabla extends React.Component {
                             <div className={"card-body"}>
                                 <div className={"row border-top border-bottom addPaddingToConfig"}>
                                     {this.state.tablas.map((tabla, i) =>
-                                        <a className={"btn btn-outline-info btn-block btnWhiteColorHover fontSize1EM"} onClick={() => this.props.seleccionarTabla(tabla.ID, tabla.nombre)} key={i}>{tabla.nombre}</a>
+                                        <a className={tabla.selected ? claseSel : claseNoSel} onClick={() => this.selTabla(tabla, i)} key={i}>{tabla.nombre}</a>
                                     )}
                                     { this.state.tablas.length == 0 ? (
                                         <a className={"btn btn-outline-dark btn-block btnWhiteColorHover fontSize1EM"}>No existen tablas creadas</a>

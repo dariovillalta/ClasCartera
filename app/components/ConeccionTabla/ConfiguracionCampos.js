@@ -68,6 +68,8 @@ var tablas = [{
 var funciones = [{
   nombre: "Identificador"
 }, {
+  nombre: "Nombre Cliente"
+}, {
   nombre: "Otro"
 }]; //let funciones = [ {funcion: "idCliente", texto: "ID de Cliente"}, {funcion: "fecha", texto: "fecha"}, {nombre: "date"}, {nombre: "int"} ];
 
@@ -836,7 +838,7 @@ function (_React$Component) {
         className: "form-group col-xl-6 col-6"
       }, _react["default"].createElement("h4", {
         className: "col-form-label text-center"
-      }, "Nombre de Campo"), _react["default"].createElement("input", {
+      }, "Nombre de Columna"), _react["default"].createElement("input", {
         id: "campoNombre",
         type: "text",
         className: "form-control"
@@ -846,7 +848,7 @@ function (_React$Component) {
         className: "form-group col-xl-6 col-6"
       }, _react["default"].createElement("h4", {
         className: "col-form-label text-center"
-      }, "Tabla"), _react["default"].createElement("select", {
+      }, "Objeto"), _react["default"].createElement("select", {
         id: "campoTabla",
         className: "form-control"
         /*onChange={this.checkFieldType.bind(this)}*/
@@ -965,7 +967,7 @@ function (_React$Component) {
           className: "form-group col-xl-6 col-6"
         }, _react["default"].createElement("h4", {
           className: "col-form-label text-center"
-        }, "Nombre de Campo"), _react["default"].createElement(_InlineEdit["default"], {
+        }, "Nombre de Columna"), _react["default"].createElement(_InlineEdit["default"], {
           id: "campoNombre" + i,
           texto: campo.nombre
         }, " "))), _react["default"].createElement("div", {
@@ -974,7 +976,7 @@ function (_React$Component) {
           className: "form-group col-xl-6 col-6"
         }, _react["default"].createElement("h4", {
           className: "col-form-label text-center"
-        }, "Tabla"), _react["default"].createElement("select", {
+        }, "Objeto"), _react["default"].createElement("select", {
           id: "campoTabla" + i,
           className: "form-control",
           defaultValue: campo.tabla

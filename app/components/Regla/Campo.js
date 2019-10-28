@@ -47,7 +47,7 @@ function (_React$Component) {
     value: function checkFieldType() {
       var valor = $('#campo').val();
 
-      if (valor.length > 0 && valor.localeCompare("M0ra") != 0) {
+      if (valor.length > 0 && valor.localeCompare("M0ra") != 0 && valor.localeCompare("Gr4nDeud0r") != 0 && valor.localeCompare("P3quDeud0r") != 0) {
         var campoSeleccionado = this.props.campos[valor];
 
         if (campoSeleccionado.tipo.indexOf("int") == 0) {
@@ -61,6 +61,10 @@ function (_React$Component) {
         }
       } else if (valor.length > 0 && valor.localeCompare("M0ra") == 0) {
         this.props.esNumero();
+      } else if (valor.length > 0 && valor.localeCompare("Gr4nDeud0r") == 0) {
+        this.props.esGranDeudor();
+      } else if (valor.length > 0 && valor.localeCompare("P3quDeud0r") == 0) {
+        this.props.esPequenoDeudor();
       }
     }
   }, {
@@ -86,7 +90,11 @@ function (_React$Component) {
         value: ""
       }, "Seleccione un campo..."), _react["default"].createElement("option", {
         value: "M0ra"
-      }, "D\xEDas de Mora"), this.props.campos.map(function (campo, i) {
+      }, "D\xEDas de Mora"), _react["default"].createElement("option", {
+        value: "Gr4nDeud0r"
+      }, "Gran Deudor Comercial"), _react["default"].createElement("option", {
+        value: "P3quDeud0r"
+      }, "Peque\xF1o Deudor Comercial"), this.props.campos.map(function (campo, i) {
         return _react["default"].createElement("option", {
           value: i,
           key: i

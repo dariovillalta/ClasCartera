@@ -14,6 +14,8 @@ import Graficos from './Graficos/Graficos.js';
 import Home from './Home.js';
 import CategoriaClasificacion from './CategoriaClasificacion/CategoriaClasificacion.js';
 import CriteriosDeterioro from './CriteriosDeterioro/CriteriosDeterioro.js';
+import MantenimientoUsuarios from './MantenimientoUsuarios.js';
+import Bitacora from './Bitacora.js';
 
 //const importacionODBC = new Worker("./components/odbcMSSQL.js");
 
@@ -55,12 +57,9 @@ export default class Body extends React.Component {
                         showClasificationCriteriaComponent={this.props.showClasificationCriteriaComponent}
                         showListsComponent={this.props.showListsComponent}
                         showCatClass={this.props.showCatClass}
-                        showDeteriorationCriteria={this.props.showDeteriorationCriteria}> </Configuracion>
-                    { this.state.showLoadingScreen ? (
-                        <LoadingScreen mensaje={this.state.mensajeLoadingScreen}> </LoadingScreen>
-                    ) : (
-                        <div></div>
-                    )}
+                        showDeteriorationCriteria={this.props.showDeteriorationCriteria}
+                        showMantenimientoUsuarios={this.props.showMantenimientoUsuarios}
+                        showBitacora={this.props.showBitacora}> </Configuracion>
                 </div>
             );
         } else if(this.props.router.showConfTables) {
@@ -90,7 +89,12 @@ export default class Body extends React.Component {
         } else if(this.props.router.showCreditClassificationProcess) {
             return (
                 <div>
-                    <ClasificarCarteraProceso pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </ClasificarCarteraProceso>
+                    <ClasificarCarteraProceso showLoadingScreen={this.showLoadingScreen} hideLoadingScreen={this.hideLoadingScreen} pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </ClasificarCarteraProceso>
+                    { this.state.showLoadingScreen ? (
+                        <LoadingScreen mensaje={this.state.mensajeLoadingScreen}> </LoadingScreen>
+                    ) : (
+                        <div></div>
+                    )}
                 </div>
             );
         } else if(this.props.router.showChooseReports) {
@@ -102,19 +106,34 @@ export default class Body extends React.Component {
         } else if(this.props.router.showReportsView) {
             return (
                 <div>
-                    <VerReporteria pool={this.props.pool}> </VerReporteria>
+                    <VerReporteria showLoadingScreen={this.showLoadingScreen} hideLoadingScreen={this.hideLoadingScreen} pool={this.props.pool}> </VerReporteria>
+                    { this.state.showLoadingScreen ? (
+                        <LoadingScreen mensaje={this.state.mensajeLoadingScreen}> </LoadingScreen>
+                    ) : (
+                        <div></div>
+                    )}
                 </div>
             );
         } else if(this.props.router.showReportsDownload) {
             return (
                 <div>
-                    <DescargarReporteria pool={this.props.pool}> </DescargarReporteria>
+                    <DescargarReporteria showLoadingScreen={this.showLoadingScreen} hideLoadingScreen={this.hideLoadingScreen} pool={this.props.pool}> </DescargarReporteria>
+                    { this.state.showLoadingScreen ? (
+                        <LoadingScreen mensaje={this.state.mensajeLoadingScreen}> </LoadingScreen>
+                    ) : (
+                        <div></div>
+                    )}
                 </div>
             );
         } else if(this.props.router.showGraphics) {
             return (
                 <div>
-                    <Graficos pool={this.props.pool}> </Graficos>
+                    <Graficos showLoadingScreen={this.showLoadingScreen} hideLoadingScreen={this.hideLoadingScreen} pool={this.props.pool}> </Graficos>
+                    { this.state.showLoadingScreen ? (
+                        <LoadingScreen mensaje={this.state.mensajeLoadingScreen}> </LoadingScreen>
+                    ) : (
+                        <div></div>
+                    )}
                 </div>
             );
         } else if(this.props.router.showHome) {
@@ -133,6 +152,18 @@ export default class Body extends React.Component {
             return (
                 <div>
                     <CriteriosDeterioro pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </CriteriosDeterioro>
+                </div>
+            );
+        } else if(this.props.router.showMantenimientoUsuarios) {
+            return (
+                <div>
+                    <MantenimientoUsuarios pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </MantenimientoUsuarios>
+                </div>
+            );
+        } else if(this.props.router.showBitacora) {
+            return (
+                <div>
+                    <Bitacora pool={this.props.pool} showConfigurationComponent={this.props.showConfigurationComponent}> </Bitacora>
                 </div>
             );
         } else {

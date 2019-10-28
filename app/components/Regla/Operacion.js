@@ -175,7 +175,7 @@ function (_React$Component) {
             width: "30px"
           }
         }))))))));
-      } else if (this.props.esNumero || this.props.esFecha) {
+      } else if (this.props.esNumero || this.props.esFecha || this.props.esTexto) {
         return _react["default"].createElement("div", {
           className: "row"
         }, _react["default"].createElement("div", {
@@ -299,55 +299,37 @@ function (_React$Component) {
             width: "30px"
           }
         })))))))));
-      } else if (this.props.esTexto) {
-        return _react["default"].createElement("div", {
-          className: "row"
-        }, _react["default"].createElement("div", {
-          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
-        }, _react["default"].createElement("div", {
-          className: "card"
-        }, _react["default"].createElement("h3", {
-          className: "card-header"
-        }, "Seleccionar Operacion"), _react["default"].createElement("div", {
-          className: "card-body"
-        }, _react["default"].createElement("div", {
-          className: "text-center"
-        }, _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "sumIf",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/varCreation/SumarSi.png",
-          alt: "",
-          style: {
-            height: "25px",
-            width: "auto"
-          }
-        }))), _react["default"].createElement("label", {
-          className: "custom-control custom-radio custom-control-inline"
-        }, _react["default"].createElement("input", {
-          type: "radio",
-          value: "sumIfNot",
-          name: "operacionRadio",
-          className: "custom-control-input"
-        }), _react["default"].createElement("span", {
-          className: "custom-control-label"
-        }, _react["default"].createElement("img", {
-          src: "./assets/varCreation/SumarSiNo.png",
-          alt: "",
-          style: {
-            height: "25px",
-            width: "auto"
-          }
-        }))))))));
-      } else {
-        return _react["default"].createElement("div", null);
       }
+      /*else if(this.props.esTexto) {
+        return (
+            <div className={"row"}>
+                <div className={"col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"}>
+                    <div className={"card"}>
+                        <h3 className={"card-header"}>Seleccionar Operacion</h3>
+                        <div className={"card-body"}>
+                            <div className={"text-center"}>
+                                <label className={"custom-control custom-radio custom-control-inline"}>
+                                    <input type="radio" value="sumIf" name="operacionRadio" className={"custom-control-input"}/>
+                                    <span className={"custom-control-label"}>
+                                        <img src="./assets/varCreation/SumarSi.png" alt="" style={{height: "25px", width: "auto"}}/>
+                                    </span>
+                                </label>
+                                <label className={"custom-control custom-radio custom-control-inline"}>
+                                    <input type="radio" value="sumIfNot" name="operacionRadio" className={"custom-control-input"}/>
+                                    <span className={"custom-control-label"}>
+                                        <img src="./assets/varCreation/SumarSiNo.png" alt="" style={{height: "25px", width: "auto"}}/>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+      }*/
+      else {
+          return _react["default"].createElement("div", null);
+        }
     }
   }]);
 

@@ -7,7 +7,7 @@ exports["default"] = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _ComportamientoPago = _interopRequireDefault(require("./ComportamientoPago.js"));
+var _SeleccionarComportamientoPago = _interopRequireDefault(require("./SeleccionarComportamientoPago.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -174,17 +174,137 @@ function (_React$Component) {
           onClick: this.showEntornoEconomicoComponent
         }, "Entorno Econ\xF3mico")))))));
       } else if (this.state.router.showCapacidadPago) {
-        return _react["default"].createElement("div", null);
+        return _react["default"].createElement("div", null, _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
+        }, _react["default"].createElement("div", {
+          className: "page-header"
+        }, _react["default"].createElement("h2", {
+          className: "pageheader-title"
+        }, "Configuraci\xF3n"), _react["default"].createElement("div", {
+          className: "page-breadcrumb"
+        }, _react["default"].createElement("nav", {
+          "aria-label": "breadcrumb"
+        }, _react["default"].createElement("ol", {
+          className: "breadcrumb"
+        }, _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.showConfigurationComponent
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Configuraci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.showConfiguracion
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Criterios de Clasificaci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item active",
+          "aria-current": "page"
+        }, "Capacidad de Pago del Deudor"))))))), _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-b-60"
+        }, _react["default"].createElement("div", {
+          className: "simple-card",
+          style: {
+            padding: "5%"
+          }
+        }, _react["default"].createElement("p", null, "Constituir\xE1 el factor principal para evaluar a los Grandes Deudores Comerciales, y se medir\xE1 en funci\xF3n del an\xE1lisis que realice la instituci\xF3n (ver Anexo 1-G) al inicio del cr\xE9dito y de las actualizaciones que efect\xFAe de conformidad al perfil de riesgo del deudor, las cuales como m\xEDnimo deben ser anualmente, de la situaci\xF3n financiera, presente y futura del deudor. Este an\xE1lisis deber\xE1 tener como sustento t\xE9cnico, los estados financieros principales del deudor (balance general, estado de resultados y flujo de caja), los que deber\xE1n haber sido auditados por firmas independientes registradas en la Comisi\xF3n o auditados por firmas extranjeras cuando se trate de un deudor no domiciliado en el territorio nacional, mismos que deber\xE1n ser confiables y comprensibles para la entidad prestamista, de conformidad con el Anexo 1-A, numerales 2.1 y 2.2, Secci\xF3n Financiera. Los flujos de caja y estudios de factibilidad de los nuevos proyectos a financiar, deber\xE1n tener bases de sustentaci\xF3n y supuestos, suficientes y razonables.")))));
       } else if (this.state.router.showComportamientoPago) {
-        return _react["default"].createElement("div", null, _react["default"].createElement(_ComportamientoPago["default"], {
+        return _react["default"].createElement("div", null, _react["default"].createElement(_SeleccionarComportamientoPago["default"], {
           pool: this.props.pool,
           showConfigurationComponent: this.props.showConfigurationComponent,
           showCriteriosClasificacion: this.showConfiguracion
         }, " "));
       } else if (this.state.router.showDisponibilidadGarantias) {
-        return _react["default"].createElement("div", null);
+        return _react["default"].createElement("div", null, _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
+        }, _react["default"].createElement("div", {
+          className: "page-header"
+        }, _react["default"].createElement("h2", {
+          className: "pageheader-title"
+        }, "Configuraci\xF3n"), _react["default"].createElement("div", {
+          className: "page-breadcrumb"
+        }, _react["default"].createElement("nav", {
+          "aria-label": "breadcrumb"
+        }, _react["default"].createElement("ol", {
+          className: "breadcrumb"
+        }, _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.showConfigurationComponent
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Configuraci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.showConfiguracion
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Criterios de Clasificaci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item active",
+          "aria-current": "page"
+        }, "Disponibilidad de Garant\xEDas"))))))), _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-b-60"
+        }, _react["default"].createElement("div", {
+          className: "simple-card",
+          style: {
+            padding: "5%"
+          }
+        }, _react["default"].createElement("p", null, "Las garant\xEDas constituyen la fuente alterna de pago de un cr\xE9dito y tienen relevancia para el requerimiento de las estimaciones de deterioro, despu\xE9s de que se hayan establecido claras debilidades en los dos (2) factores anteriores, siempre que para su ejecuci\xF3n y realizaci\xF3n no se prevean dificultades u obst\xE1culos que deterioren el valor de la garant\xEDa. Para ser consideradas como fuente alterna de pago, las garant\xEDas deben poder ser ejecutadas y realizadas en el corto plazo. Las garant\xEDas se considerar\xE1n por el valor que se les haya asignado en aval\xFAo efectuado por profesional debidamente registrado en la Comisi\xF3n, o bien, con el valor de la factura de proveedor reconocido o por su precio de venta de realizaci\xF3n r\xE1pida, dependiendo de su naturaleza, cuando corresponda. Los criterios de valorizaci\xF3n de las garant\xEFas para efectos de clasificaci\xF3n de la cartera de cr\xE9ditos, se detallan en el Anexo 2 que forma parte integral de las presentes Normas.")))));
       } else if (this.state.router.showEntornoEconomico) {
-        return _react["default"].createElement("div", null);
+        return _react["default"].createElement("div", null, _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"
+        }, _react["default"].createElement("div", {
+          className: "page-header"
+        }, _react["default"].createElement("h2", {
+          className: "pageheader-title"
+        }, "Configuraci\xF3n"), _react["default"].createElement("div", {
+          className: "page-breadcrumb"
+        }, _react["default"].createElement("nav", {
+          "aria-label": "breadcrumb"
+        }, _react["default"].createElement("ol", {
+          className: "breadcrumb"
+        }, _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.props.showConfigurationComponent
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Configuraci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item",
+          "aria-current": "page",
+          onClick: this.showConfiguracion
+        }, _react["default"].createElement("a", {
+          href: "#",
+          className: "breadcrumb-link"
+        }, "Criterios de Clasificaci\xF3n")), _react["default"].createElement("li", {
+          className: "breadcrumb-item active",
+          "aria-current": "page"
+        }, "Entorno Econ\xF3mico"))))))), _react["default"].createElement("div", {
+          className: "row"
+        }, _react["default"].createElement("div", {
+          className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 m-b-60"
+        }, _react["default"].createElement("div", {
+          className: "simple-card",
+          style: {
+            padding: "5%"
+          }
+        }, _react["default"].createElement("p", null, "Las condiciones y perspectivas del mercado o sector en que se llevan a cabo las actividades comerciales o productivas del deudor deben ser tomadas en cuenta en la asignaci\xF3n de categor\xEDas a los Grandes Deudores Comerciales. Se debe analizar la posici\xF3n estrat\xE9gica de un deudor en su mercado o rubro (utilizando criterios tales como dependencia de un solo producto o proveedor, demanda decreciente, productos substitutos, obsolescencia tecnol\xF3gica, entre otros).")))));
       }
     }
   }]);
